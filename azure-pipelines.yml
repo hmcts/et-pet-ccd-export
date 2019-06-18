@@ -24,59 +24,58 @@ variables:
   manual.branch.prefix: 'develop'
 
 jobs:
-# - job: TestApplication
+- job: TestApplication
 
-#   pool:
-#     vmImage: 'Ubuntu-16.04'
+  pool:
+    vmImage: 'Ubuntu-16.04'
   
-#   steps:
-#   - task: UseRubyVersion@0
-#     inputs:
-#       versionSpec: '>= 2.5'
+  steps:
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= 2.5'
 
-#   - script: |
-#       export ENABLE_COVERAGE=true
-#       export DB_USERNAME=postgres
-#       export DB_PORT=5433
-#       export CC_TEST_REPORTER=935a4195bd35a993666acc398a01a53daf4e7f11635e90a51c8f30b44cbe1ec9
-#       sudo apt-get update
-#       sudo apt-get install libpq-dev mcrypt libmcrypt-dev pdftk
-#       chmod +x ./bin/wait-for-it.sh
-#       sudo rm /usr/local/bin/docker-compose
-#       curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-Linux-x86_64 > docker-compose
-#       chmod +x docker-compose
-#       sudo mv docker-compose /usr/local/bin
-#       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
-#       gem install bundler -v 1.16.4
-#     displayName: 'before install'
-#   - script: |
-#       export ENABLE_COVERAGE=true
-#       export DB_USERNAME=postgres
-#       export DB_PORT=5433
-#       ./bin/dev/docker-support-services up -d
-#       ./bin/wait-for-it.sh localhost:5433
-#       sleep 5
-#       ./bin/wait-for-it.sh localhost:5433
-#       RAILS_ENV=test bundle install && bundle exec rails db:create db:migrate
-#       curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-#       chmod +x ./cc-test-reporter
-#       ./cc-test-reporter before-build
-#     displayName: 'before script'
-#   - script: |
-#       export ENABLE_COVERAGE=true
-#       export DB_USERNAME=postgres
-#       export DB_PORT=5433
-#       export CC_TEST_REPORTER=935a4195bd35a993666acc398a01a53daf4e7f11635e90a51c8f30b44cbe1ec9
-#       RAILS_ENV=test bundle install
-#       RAILS_ENV=test bundle exec rspec
-#       # RAILS_ENV=test bundle exec codeclimate-test-reporter
-#       # ./cc-test-reporter after-build --exit-code 0
-#     displayName: 'script'
-
+  - script: |
+      export ENABLE_COVERAGE=true
+      export DB_USERNAME=postgres
+      export DB_PORT=5433
+      export CC_TEST_REPORTER=935a4195bd35a993666acc398a01a53daf4e7f11635e90a51c8f30b44cbe1ec9
+      sudo apt-get update
+      sudo apt-get install libpq-dev mcrypt libmcrypt-dev pdftk
+      chmod +x ./bin/wait-for-it.sh
+      sudo rm /usr/local/bin/docker-compose
+      curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-Linux-x86_64 > docker-compose
+      chmod +x docker-compose
+      sudo mv docker-compose /usr/local/bin
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter && chmod +x ./cc-test-reporter
+      gem install bundler -v 1.16.4
+    displayName: 'before install'
+  - script: |
+      export ENABLE_COVERAGE=true
+      export DB_USERNAME=postgres
+      export DB_PORT=5433
+      ./bin/dev/docker-support-services up -d
+      ./bin/wait-for-it.sh localhost:5433
+      sleep 5
+      ./bin/wait-for-it.sh localhost:5433
+      RAILS_ENV=test bundle install && bundle exec rails db:create db:migrate
+      curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      chmod +x ./cc-test-reporter
+      ./cc-test-reporter before-build
+    displayName: 'before script'
+  - script: |
+      export ENABLE_COVERAGE=true
+      export DB_USERNAME=postgres
+      export DB_PORT=5433
+      export CC_TEST_REPORTER=935a4195bd35a993666acc398a01a53daf4e7f11635e90a51c8f30b44cbe1ec9
+      RAILS_ENV=test bundle install
+      RAILS_ENV=test bundle exec rspec
+      # RAILS_ENV=test bundle exec codeclimate-test-reporter
+      # ./cc-test-reporter after-build --exit-code 0
+    displayName: 'script'
+    
 - job: BuildAndPushImage
-  # dependsOn: TestApplication
-  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/develop')
+  dependsOn: TestApplication
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
   pool:
     name: hmcts-pet
   steps:
@@ -123,15 +122,8 @@ jobs:
 
 
 - job: ManualBuildAndPushImage
-  # dependsOn: TestApplication
-  # condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.Reason'], 'Manual'))
-  condition: |
-    and
-    (
-      ne(variables['Build.SourceBranch'], 'refs/heads/develop'), 
-      eq(variables['Build.Reason'], 'Manual')
-    )
-
+  dependsOn: TestApplication
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.Reason'], 'Manual'))
   pool:
     name: hmcts-pet  # name of the pool to run this job in
   steps:
