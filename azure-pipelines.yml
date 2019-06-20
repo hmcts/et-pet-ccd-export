@@ -37,7 +37,7 @@ jobs:
   - script: |
       sudo apt-get update
       sudo apt-get install libpq-dev mcrypt libmcrypt-dev pdftk
-      gem install bundler -v 1.16.4
+      gem install bundler -v 1.17.3
     displayName: 'before install'
   - script: |
       RAILS_ENV=test bundle install
