@@ -92,10 +92,13 @@ The application must be configured to use the same redis details as the API serv
     CCD_AUTH_BASE_URL=<service-auth-provider-api base URL>
     CCD_IDAM_BASE_URL=<idam-api base URL>
     CCD_DATA_STORE_BASE_URL=<ccd-data-store-api base URL>
+    CCD_DOCUMENT_STORE_BASE_URL=<ccd-document-store-api base URL>
+    CCD_DOCUMENT_STORE_REWRITE=<rewrite spec or false - see below>
 
     ```
+    
 
-    If any of these urls use SSL and do not have valid certificates, switch off validation using
+    If any of the above urls use SSL and do not have valid certificates, switch off validation using
 
     ```
     CCD_SSL_VERIFICATION=false
@@ -136,6 +139,23 @@ The application must be configured to use the same redis details as the API serv
     CCD_CLIENT_POOL_SIZE = <size> (where size should not be less than the concurrency in sidekiq else workers will become blocked)
     CCD_CLIENT_POOL_TIMEOUT = <timeout seconds> Set this to the max amount of time the code should wait for a client from the pool to become available
     ```
+    
+    The CCD_DOCUMENT_STORE_REWRITE variable should either contain 'false' if
+    the URL's that come back from uploading a document should be used as
+    is OR a specification to define that the urls should be remapped because of 
+    docker port forwarding for example.
+    
+    So, if you are using docker, it should be set as follows
+    
+    ```
+    CCD_DOCUMENT_STORE_REWRITE=localhost:4506:dm-store:8080
+    ```
+    
+    Which means 'If localhost:4506' is returned, re map it to dm-store:8080
+    
+    Without this, the CCD services that want to access this data from inside docker,
+    will not be able to.
+
 
 ## Running
 

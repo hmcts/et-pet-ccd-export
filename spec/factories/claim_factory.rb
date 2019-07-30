@@ -75,6 +75,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_unwanted_claim_file do
+      after(:build) do |claim, _evaluator|
+        claim.uploaded_files << build(:uploaded_file, :unwanted_claim_file)
+      end
+    end
+
     trait :no_representative do
       primary_representative_traits { [] }
     end
