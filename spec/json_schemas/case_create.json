@@ -783,6 +783,109 @@
           }
         }
       }
+    },
+    "document_for_collection": {
+      "$id": "#/properties/data/properties/documentCollection/items",
+      "type": "object",
+      "title": "The Document Schema",
+      "required": [
+        "id",
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "$id": "#/properties/data/properties/documentCollection/items/properties/value",
+          "type": "object",
+          "title": "The Value Schema",
+          "required": [
+            "uploadedDocument"
+          ],
+          "properties": {
+            "typeOfDocument": {
+              "$id": "#/properties/data/properties/documentCollection/items/properties/value/properties/documentCollection",
+              "type": "string",
+              "title": "The type of document Schema",
+              "default": "",
+              "examples": [
+                "Application"
+              ],
+              "enum": [
+                "Application",
+                "Power of attorney",
+                "Claimant evidence",
+                "Respondent evidence",
+                "Other evidence",
+                "Initial assessment",
+                "Referral notice",
+                "Notification to repondent",
+                "Risk assessment",
+                "Correspondence",
+                "Index of checklist documents",
+                "Preliminary Hearing",
+                "Other"
+              ]
+            },
+            "ownerDocument": {
+              "$id": "#/properties/data/properties/documentCollection/items/properties/value/properties/ownerDocument",
+              "type": "string",
+              "title": "The document ownerDocument Schema"
+            },
+            "shortDescription": {
+              "$id": "#/properties/data/properties/documentCollection/items/properties/value/properties/shortDescription",
+              "type": ["string", "null"],
+              "title": "The document shortDescription Schema",
+              "default": null,
+              "examples": [
+                "Short description of the document"
+              ]
+            },
+            "uploadedDocument": {
+              "$id": "#/properties/data/properties/documentCollection/items/properties/value/properties/uploadedDocument",
+              "type": "object",
+              "title": "The document uploadedDocument Schema",
+              "$ref": "#/definitions/uploaded_document"
+            }
+          }
+        }
+      }
+    },
+    "uploaded_document": {
+      "$id": "#/properties/data/properties/documentCollection/items/uploadedDocument",
+      "title": "The uploaded document schema",
+      "type": "object",
+      "required": [
+        "document_url",
+        "document_binary_url",
+        "document_filename"
+      ],
+      "properties": {
+        "document_url": {
+          "$id": "#/properties/data/properties/documentCollection/items/uploadedDocument/document_url",
+          "type": "string",
+          "title": "The uploaded document document_url Schema",
+          "pattern": "^https?://",
+          "examples": [
+            "http://dm-store:8080/documents/1234-123213-121312-3-12"
+          ]
+        },
+        "document_binary_url": {
+          "$id": "#/properties/data/properties/documentCollection/items/uploadedDocument/document_binary_url",
+          "type": "string",
+          "title": "The uploaded document document_binary_url Schema",
+          "pattern": "^https?://",
+          "examples": [
+            "http://dm-store:8080/documents/1234-123213-121312-3-12/binary"
+          ]
+        },
+        "document_filename": {
+          "$id": "#/properties/data/properties/documentCollection/items/uploadedDocument/document_filename",
+          "type": "string",
+          "title": "The uploaded document filename Schema",
+          "examples": [
+            "example.pdf"
+          ]
+        }
+      }
     }
   },
   "schema": "http://json-schema.org/draft-07/schema#",
@@ -800,7 +903,8 @@
     "respondentCollection",
     "claimantOtherType",
     "claimantRepresentedQuestion",
-    "representativeClaimantType"
+    "representativeClaimantType",
+    "documentCollection"
   ],
   "properties": {
     "receiptDate": {
@@ -872,6 +976,12 @@
       ],
       "enum": ["Yes", "No"]
     },
-    "representativeClaimantType": { "$ref": "#/definitions/representative_claimant_type"}
+    "representativeClaimantType": { "$ref": "#/definitions/representative_claimant_type"},
+    "documentCollection": {
+      "$id": "#/properties/data/properties/documentCollection",
+      "type": "array",
+      "title": "The Document collection Schema",
+      "items":{ "$ref": "#/definitions/document_for_collection"}
+    }
   }
 }

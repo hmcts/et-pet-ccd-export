@@ -4,6 +4,11 @@ RSpec.describe "create claim" do
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap {|c| c.login(username: 'm@m.com', password: 'Pa55word11')} }
   include_context 'with stubbed ccd'
 
+  before do
+    stub_request(:get, "http://dummy.com/et1_chloe_goodwin.pdf").
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf'})
+  end
+
   it 'creates a claim in ccd' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim)
@@ -106,5 +111,59 @@ RSpec.describe "create claim" do
                                         "PostCode" => claimant.address.post_code,
                                         "Country" => nil
                                     }
+  end
+
+  it 'populates the documents collection correctly with a single pdf file input' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim)
+    claimant = export.dig('resource', 'primary_claimant')
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
+    expect(ccd_documents).to \
+      contain_exactly \
+        a_hash_including 'id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'Application',
+                           'shortDescription' => "ET1 application for #{claimant.first_name} #{claimant.last_name}",
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'et1_chloe_goodwin.pdf'
+                           )
+                         )
+  end
+
+  it 'populates the documents collection correctly with some extra un wanted files in the input' do
+    # Arrange - Produce the input JSON
+    claim = build(:claim, :default, :with_unwanted_claim_file)
+    export = build(:export, :for_claim, resource: claim)
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
+    expect(ccd_documents).to \
+      contain_exactly \
+        a_hash_including 'id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'Application',
+                           'uploadedDocument' => a_hash_including(
+                             'document_filename' => 'et1_chloe_goodwin.pdf'
+                           )
+                         )
+
+  end
+
+  it 'stores the document correctly with a single pdf file input' do
+    raise "Dont forget the fake ccd stuff might not work for this yet"
   end
 end
