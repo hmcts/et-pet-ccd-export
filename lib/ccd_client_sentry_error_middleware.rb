@@ -11,6 +11,6 @@ class CcdClientSentryErrorMiddleware
       req[:headers] = ex.request.headers
       req[:cookies] = ex.request.cookies
     end
-    Raven.context.extra.merge! ccd_response: ex.response.body, ccd_request: req
+    Raven.context.extra.merge! ccd_response: ex.response.to_s, ccd_request: req
   end
 end
