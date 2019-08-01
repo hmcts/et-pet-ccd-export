@@ -126,7 +126,7 @@ jobs:
       azureSubscriptionEndpoint: '$(azure.subscription.endpoint)'
       azureContainerRegistry: $(azure.container.registry)
       command: 'Tag image'
-      imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
+      imageName: '$(azure.container.registry)/$(application.name):$(getDockerTag.DOCKER_TAG)'
       qualifyImageName: false
 
     
