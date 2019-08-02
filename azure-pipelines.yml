@@ -34,15 +34,15 @@ jobs:
     inputs:
       versionSpec: '>= 2.5'
 
-  # - script: |
-  #     sudo apt-get update
-  #     sudo apt-get install libpq-dev
-  #     gem install bundler -v 1.17.3
-  #   displayName: 'before install'
-  # - script: |
-  #     bundle install
-  #     bundle exec rspec
-  #   displayName: 'script'
+  - script: |
+      sudo apt-get update
+      sudo apt-get install libpq-dev
+      gem install bundler -v 1.17.3
+    displayName: 'before install'
+  - script: |
+      bundle install
+      bundle exec rspec
+    displayName: 'script'
 
 - job: BuildAndPushImage
   dependsOn: TestApplication
@@ -67,17 +67,17 @@ jobs:
   - task: Docker@1
     displayName: 'Build an image'
     inputs:
-      imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
+      imageName: '$(azure.container.registry)/$(application.name):$(getDockerTag.DOCKER_TAG)'
       arguments: '--build-arg APPVERSION=$(getDockerTag.DOCKER_TAG) --build-arg APP_BUILD_TAG=$(Build.SourceBranchName)-$(Build.SourceVersion) --build-arg APP_GIT_COMMIT=$(Build.SourceVersion)'
 
-  - task: Docker@1
-    displayName: 'Tag image'
-    inputs:
-      azureSubscriptionEndpoint: '$(azure.subscription.endpoint)'
-      azureContainerRegistry: (azure.container.registry)
-      command: 'Tag image'
-      imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
-      qualifyImageName: false
+  # - task: Docker@1
+  #   displayName: 'Tag image'
+  #   inputs:
+  #     azureSubscriptionEndpoint: '$(azure.subscription.endpoint)'
+  #     azureContainerRegistry: (azure.container.registry)
+  #     command: 'Tag image'
+  #     imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
+  #     qualifyImageName: false
     
   - task: Docker@1
     displayName: 'Push an image'
