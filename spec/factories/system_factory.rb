@@ -8,8 +8,8 @@ FactoryBot.define do
       [
         build(:system_configuration, key: 'user_id', value: '22'),
         build(:system_configuration, key: 'user_role', value: 'caseworker,caseworker-test,caseworker-employment-tribunal-manchester,caseworker-employment,caseworker-employment-tribunal-manchester-caseofficer,caseworker-publiclaw-localAuthority'),
-        build(:system_configuration, key: 'case_type_id', value: 'EmpTrib_MVP_1.0_Manc'),
-        build(:system_configuration, key: 'multiples_case_type_id', value: 'CCD_Bulk_Action_Manc_v3'),
+        build(:system_configuration, key: 'case_type_id', value: 'Manchester_Dev'),
+        build(:system_configuration, key: 'multiples_case_type_id', value: 'Manchester_Multiples_Dev'),
       ]
     end
     # config do
@@ -23,7 +23,7 @@ FactoryBot.define do
     #     user_role: 'caseworker,caseworker-test,caseworker-employment-tribunal-manchester,caseworker-employment,caseworker-employment-tribunal-manchester-caseofficer,caseworker-publiclaw-localAuthority',
     #     secret: 'AAAAAAAAAAAAAAAC',
     #     jurisdiction_id: 'EMPLOYMENT',
-    #     case_type_id: 'EmpTrib_MVP_1.0_Manc',
+    #     case_type_id: 'Manchester_Dev',
     #     initiate_claim_event_id: 'initiateCase'
     #   }
     # end
