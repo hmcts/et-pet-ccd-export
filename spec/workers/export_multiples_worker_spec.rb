@@ -142,7 +142,7 @@ RSpec.describe ExportMultiplesWorker do
       # Act - Call the worker
       batch=Sidekiq::Batch.new
       batch.jobs do
-        worker.perform(example_ccd_data.to_json, 'EmpTrib_MVP_1.0_Manc')
+        worker.perform(example_ccd_data.to_json, 'Manchester_Dev')
       end
 
       # Assert - Check in redis
@@ -154,8 +154,8 @@ RSpec.describe ExportMultiplesWorker do
       # Act - Call the worker
       batch=Sidekiq::Batch.new
       batch.jobs do
-        worker.perform(example_ccd_data.to_json, 'EmpTrib_MVP_1.0_Manc')
-        worker.perform(example_ccd_data_primary.to_json, 'EmpTrib_MVP_1.0_Manc', true)
+        worker.perform(example_ccd_data.to_json, 'Manchester_Dev')
+        worker.perform(example_ccd_data_primary.to_json, 'Manchester_Dev', true)
       end
 
       # Assert - Check in redis

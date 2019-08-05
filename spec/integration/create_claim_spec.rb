@@ -1,11 +1,11 @@
 require 'rails_helper'
 RSpec.describe "create claim" do
   subject(:worker) { ::EtExporter::ExportClaimWorker }
-  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap {|c| c.login(username: 'm@m.com', password: 'Pa55word11')} }
+  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap {|c| c.login } }
   include_context 'with stubbed ccd'
 
   before do
-    stub_request(:get, "http://dummy.com/et1_chloe_goodwin.pdf").
+    stub_request(:get, "http://dummy.com/examplepdf").
       to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf'})
   end
 
@@ -18,7 +18,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     expect(ccd_case['case_fields']).to include 'feeGroupReference' => export.resource.reference
   end
 
@@ -31,7 +31,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     expect(ccd_case['case_fields']).to match_json_schema('case_create')
   end
 
@@ -45,7 +45,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
     expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
                                     "claimant_mobile_number" => claimant.mobile_number,
@@ -71,7 +71,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
     expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
                                     "claimant_mobile_number" => claimant.mobile_number,
@@ -97,7 +97,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
     expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
                                     "claimant_mobile_number" => claimant.mobile_number,
@@ -123,7 +123,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
       contain_exactly \
@@ -149,7 +149,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
       contain_exactly \

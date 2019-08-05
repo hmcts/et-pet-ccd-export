@@ -23,13 +23,13 @@ class ExportClaimService
 
   def files_data(client, export)
     files_of_interest(export).map do |f|
-      json = client.upload_file_from_url(f['url'], content_type: f['content_type'])
+      json = client.upload_file_from_url(f['url'], content_type: f['content_type'], original_filename: f['filename'])
       {
         'document_type' => application_file?(f) ? 'Application' : 'Other',
         'short_description' => short_description_for(f, export: export),
         'document_url' => json.dig('_embedded', 'documents').first.dig('_links', 'self', 'href'),
         'document_binary_url' => json.dig('_embedded', 'documents').first.dig('_links', 'binary', 'href'),
-        'document_filename' => json.dig('_embedded', 'documents').first.dig('originalDocumentName')
+        'document_filename' => f['filename']
       }
     end
   end

@@ -14,7 +14,7 @@ RSpec.describe "create claim" do
     Sidekiq::Worker.drain_all
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'CCD_Bulk_Action_Manc_v3')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
     aggregate_failures 'validating key fields' do
       expect(ccd_case['case_fields']).to include 'multipleReference' => export.resource.reference
       case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
@@ -32,11 +32,11 @@ RSpec.describe "create claim" do
     Sidekiq::Worker.drain_all
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'CCD_Bulk_Action_Manc_v3')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
     aggregate_failures 'validating key fields' do
       case_references.each do |ref|
-        created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+        created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'Manchester_Dev')
         expect(created_case['case_fields']).to include 'state' => 'Pending'
       end
     end
@@ -52,10 +52,10 @@ RSpec.describe "create claim" do
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     primary_claimant=export.resource.primary_claimant
-    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'CCD_Bulk_Action_Manc_v3')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
     aggregate_failures 'validating key fields' do
-      created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+      created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester_Dev')
       expect(created_case['case_fields']).to include \
         'claimantIndType' => a_hash_including(
         'claimant_title1' => primary_claimant.title,
@@ -78,10 +78,10 @@ RSpec.describe "create claim" do
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     primary_claimant=export.resource.primary_claimant
-    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'CCD_Bulk_Action_Manc_v3')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
     aggregate_failures 'validating key fields' do
-      created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+      created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester_Dev')
       expect(created_case['case_fields']).to include \
         'claimantIndType' => a_hash_including(
         'claimant_title1' => primary_claimant.title,
@@ -101,7 +101,7 @@ RSpec.describe "create claim" do
   #   worker.drain
   #
   #   # Assert - Check with CCD (or fake CCD) to see what we sent
-  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
   #   expect(ccd_case['case_fields']).to match_json_schema('case_create')
   # end
   #
@@ -116,7 +116,7 @@ RSpec.describe "create claim" do
   #   worker.drain
   #
   #   # Assert - Check with CCD (or fake CCD) to see what we sent
-  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
   #   ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
   #   expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
   #                                   "claimant_mobile_number" => claimant.mobile_number,
@@ -144,7 +144,7 @@ RSpec.describe "create claim" do
   #   worker.drain
   #
   #   # Assert - Check with CCD (or fake CCD) to see what we sent
-  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
   #   ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
   #   expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
   #                                   "claimant_mobile_number" => claimant.mobile_number,
@@ -171,7 +171,7 @@ RSpec.describe "create claim" do
   #   worker.drain
   #
   #   # Assert - Check with CCD (or fake CCD) to see what we sent
-  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'EmpTrib_MVP_1.0_Manc')
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
   #   ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
   #   expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
   #                                   "claimant_mobile_number" => claimant.mobile_number,

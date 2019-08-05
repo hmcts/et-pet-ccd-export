@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/hmcts/et-ccd-client-ruby.git
-  revision: 34ffbd75f63c6a9c6dc2119ccc2314afc3e3c045
-  tag: v0.1.35
+  revision: 82f60b064e5f51983c70012e573aafdb34510fc3
+  tag: v0.1.39
   specs:
-    et_ccd_client (0.1.35)
+    et_ccd_client (0.1.39)
       addressable (~> 2.6)
       connection_pool (~> 2.2, >= 2.2.2)
       rest-client (~> 2.0, >= 2.0.2)
@@ -78,7 +78,7 @@ GEM
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.8.0)
-    et_fake_ccd (0.1.17)
+    et_fake_ccd (0.1.18)
       activemodel (~> 5.2, >= 5.2.3)
       puma (~> 3.12)
       roda (~> 3.21)

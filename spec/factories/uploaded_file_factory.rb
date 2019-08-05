@@ -6,7 +6,7 @@ FactoryBot.define do
 
     trait :example_pdf do
       filename { "et1_chloe_goodwin.pdf" }
-      url { "http://dummy.com/et1_chloe_goodwin.pdf" }
+      url { "http://dummy.com/examplepdf" }
       content_type { "application/pdf" }
     end
 
@@ -17,8 +17,8 @@ FactoryBot.define do
     end
 
     trait :unwanted_claim_file do
-      filename { 'unwanted.txt' }
-      url { "http://dummy.com/unwanted.txt" }
+      filename { 'et1_First_Last.txt' }
+      url { "http://dummy.com/first_last.txt" }
       content_type { "text/plain" }
     end
   end

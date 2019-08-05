@@ -132,7 +132,7 @@ RSpec.describe ExportMultipleClaimsService do
         ::Sidekiq::Worker.drain_all
 
         # Assert - Check the batch
-        expect(mock_header_worker).to have_received(:perform).with(example_export.resource.reference, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'CCD_Bulk_Action_Manc_v3')
+        expect(mock_header_worker).to have_received(:perform).with(example_export.resource.reference, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples_Dev')
       end
 
       it 'queues the worker 11 times with the data from the presenter' do
@@ -158,8 +158,8 @@ RSpec.describe ExportMultipleClaimsService do
 
         # Assert - Check the worker has been queued, first time with the primary set to true
         aggregate_failures 'validating calls' do
-          expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'EmpTrib_MVP_1.0_Manc', true])
-          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map {|data| [data, 'EmpTrib_MVP_1.0_Manc']}
+          expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'Manchester_Dev', true])
+          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map {|data| [data, 'Manchester_Dev']}
         end
       end
 
@@ -364,10 +364,10 @@ RSpec.describe ExportMultipleClaimsService do
         JSON
       end
       # Act - call the service
-      service.export(example_ccd_data.to_json, 'EmpTrib_MVP_1.0_Manc')
+      service.export(example_ccd_data.to_json, 'Manchester_Dev')
 
       # Assert - ensure it has arrived in CCD
-      ccd_case = test_ccd_client.caseworker_search_latest_by_reference(example_ccd_data[:feeGroupReference], case_type_id: 'EmpTrib_MVP_1.0_Manc')
+      ccd_case = test_ccd_client.caseworker_search_latest_by_reference(example_ccd_data[:feeGroupReference], case_type_id: 'Manchester_Dev')
       expect(ccd_case['case_fields']).to include 'feeGroupReference' => example_ccd_data[:feeGroupReference]
     end
 
