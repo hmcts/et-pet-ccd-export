@@ -164,6 +164,18 @@ RSpec.describe "create claim" do
   end
 
   it 'stores the document correctly with a single pdf file input' do
-    raise "Dont forget the fake ccd stuff might not work for this yet"
+    # Arrange - Produce the input JSON
+    claim = build(:claim, :default, :with_unwanted_claim_file)
+    export = build(:export, :for_claim, resource: claim)
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent - then download the file and compare size
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    url = ccd_case.dig('case_fields', 'documentCollection').first.dig('value', 'uploadedDocument', 'document_binary_url')
+    raw = RestClient::Request.execute method: :get, url: url, raw_response: true, verify_ssl: false
+    expect(File.size(raw.file.path)).to eql File.size(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__))
   end
 end
