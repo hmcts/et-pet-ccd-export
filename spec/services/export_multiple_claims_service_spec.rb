@@ -123,7 +123,16 @@ RSpec.describe ExportMultipleClaimsService do
     end
 
     context 'with secondary claimants from csv file' do
+      include_context 'with stubbed ccd'
       include_context 'with mock workers'
+
+      before do
+        stub_request(:get, "http://dummy.com/examplepdf").
+          to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf'})
+        stub_request(:get, "http://dummy.com/examplecsv").
+          to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv'})
+      end
+
       let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
 
       it 'queues the header worker when done with the data from the header presenter' do
@@ -171,7 +180,7 @@ RSpec.describe ExportMultipleClaimsService do
         # Assert - Check the worker has been queued
         aggregate_failures "validate all calls in one" do
           expect(mock_presenter).to have_received(:present).exactly(example_export.resource.secondary_claimants.length + 1).times
-          expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: example_export.resource.primary_claimant.as_json, lead_claimant: true)
+          expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: example_export.resource.primary_claimant.as_json, files: an_instance_of(Array), lead_claimant: true)
           example_export.resource.secondary_claimants.each do |claimant|
             expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: claimant.as_json, lead_claimant: false)
           end
