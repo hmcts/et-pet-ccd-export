@@ -44,6 +44,14 @@ class ExportClaimService
     file['filename'].match? /\Aet1_.*\.pdf\z/
   end
 
+  def claimants_file?(file)
+    file['filename'].match? /\Aet1a.*\.csv\z/
+  end
+
+  def additional_info_file?(file)
+    file['filename'].match? /\Aet1.*\.rtf\z/
+  end
+
   def short_description_for(file, export:)
     claimant = export.dig('resource', 'primary_claimant')
     if application_file?(file)
