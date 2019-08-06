@@ -1,4 +1,5 @@
 class ExportMultipleClaimsService
+  include ClaimFiles
   def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter)
     self.presenter = presenter
     self.header_presenter = header_presenter
@@ -19,7 +20,9 @@ class ExportMultipleClaimsService
              header_worker: header_worker.name,
              multiples_case_type_id: multiples_case_type_id
     batch.jobs do
-      worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), lead_claimant: true), case_type_id, true
+      client_class.use do |client|
+        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true), case_type_id, true
+      end
       export.dig('resource', 'secondary_claimants').each do |claimant|
         worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false), case_type_id
       end

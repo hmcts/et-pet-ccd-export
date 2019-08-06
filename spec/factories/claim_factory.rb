@@ -87,6 +87,7 @@ FactoryBot.define do
 
     trait :default_multiple_claimants do
       default
+      with_claimants_csv_file
       secondary_claimants do
         [
           build(:claimant, :csv_tamara_swift),
@@ -101,7 +102,6 @@ FactoryBot.define do
           build(:claimant, :csv_eulalia_hammes)
         ]
       end
-      uploaded_files { [build(:uploaded_file, :example_pdf), build(:uploaded_file, :example_claim_claimants_csv)] }
     end
   end
 end

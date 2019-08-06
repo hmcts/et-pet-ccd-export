@@ -12,7 +12,7 @@ FactoryBot.define do
 
     trait :example_claim_claimants_csv do
       filename { 'et1a_first_last.csv' }
-      url { "http://dummy.com/et1_chloe_goodwin.csv" }
+      url { "http://dummy.com/examplecsv" }
       content_type { "text/csv" }
     end
 
