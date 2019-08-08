@@ -3,7 +3,11 @@ EtCcdClient.config do |c|
   c.idam_base_url = ENV.fetch('CCD_IDAM_BASE_URL', 'http://localhost:8080/idam')
   c.data_store_base_url = ENV.fetch('CCD_DATA_STORE_BASE_URL', 'http://localhost:8080/data_store')
   c.document_store_base_url = ENV.fetch('CCD_DOCUMENT_STORE_BASE_URL', 'http://localhost:8080/document_store')
-  c.document_store_url_rewrite = ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'false')
+  if ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'false') == 'false'
+    c.document_store_url_rewrite = false
+  else
+    c.document_store_url_rewrite = ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE').split(':')
+  end
   c.gateway_api_url = ENV.fetch('CCD_GATEWAY_API_URL', 'http://localhost:8080/api-gateway')
   c.jurisdiction_id = ENV.fetch('CCD_JURISDICTION_ID', 'EMPLOYMENT')
   c.microservice = ENV.fetch('CCD_MICROSERVICE_ID', 'ccd_gw')
