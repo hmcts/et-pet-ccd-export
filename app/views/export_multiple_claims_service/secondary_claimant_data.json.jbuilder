@@ -1,6 +1,6 @@
 json.set! 'receiptDate', optional_date(claim.dig('date_of_receipt'))
 json.set! 'state', 'Pending'
-json.set! 'ethosCaseReference', "caseRef0001_#{Time.now.strftime('%Y%m%d%H%M%S.%6N')}"
+json.set! 'ethosCaseReference', "#{Time.now.strftime('%Y%m%d%H%M%S.%6N')}"
 json.set! 'feeGroupReference', claim.dig('reference')
 json.set! 'claimant_TypeOfClaimant', 'Individual'
 json.set! 'claimantIndType' do
