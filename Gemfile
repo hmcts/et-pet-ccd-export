@@ -25,7 +25,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.0', '>= 2.0.2'
 gem 'jbuilder', '~> 2.9', '>= 2.9.1'
-gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.1.39'
+gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.1.41'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
