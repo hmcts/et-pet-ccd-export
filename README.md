@@ -156,6 +156,15 @@ The application must be configured to use the same redis details as the API serv
     Without this, the CCD services that want to access this data from inside docker,
     will not be able to.
 
+8. CCD Document Store - Disallowed types
+
+At the time of writing, ccd document store will not store RTF and CSV files.  There is a change going through to the whitelist
+but to prevent cases from going through as a result of any errors raised by this - you can control which file types are disallowed
+using the following
+
+CCD_DOCUMENT_STORE_DISALLOW_FILE_EXTENSIONS=.csv,.rtf
+
+which is just a comma separated list of file extensions to disallow (including the dot)
 
 ## Running
 
