@@ -920,7 +920,15 @@
       "type": "string",
       "title": "The state of the case (optional)",
       "examples": [
-        "Submitted"
+        "Pending"
+      ],
+      "enum": ["Pending"]
+    },
+    "stateAPI": {
+      "type": "string",
+      "title": "The state of the case from an API perspective (optional)",
+      "examples": [
+        "Pending"
       ],
       "enum": ["Pending"]
     },

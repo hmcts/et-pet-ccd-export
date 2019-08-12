@@ -44,7 +44,7 @@ RSpec.describe "create claim multiples" do
     aggregate_failures 'validating key fields' do
       case_references.each do |ref|
         created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'Manchester_Dev')
-        expect(created_case['case_fields']).to include 'state' => 'Pending'
+        expect(created_case['case_fields']).to include 'state' => 'Pending', 'stateAPI' => 'Pending'
       end
     end
   end
