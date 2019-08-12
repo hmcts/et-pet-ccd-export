@@ -19,7 +19,8 @@ module ClaimFiles
 
   def files_of_interest(export)
     export.dig('resource', 'uploaded_files').select do |file|
-      file['filename'].match? /\Aet1_.*\.pdf\z|\.rtf\z|\.csv/
+      file['filename'].match?(/\Aet1_.*\.pdf\z|\.rtf\z|\.csv/) &&
+        !disallow_file_extensions.include?(File.extname(file['filename']))
     end
   end
 
