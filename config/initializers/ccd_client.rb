@@ -8,7 +8,6 @@ EtCcdClient.config do |c|
   else
     c.document_store_url_rewrite = ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'localhost:4506:dm-store:8080').split(':')
   end
-  puts "config.document_store_url_rewrite=#{c.document_store_url_rewrite}"
   c.gateway_api_url = ENV.fetch('CCD_GATEWAY_API_URL', 'http://localhost:3453')
   c.jurisdiction_id = ENV.fetch('CCD_JURISDICTION_ID', 'EMPLOYMENT')
   c.microservice = ENV.fetch('CCD_MICROSERVICE_ID', 'ccd_gw')

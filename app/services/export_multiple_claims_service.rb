@@ -1,10 +1,11 @@
 class ExportMultipleClaimsService
   include ClaimFiles
-  def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter)
+  def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.presenter = presenter
     self.header_presenter = header_presenter
     self.envelope_presenter = envelope_presenter
     self.client_class = client_class
+    self.disallow_file_extensions = disallow_file_extensions
   end
 
   # Schedules a worker to send the pre compiled data (as the ccd data is smaller than the export data for each multiples case)
@@ -53,7 +54,7 @@ class ExportMultipleClaimsService
 
   private
 
-  attr_accessor :presenter, :header_presenter, :envelope_presenter, :client_class
+  attr_accessor :presenter, :header_presenter, :envelope_presenter, :client_class, :disallow_file_extensions
   class Callback
     include Sidekiq::Worker
 

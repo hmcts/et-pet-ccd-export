@@ -1,7 +1,8 @@
 class ExportClaimService
   include ClaimFiles
-  def initialize(client_class: EtCcdClient::Client)
+  def initialize(client_class: EtCcdClient::Client, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.client_class = client_class
+    self.disallow_file_extensions = disallow_file_extensions
   end
 
   def call(export)
@@ -10,7 +11,7 @@ class ExportClaimService
 
   private
 
-  attr_accessor :client_class
+  attr_accessor :client_class, :disallow_file_extensions
 
   def do_export(export)
     client_class.use do |client|

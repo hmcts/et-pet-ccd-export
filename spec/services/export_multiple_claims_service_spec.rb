@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'ice_nine'
 require 'securerandom'
 RSpec.describe ExportMultipleClaimsService do
-  subject(:service) { described_class.new presenter: mock_presenter, header_presenter: mock_header_presenter, envelope_presenter: mock_envelope_presenter }
+  subject(:service) { described_class.new presenter: mock_presenter, header_presenter: mock_header_presenter, envelope_presenter: mock_envelope_presenter, disallow_file_extensions: [] }
 
   let(:mock_presenter) { class_spy(MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
   let(:mock_header_presenter) do

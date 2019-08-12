@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe ExportClaimService do
-  subject(:service) { described_class.new }
+  subject(:service) { described_class.new(disallow_file_extensions: []) }
 
   describe '#call' do
     let(:export) { create(:export, :for_claim) }
