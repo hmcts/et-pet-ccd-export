@@ -1,5 +1,7 @@
 # ET to CCD Exporter
 
+[![Build Status](https://dev.azure.com/HMCTS-PET/pet-azure-infrastructure/_apis/build/status/et/et-ccd-export?branchName=develop)](https://dev.azure.com/HMCTS-PET/pet-azure-infrastructure/_build/latest?definitionId=23&branchName=develop)
+
 This application is to be used alongside the Employment Tribunals API service.  It shares the same redis connection
 for sidekiq.
 
