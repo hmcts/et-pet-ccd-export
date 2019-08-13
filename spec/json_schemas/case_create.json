@@ -904,6 +904,7 @@
     "claimantOtherType",
     "claimantRepresentedQuestion",
     "representativeClaimantType",
+    "positionType",
     "documentCollection"
   ],
   "properties": {
@@ -990,6 +991,15 @@
       "type": "array",
       "title": "The Document collection Schema",
       "items":{ "$ref": "#/definitions/document_for_collection"}
+    },
+    "positionType": {
+      "$id": "#/properties/data/properties/positionType",
+      "type": "string",
+      "title": "The position type (fixed value)",
+      "examples": [
+        "received by auto-import"
+      ],
+      "enum": ["received by auto-import"]
     }
   }
 }

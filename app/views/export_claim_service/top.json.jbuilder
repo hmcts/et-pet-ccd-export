@@ -3,6 +3,7 @@ json.set! 'data' do
   json.set! 'ethosCaseReference', "#{Time.now.strftime('%Y%m%d%H%M%S.%6N')}"
   json.set! 'feeGroupReference', claim.dig('reference')
   json.set! 'claimant_TypeOfClaimant', 'Individual'
+  json.set! 'positionType', 'received by auto-import'
   json.set! 'claimantIndType' do
     json.set! 'claimant_title1', claim.dig('primary_claimant', 'title')
     json.set! 'claimant_first_names', claim.dig('primary_claimant', 'first_name')
