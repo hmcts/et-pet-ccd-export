@@ -98,19 +98,39 @@ RSpec.describe "create claim multiples" do
     end
   end
 
-  # it 'creates a claim in ccd that matches the schema' do
-  #   boom!
-  #   # Arrange - Produce the input JSON
-  #   export = build(:export, :for_claim)
-  #
-  #   # Act - Call the worker in the same way the application would (minus using redis)
-  #   worker.perform_async(export.as_json.to_json)
-  #   worker.drain
-  #
-  #   # Assert - Check with CCD (or fake CCD) to see what we sent
-  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
-  #   expect(ccd_case['case_fields']).to match_json_schema('case_create')
-  # end
+  it 'creates a lead claim in ccd that matches the schema' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    Sidekiq::Worker.drain_all
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
+    case_reference = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }.first
+    aggregate_failures 'validating against schema' do
+      lead_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_reference, case_type_id: 'Manchester_Dev')
+      expect(lead_case['case_fields']).to match_json_schema('case_create')
+    end
+  end
+
+  it 'creates a non lead claim in ccd that matches the schema' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    Sidekiq::Worker.drain_all
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
+    case_reference = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }[1]
+    aggregate_failures 'validating against schema' do
+      lead_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_reference, case_type_id: 'Manchester_Dev')
+      expect(lead_case['case_fields']).to match_json_schema('case_create')
+    end
+  end
   #
   # it 'populates the claimant data correctly with an address specifying UK country' do
   #   boom!

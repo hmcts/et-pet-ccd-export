@@ -27,21 +27,6 @@ json.set! 'claimantType' do
   json.set! 'claimant_contact_preference', claim.dig('primary_claimant', 'contact_preference')&.humanize
 end
 json.set! 'caseType', 'Single'
-json.set! 'respondentSumType' do
-  json.set! 'respondent_name', claim.dig('primary_respondent', 'name')
-  json.set! 'respondent_ACAS_question', claim.dig('primary_respondent', 'acas_certificate_number').present? ? 'Yes' : 'No'
-  json.set! 'respondent_address' do
-    json.set! 'AddressLine1', claim.dig('primary_respondent', 'address', 'building')
-    json.set! 'AddressLine2', claim.dig('primary_respondent', 'address', 'street')
-    json.set! 'PostTown', claim.dig('primary_respondent', 'address', 'locality')
-    json.set! 'County', claim.dig('primary_respondent', 'address', 'county')
-    json.set! 'Country', nil
-    json.set! 'PostCode', claim.dig('primary_respondent', 'address', 'post_code')
-  end
-  json.set! 'respondent_phone1', claim.dig('primary_respondent', 'address_telephone_number')
-  json.set! 'respondent_ACAS', claim.dig('primary_respondent', 'acas_certificate_number')
-  json.set! 'respondent_ACAS_no', optional_acas_exemption(claim.dig('primary_respondent', 'acas_exemption_code')) unless claim.dig('primary_respondent', 'acas_certificate_number').present?
-end
 json.set! 'claimantWorkAddress' do
   if claim.dig('primary_respondent', 'work_address').present?
     json.set! 'claimant_work_address' do
@@ -66,7 +51,7 @@ json.set! 'claimantWorkAddress' do
   end
 end
 json.set! 'respondentCollection' do
-  json.array!(claim.dig('secondary_respondents')) do |respondent|
+  json.array!([claim['primary_respondent']] + claim.dig('secondary_respondents')) do |respondent|
     json.set! 'value' do
       json.set! 'respondent_name', respondent.dig('name')
       json.set! 'respondent_address' do

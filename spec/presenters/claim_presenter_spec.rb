@@ -197,69 +197,6 @@ RSpec.describe ClaimPresenter do
       it { is_expected.to present_ccd_field('representativeClaimantType.representative_dx').using(:claim, primary_representative_attrs: { dx_number: nil }).with_result(nil) }
     end
 
-    context 'with respondentSumType.respondent_name' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_name').using(:claim, primary_respondent_attrs: { name: 'Name 1' }).with_result('Name 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_name').using(:claim, primary_respondent_attrs: { name: 'Name 2' }).with_result('Name 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_name').using(:claim, primary_respondent_attrs: { name: nil }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_address.AddressLine1' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.AddressLine1').using(:claim, primary_respondent_attrs: { address: build(:address, building: 'Building 1') }).with_result('Building 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.AddressLine1').using(:claim, primary_respondent_attrs: { address: build(:address, building: 'Building 2') }).with_result('Building 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.AddressLine1').using(:claim, primary_respondent_attrs: { address: build(:address, building: nil) }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_address.AddressLine2' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.AddressLine2').using(:claim, primary_respondent_attrs: { address: build(:address, street: 'Street 1') }).with_result('Street 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.AddressLine2').using(:claim, primary_respondent_attrs: { address: build(:address, street: 'Street 2') }).with_result('Street 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.AddressLine2').using(:claim, primary_respondent_attrs: { address: build(:address, street: nil) }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_address.PostTown' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.PostTown').using(:claim, primary_respondent_attrs: { address: build(:address, locality: 'Town 1') }).with_result('Town 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.PostTown').using(:claim, primary_respondent_attrs: { address: build(:address, locality: 'Town 2') }).with_result('Town 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.PostTown').using(:claim, primary_respondent_attrs: { address: build(:address, locality: nil) }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_address.County' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.County').using(:claim, primary_respondent_attrs: { address: build(:address, county: 'County 1') }).with_result('County 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.County').using(:claim, primary_respondent_attrs: { address: build(:address, county: 'County 2') }).with_result('County 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.County').using(:claim, primary_respondent_attrs: { address: build(:address, county: nil) }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_address.PostCode' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.PostCode').using(:claim, primary_respondent_attrs: { address: build(:address, post_code: 'Postcode 1') }).with_result('Postcode 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.PostCode').using(:claim, primary_respondent_attrs: { address: build(:address, post_code: 'Postcode 2') }).with_result('Postcode 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_address.PostCode').using(:claim, primary_respondent_attrs: { address: build(:address, post_code: nil) }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_phone1' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_phone1').using(:claim, primary_respondent_attrs: { address_telephone_number: 'Number 1' }).with_result('Number 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_phone1').using(:claim, primary_respondent_attrs: { address_telephone_number: 'Number 2' }).with_result('Number 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_phone1').using(:claim, primary_respondent_attrs: { address_telephone_number: nil }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_ACAS' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS').using(:claim, primary_respondent_attrs: { acas_certificate_number: 'Cert 1' }).with_result('Cert 1') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS').using(:claim, primary_respondent_attrs: { acas_certificate_number: 'Cert 2' }).with_result('Cert 2') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil }).with_result(nil) }
-    end
-
-    context 'with respondentSumType.respondent_ACAS_question' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_question').using(:claim).with_result('Yes') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_question').using(:claim, primary_respondent_attrs: { acas_certificate_number: '' }).with_result('No') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_question').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil }).with_result('No') }
-    end
-
-    context 'with respondentSumType.respondent_ACAS_no' do
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_no').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'joint_claimant_has_acas_number' }).with_result('Another person') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_no').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'acas_has_no_jurisdiction' }).with_result('No Power') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_no').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'employer_contacted_acas' }).with_result('Employer already in touch') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_no').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'interim_relief' }).with_result('Unfair Dismissal') }
-      it { is_expected.to present_ccd_field('respondentSumType.respondent_ACAS_no').using(:claim, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: nil }).with_result(nil) }
-      it { is_expected.not_to present_ccd_field('respondentSumType.respondent_ACAS_no').using(:claim, primary_respondent_attrs: { acas_certificate_number: 'Some number' }) }
-    end
-
     context 'with claimantWorkAddress.claimant_work_address.AddressLine1' do
       it { is_expected.to present_ccd_field('claimantWorkAddress.claimant_work_address.AddressLine1').using(:claim, primary_respondent_attrs: { work_address: build(:address, building: 'Building 1') }).with_result('Building 1') }
       it { is_expected.to present_ccd_field('claimantWorkAddress.claimant_work_address.AddressLine1').using(:claim, primary_respondent_attrs: { work_address: build(:address, building: 'Building 2') }).with_result('Building 2') }
@@ -315,66 +252,129 @@ RSpec.describe ClaimPresenter do
     end
 
     context 'with respondentCollection[0].value.respondent_name' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_name').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { name: 'Name 1' }).with_result('Name 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_name').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { name: 'Name 2' }).with_result('Name 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_name').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { name: nil }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_name').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { name: 'Name 1' }).with_result('Name 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_name').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { name: 'Name 2' }).with_result('Name 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_name').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { name: nil }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_address.AddressLine1' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, building: 'Building 1') }).with_result('Building 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, building: 'Building 2') }).with_result('Building 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, building: nil) }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, building: 'Building 1') }).with_result('Building 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, building: 'Building 2') }).with_result('Building 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, building: nil) }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_address.AddressLine2' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, street: 'Street 1') }).with_result('Street 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, street: 'Street 2') }).with_result('Street 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, street: nil) }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, street: 'Street 1') }).with_result('Street 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, street: 'Street 2') }).with_result('Street 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, street: nil) }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_address.PostTown' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, locality: 'Town 1') }).with_result('Town 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, locality: 'Town 2') }).with_result('Town 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, locality: nil) }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, locality: 'Town 1') }).with_result('Town 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, locality: 'Town 2') }).with_result('Town 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, locality: nil) }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_address.County' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.County').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, county: 'County 1') }).with_result('County 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.County').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, county: 'County 2') }).with_result('County 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.County').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, county: nil) }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.County').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, county: 'County 1') }).with_result('County 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.County').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, county: 'County 2') }).with_result('County 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.County').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, county: nil) }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_address.PostCode' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, post_code: 'Postcode 1') }).with_result('Postcode 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, post_code: 'Postcode 2') }).with_result('Postcode 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, post_code: nil) }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, post_code: 'Postcode 1') }).with_result('Postcode 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, post_code: 'Postcode 2') }).with_result('Postcode 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address: build(:address, post_code: nil) }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_phone1' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_phone1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address_telephone_number: 'Number 1' }).with_result('Number 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_phone1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address_telephone_number: 'Number 2' }).with_result('Number 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_phone1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address_telephone_number: nil }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_phone1').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address_telephone_number: 'Number 1' }).with_result('Number 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_phone1').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address_telephone_number: 'Number 2' }).with_result('Number 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_phone1').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { address_telephone_number: nil }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_ACAS' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: 'Cert 1' }).with_result('Cert 1') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: 'Cert 2' }).with_result('Cert 2') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil }).with_result(nil) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: 'Cert 1' }).with_result('Cert 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: 'Cert 2' }).with_result('Cert 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil }).with_result(nil) }
     end
 
     context 'with respondentCollection[0].value.respondent_ACAS_question' do
       it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2).with_result('Yes') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: '' }).with_result('No') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil }).with_result('No') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: '' }).with_result('No') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil }).with_result('No') }
     end
 
     context 'with respondentCollection[0].value.respondent_ACAS_no' do
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'joint_claimant_has_acas_number' }).with_result('Another person') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'acas_has_no_jurisdiction' }).with_result('No Power') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'employer_contacted_acas' }).with_result('Employer already in touch') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'interim_relief' }).with_result('Unfair Dismissal') }
-      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: nil }).with_result(nil) }
-      it { is_expected.not_to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: 'Some number' }) }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'joint_claimant_has_acas_number' }).with_result('Another person') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'acas_has_no_jurisdiction' }).with_result('No Power') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'employer_contacted_acas' }).with_result('Employer already in touch') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'interim_relief' }).with_result('Unfair Dismissal') }
+      it { is_expected.to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: nil }).with_result(nil) }
+      it { is_expected.not_to present_ccd_field('respondentCollection[0].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, primary_respondent_attrs: { acas_certificate_number: 'Some number' }) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_name' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_name').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { name: 'Name 1' }).with_result('Name 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_name').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { name: 'Name 2' }).with_result('Name 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_name').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { name: nil }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_address.AddressLine1' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, building: 'Building 1') }).with_result('Building 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, building: 'Building 2') }).with_result('Building 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.AddressLine1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, building: nil) }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_address.AddressLine2' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, street: 'Street 1') }).with_result('Street 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, street: 'Street 2') }).with_result('Street 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.AddressLine2').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, street: nil) }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_address.PostTown' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, locality: 'Town 1') }).with_result('Town 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, locality: 'Town 2') }).with_result('Town 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.PostTown').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, locality: nil) }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_address.County' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.County').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, county: 'County 1') }).with_result('County 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.County').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, county: 'County 2') }).with_result('County 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.County').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, county: nil) }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_address.PostCode' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, post_code: 'Postcode 1') }).with_result('Postcode 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, post_code: 'Postcode 2') }).with_result('Postcode 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_address.PostCode').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address: build(:address, post_code: nil) }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_phone1' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_phone1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address_telephone_number: 'Number 1' }).with_result('Number 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_phone1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address_telephone_number: 'Number 2' }).with_result('Number 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_phone1').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { address_telephone_number: nil }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_ACAS' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: 'Cert 1' }).with_result('Cert 1') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: 'Cert 2' }).with_result('Cert 2') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil }).with_result(nil) }
+    end
+
+    context 'with respondentCollection[1].value.respondent_ACAS_question' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2).with_result('Yes') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: '' }).with_result('No') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_question').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil }).with_result('No') }
+    end
+
+    context 'with respondentCollection[1].value.respondent_ACAS_no' do
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'joint_claimant_has_acas_number' }).with_result('Another person') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'acas_has_no_jurisdiction' }).with_result('No Power') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'employer_contacted_acas' }).with_result('Employer already in touch') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: 'interim_relief' }).with_result('Unfair Dismissal') }
+      it { is_expected.to present_ccd_field('respondentCollection[1].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: nil, acas_exemption_code: nil }).with_result(nil) }
+      it { is_expected.not_to present_ccd_field('respondentCollection[1].value.respondent_ACAS_no').using(:claim, number_of_respondents: 2, secondary_respondent_attrs: { acas_certificate_number: 'Some number' }) }
     end
 
     context 'with claimantOtherType.claimant_employed_currently' do
