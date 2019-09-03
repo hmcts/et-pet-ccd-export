@@ -159,6 +159,8 @@ FactoryBot.define do
     transient do
       claim_attrs { {} }
       claim_traits { [:default] }
+      response_attrs { {} }
+      response_traits { [:default] }
     end
     external_system { build(:system) }
     resource { nil }
@@ -166,6 +168,11 @@ FactoryBot.define do
     trait :for_claim do
       resource { build(:claim, *claim_traits, **claim_attrs) }
       resource_type { 'Claim' }
+    end
+
+    trait :for_response do
+      resource { build(:response, *response_traits, **response_attrs) }
+      resource_type { 'Response' }
     end
   end
 end
