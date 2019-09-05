@@ -24,32 +24,60 @@ RSpec.describe "create response", type: :request do
     end
   end
 
-  it 'updates the claim in ccd when confirmed by the admin' do
+  it 'updates the claim in ccd' do
     # Arrange - Produce a claim to respond to and Produce the input JSON
     claim_export = test_claim_export
-    export = build(:export, :for_response)
+    ccd_claim_case = test_ccd_client.caseworker_search_latest_by_reference(claim_export.resource.reference, case_type_id: 'Manchester_Dev')
+    export = build(:export, :for_response, response_attrs: { case_number: ccd_claim_case.dig('case_fields', 'ethosCaseReference') })
     example_response = export.resource
+
+    # Act - Call the response worker as the application would
     response_worker.perform_async(export.as_json.to_json)
     response_worker.drain
-
-    # Act - Call our API to trigger the export to CCD as we have to allow the admin user to control this
-    json_data = {response_references: [example_response.reference]}.to_json
-    post '/api/v1/confirm_response', params: json_data, headers: default_headers
 
 
     # Assert - Check with CCD (or fake CCD) to see what we sent by finding the test claim and looking for its files
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(claim_export.resource.reference, case_type_id: 'Manchester_Dev')
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
-      contain_exactly \
+      include \
         a_hash_including 'id' => nil,
       'value' => a_hash_including(
-        'typeOfDocument' => 'Other',
+        'typeOfDocument' => 'ET3',
         'shortDescription' => "ET3 response from #{example_response.respondent.name}",
         'uploadedDocument' => a_hash_including(
           'document_url' => an_instance_of(String),
           'document_binary_url' => an_instance_of(String),
-          'document_filename' => 'et3_chloe_goodwin.pdf'
+          'document_filename' => 'et3_atos_export.pdf'
+        )
+      )
+  end
+
+  it 'must not remove the existing file from the claim in ccd' do
+    # Arrange - Produce a claim to respond to and Produce the input JSON
+    claim_export = test_claim_export
+    ccd_claim_case = test_ccd_client.caseworker_search_latest_by_reference(claim_export.resource.reference, case_type_id: 'Manchester_Dev')
+    export = build(:export, :for_response, response_attrs: { case_number: ccd_claim_case.dig('case_fields', 'ethosCaseReference') })
+    example_claimant = claim_export.resource.primary_claimant
+
+    # Act - Call the response worker as the application would
+    response_worker.perform_async(export.as_json.to_json)
+    response_worker.drain
+
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent by finding the test claim and looking for its files
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(claim_export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
+    expect(ccd_documents).to \
+      include \
+        a_hash_including 'id' => nil,
+      'value' => a_hash_including(
+        'typeOfDocument' => 'Application',
+        'shortDescription' => "ET1 application for #{example_claimant.first_name} #{example_claimant.last_name}",
+        'uploadedDocument' => a_hash_including(
+          'document_url' => an_instance_of(String),
+          'document_binary_url' => an_instance_of(String),
+          'document_filename' => 'et1_chloe_goodwin.pdf'
         )
       )
   end

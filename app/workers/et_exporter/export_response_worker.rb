@@ -10,7 +10,7 @@ module EtExporter
 
       parsed_json = JSON.parse(json)
       logger.debug JSON.generate(parsed_json)
-
+      ExportResponseService.new.call(parsed_json) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
     end
   end
 end

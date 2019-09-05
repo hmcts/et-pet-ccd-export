@@ -1,7 +1,7 @@
 json.set! 'receiptDate', optional_date(claim.dig('date_of_receipt'))
 json.set! 'state', 'Pending'
 json.set! 'stateAPI', 'Pending'
-json.set! 'ethosCaseReference', "#{Time.now.strftime('%Y%m%d%H%M%S.%6N')}"
+json.set! 'ethosCaseReference', ethos_case_reference unless ethos_case_reference.nil?
 json.set! 'feeGroupReference', claim.dig('reference')
 json.set! 'claimant_TypeOfClaimant', 'Individual'
 json.set! 'positionType', 'received by auto-import'

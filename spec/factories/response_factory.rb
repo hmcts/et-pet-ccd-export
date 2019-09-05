@@ -53,7 +53,7 @@ FactoryBot.define do
 
     trait :with_pdf_file do
       after(:build) do |response, _evaluator|
-        response.uploaded_files << build(:uploaded_file, :example_pdf)
+        response.uploaded_files << build(:uploaded_file, :example_response_pdf)
       end
     end
 

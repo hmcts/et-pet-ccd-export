@@ -18,6 +18,7 @@ The application must be configured to use the same redis details as the API serv
    REDIS_HOST (defaults to localhost)
    REDIS_PORT (defaults to 6379)
    REDIS_DATABASE (defaults to 1)
+   STORAGE_REDIS_DATABASE (defaults to 2)
 
    You can change any of these individually or you can ignore these by setting the full
    REDIS_URL in the traditional way - such as :-
@@ -42,7 +43,21 @@ The application must be configured to use the same redis details as the API serv
    ET_CCD_SIMULATION=true
    ```
    
-3. Logging levels can be changed using the following (note that
+3. Generating interim 'ethosCaseReference' field in the data to CCD
+   
+   During a transition period whilst CCD is being developed, it was required to generate an ethosCaseReference field.
+   In local environments and also when using fake ccd it is best for this to be disabled (so ET3 tests can use a properly formatted
+   case reference)
+   
+   To disable - set this
+   
+   ```
+   GENERATE_ETHOS_CASE_REFERENCE=false
+   ``` 
+   
+   If this is omitted or set to 'true' - the functionality will be enabled.
+   
+4. Logging levels can be changed using the following (note that
    this is not a rails app, but I have kept the same naming
    convention as a rails app)
    
@@ -52,7 +67,7 @@ The application must be configured to use the same redis details as the API serv
    
    values are debug (noisiest) , info, warn, error and fatal (quietist)
 
-4. Disabling 'sidekiq_alive' (provides a http server to sense
+5. Disabling 'sidekiq_alive' (provides a http server to sense
    if sidekiq is running or not - used in deployment) can be done
    as follows :-
    
@@ -62,7 +77,7 @@ The application must be configured to use the same redis details as the API serv
    
    To re enable you must completely remove this env var
    
-5. Controlling sidekiq threads
+6. Controlling sidekiq threads
    Increasing the number of threads available to sidekiq is a good and a bad thing.
    It is good because more cases will go to CCD in parallel, but it is bad because
    it might overload CCD.
@@ -73,7 +88,7 @@ The application must be configured to use the same redis details as the API serv
    RAILS_MAX_THREADS=<value>
    ```
    
-6. Connecting to sentry is easy. Just set :-
+7. Connecting to sentry is easy. Just set :-
 
     ```
     RAVEN_DSN=<your sentry dsn>
@@ -85,7 +100,7 @@ The application must be configured to use the same redis details as the API serv
     RAVEN_SSL_VERIFICATION=false
     ```
     
-7. Configuration for CCD
+8. Configuration for CCD
 
     There are 3 base urls which have defaults to allow the system to work alongside ccd-docker.
     These will need configuring in real environments to point to a real CCD
@@ -158,7 +173,7 @@ The application must be configured to use the same redis details as the API serv
     Without this, the CCD services that want to access this data from inside docker,
     will not be able to.
 
-8. CCD Document Store - Disallowed types
+9. CCD Document Store - Disallowed types
 
 At the time of writing, ccd document store will not store RTF and CSV files.  There is a change going through to the whitelist
 but to prevent cases from going through as a result of any errors raised by this - you can control which file types are disallowed
