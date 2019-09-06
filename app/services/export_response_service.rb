@@ -18,9 +18,9 @@ class ExportResponseService
       case_type_id = export.dig('external_system', 'configurations').detect {|c| c['key'] == 'case_type_id'}['value']
       claim = client.caseworker_search_latest_by_ethos_case_reference(export.dig('resource', 'case_number'), case_type_id: case_type_id)
       raise ClaimNotFoundByCaseNumberException, "A response for claim with case_number #{export.dig('resource', 'case_number')} could not be processed as this case number does not exist" if claim.nil?
-      resp = client.caseworker_start_upload_document(case_type_id: case_type_id)
+      resp = client.caseworker_start_upload_document(ctid: case_type_id, cid: claim['id'])
       event_token = resp['token']
-      resp = client.caseworker_update_case_documents(case_id: claim['id'], case_type_id: case_type_id, event_token: event_token, files: claim.dig('case_data', 'documentCollection') + files_data(client, export))
+      client.caseworker_update_case_documents(case_id: claim['id'], case_type_id: case_type_id, event_token: event_token, files: claim.dig('case_data', 'documentCollection') + files_data(client, export))
     end
   end
 end
