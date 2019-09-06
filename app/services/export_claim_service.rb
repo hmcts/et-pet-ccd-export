@@ -19,7 +19,7 @@ class ExportClaimService
       case_type_id = export.dig('external_system', 'configurations').detect {|c| c['key'] == 'case_type_id'}['value']
       resp = client.caseworker_start_case_creation(case_type_id: case_type_id)
       event_token = resp['token']
-      data = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export), ethos_case_reference: ethos_case_reference)
+      data = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export), ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code')))
       client.caseworker_case_create(data, case_type_id: case_type_id)
     end
   end

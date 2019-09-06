@@ -59,6 +59,9 @@ Rails.application.configure do
   config.multiples_supervisor_adapter = {type: :redis}
 
   config.ccd_disallowed_file_extensions = ENV.fetch('CCD_DOCUMENT_STORE_DISALLOW_FILE_EXTENSIONS', '').split(',')
+  config.generate_ethos_case_reference = ENV.fetch('CCD_GENERATE_ETHOS_CASE_REFERENCE', 'true') == 'true'
+
+
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')

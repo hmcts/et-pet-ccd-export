@@ -23,10 +23,10 @@ class ExportMultipleClaimsService
              multiples_case_type_id: multiples_case_type_id
     batch.jobs do
       client_class.use do |client|
-        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, ethos_case_reference: ethos_case_reference), case_type_id, true
+        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code'))), case_type_id, true
       end
       export.dig('resource', 'secondary_claimants').each do |claimant|
-        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, ethos_case_reference: ethos_case_reference), case_type_id
+        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code'))), case_type_id
       end
     end
   end

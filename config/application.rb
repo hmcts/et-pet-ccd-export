@@ -32,6 +32,5 @@ module EtCcdExport
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.storage_redis_database = ENV.fetch('STORAGE_REDIS_DATABASE', '2')
-    config.generate_ethos_case_reference = ENV.fetch('GENERATE_ETHOS_CASE_REFERENCE', 'true') == 'true'
   end
 end
