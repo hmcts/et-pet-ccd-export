@@ -23,7 +23,7 @@ gem 'azure_env_secrets', git: 'https://github.com/ministryofjustice/azure_env_se
 gem 'pg', '>= 0.18', '< 2.0'
 
 gem 'addressable', '~> 2.6'
-gem 'rest-client', '~> 2.0', '>= 2.0.2'
+gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.9', '>= 2.9.1'
 gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.1.43'
 
