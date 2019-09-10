@@ -12,7 +12,7 @@ gem 'rails', '~> 6.0.0'
 gem 'sidekiq', '~> 5.2', '>= 5.2.7'
 gem 'sidekiq_alive', '~> 1.1'
 gem 'sidekiq-failures', '~> 1.0'
-gem 'sidekiq-batch', '~> 0.1.5'
+gem 'sidekiq-batch', '~> 0.1.6'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
