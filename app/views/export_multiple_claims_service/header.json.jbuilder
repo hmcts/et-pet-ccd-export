@@ -1,5 +1,5 @@
 json.data do
-  json.bulkCaseTitle ""
+  json.bulkCaseTitle respondent_name
   json.multipleReference primary_reference
   json.caseIdCollection(case_references) do |case_ref|
     json.id nil

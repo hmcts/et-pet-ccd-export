@@ -141,7 +141,7 @@ RSpec.describe ExportMultipleClaimsService do
         ::Sidekiq::Worker.drain_all
 
         # Assert - Check the batch
-        expect(mock_header_worker).to have_received(:perform).with(example_export.resource.reference, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples_Dev')
+        expect(mock_header_worker).to have_received(:perform).with(example_export.resource.reference, example_export.resource.primary_respondent.name, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples_Dev')
       end
 
       it 'queues the worker 11 times with the data from the presenter' do

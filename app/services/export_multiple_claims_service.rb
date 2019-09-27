@@ -19,6 +19,7 @@ class ExportMultipleClaimsService
     batch.on :complete,
              Callback,
              primary_reference: export.dig('resource', 'reference'),
+             respondent_name: export.dig('resource', 'primary_respondent', 'name'),
              header_worker: header_worker.name,
              multiples_case_type_id: multiples_case_type_id
     batch.jobs do
@@ -43,12 +44,13 @@ class ExportMultipleClaimsService
 
   # Export the header record (multiples case) to ccd
   # @param [String] primary_reference
+  # @param [String] respondent_name
   # @param [Array<String>] case_references
-  def export_header(primary_reference, case_references, case_type_id)
+  def export_header(primary_reference, respondent_name, case_references, case_type_id)
     client_class.use do |client|
       resp = client.caseworker_start_bulk_creation(case_type_id: case_type_id)
       event_token = resp['token']
-      data = header_presenter.present(primary_reference: primary_reference, case_references: case_references, event_token: event_token)
+      data = header_presenter.present(primary_reference: primary_reference, respondent_name: respondent_name, case_references: case_references, event_token: event_token)
       client.caseworker_case_create(data, case_type_id: case_type_id)
     end
   end
@@ -62,7 +64,7 @@ class ExportMultipleClaimsService
     def on_complete(batch_status, options)
       case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
 
-      options['header_worker'].safe_constantize.perform_async options['primary_reference'], case_references, options['multiples_case_type_id']
+      options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id']
     end
   end
 end
