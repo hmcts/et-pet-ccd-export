@@ -162,6 +162,7 @@ FactoryBot.define do
       response_attrs { {} }
       response_traits { [:default] }
     end
+    sequence(:id) {|idx| idx}
     external_system { build(:system) }
     resource { nil }
 

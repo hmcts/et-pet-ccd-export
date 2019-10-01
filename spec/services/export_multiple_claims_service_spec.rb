@@ -125,6 +125,7 @@ RSpec.describe ExportMultipleClaimsService do
     context 'with secondary claimants from csv file' do
       include_context 'with stubbed ccd'
       include_context 'with mock workers'
+      include_context 'with mock api event worker'
 
       before do
         stub_request(:get, "http://dummy.com/examplepdf").

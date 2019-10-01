@@ -14,7 +14,7 @@ module EtExporter
       if parsed_json.dig('resource', 'secondary_claimants').present?
         ExportMultipleClaimsService.new.call(parsed_json) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
       else
-        ExportClaimService.new.call(parsed_json) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
+        ExportClaimService.new.call(parsed_json, jid: jid) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
       end
     end
   end
