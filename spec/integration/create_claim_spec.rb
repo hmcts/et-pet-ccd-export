@@ -1,12 +1,12 @@
 require 'rails_helper'
 RSpec.describe "create claim" do
   subject(:worker) { ::EtExporter::ExportClaimWorker }
-  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap {|c| c.login } }
+  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login } }
   include_context 'with stubbed ccd'
 
   before do
     stub_request(:get, "http://dummy.com/examplepdf").
-      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf'})
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: {'Content-Type' => 'application/pdf'})
   end
 
   it 'creates a claim in ccd' do
@@ -35,6 +35,32 @@ RSpec.describe "create claim" do
     expect(ccd_case['case_fields']).to match_json_schema('case_create')
   end
 
+  it 'raises an API event to inform of start of case creation' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim)
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check for API event being received
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    external_events.assert_claim_export_started(export: export)
+  end
+
+  it 'raises an API event to inform of case creation complete' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim)
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check for API event being received
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    external_events.assert_claim_export_succeeded(export: export, ccd_case: ccd_case)
+  end
+
   it 'populates the claimant data correctly with an address specifying UK country' do
     # Arrange - Produce the input JSON
     claimant = build(:claimant, :default, address: build(:address, :with_uk_country))
@@ -52,12 +78,12 @@ RSpec.describe "create claim" do
                                     "claimant_email_address" => claimant.email_address,
                                     "claimant_contact_preference" => claimant.contact_preference.titleize,
                                     "claimant_addressUK" => {
-                                        "AddressLine1" => claimant.address.building,
-                                        "AddressLine2" => claimant.address.street,
-                                        "PostTown" => claimant.address.locality,
-                                        "County" => claimant.address.county,
-                                        "PostCode" => claimant.address.post_code,
-                                        "Country" => claimant.address.country
+                                      "AddressLine1" => claimant.address.building,
+                                      "AddressLine2" => claimant.address.street,
+                                      "PostTown" => claimant.address.locality,
+                                      "County" => claimant.address.county,
+                                      "PostCode" => claimant.address.post_code,
+                                      "Country" => claimant.address.country
                                     }
   end
 
@@ -78,12 +104,12 @@ RSpec.describe "create claim" do
                                     "claimant_email_address" => claimant.email_address,
                                     "claimant_contact_preference" => claimant.contact_preference.titleize,
                                     "claimant_addressUK" => {
-                                        "AddressLine1" => claimant.address.building,
-                                        "AddressLine2" => claimant.address.street,
-                                        "PostTown" => claimant.address.locality,
-                                        "County" => claimant.address.county,
-                                        "PostCode" => claimant.address.post_code,
-                                        "Country" => nil
+                                      "AddressLine1" => claimant.address.building,
+                                      "AddressLine2" => claimant.address.street,
+                                      "PostTown" => claimant.address.locality,
+                                      "County" => claimant.address.county,
+                                      "PostCode" => claimant.address.post_code,
+                                      "Country" => nil
                                     }
   end
 
@@ -104,12 +130,12 @@ RSpec.describe "create claim" do
                                     "claimant_email_address" => claimant.email_address,
                                     "claimant_contact_preference" => claimant.contact_preference.titleize,
                                     "claimant_addressUK" => {
-                                        "AddressLine1" => claimant.address.building,
-                                        "AddressLine2" => claimant.address.street,
-                                        "PostTown" => claimant.address.locality,
-                                        "County" => claimant.address.county,
-                                        "PostCode" => claimant.address.post_code,
-                                        "Country" => nil
+                                      "AddressLine1" => claimant.address.building,
+                                      "AddressLine2" => claimant.address.street,
+                                      "PostTown" => claimant.address.locality,
+                                      "County" => claimant.address.county,
+                                      "PostCode" => claimant.address.post_code,
+                                      "Country" => nil
                                     }
   end
 
