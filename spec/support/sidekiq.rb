@@ -8,3 +8,8 @@ Sidekiq::Testing.server_middleware do |chain|
   chain.add Sidekiq::Batch::Middleware::ServerMiddleware
 end
 
+RSpec.configure do |c|
+  c.before do
+    Sidekiq::Worker.clear_all
+  end
+end

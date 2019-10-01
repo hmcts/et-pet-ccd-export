@@ -18,7 +18,7 @@ RSpec.describe "create claim multiples" do
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
@@ -37,7 +37,7 @@ RSpec.describe "create claim multiples" do
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
@@ -56,7 +56,7 @@ RSpec.describe "create claim multiples" do
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     primary_claimant=export.resource.primary_claimant
@@ -82,7 +82,7 @@ RSpec.describe "create claim multiples" do
 
     ::EtExporter::ExportClaimWorker.drain
     ExportMultiplesWorker.jobs.reverse!
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     primary_claimant=export.resource.primary_claimant
@@ -105,7 +105,7 @@ RSpec.describe "create claim multiples" do
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
@@ -122,7 +122,7 @@ RSpec.describe "create claim multiples" do
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
@@ -221,7 +221,7 @@ RSpec.describe "create claim multiples" do
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
-    Sidekiq::Worker.drain_all
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     header_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')

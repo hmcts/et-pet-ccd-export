@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:name) { |idx| "CCD Instance #{idx}" }
     sequence(:reference) { |idx| "ccd_instance_#{idx}" }
     office_codes { [1,2,3,4,5] }
+    export_feedback_queue { 'export_feedback_queue' }
     enabled { true }
     configurations do
       [
