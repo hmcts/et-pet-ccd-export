@@ -38,7 +38,7 @@ class ExportClaimService
         case_type_id: case_type_id
       }
     }
-    send_application_event('ClaimExportSucceeded', event_data, queue: 'default')
+    send_application_event('ClaimExportSucceeded', event_data)
   end
 
 end

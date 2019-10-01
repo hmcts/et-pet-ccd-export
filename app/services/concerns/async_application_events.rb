@@ -1,5 +1,5 @@
 module AsyncApplicationEvents
-  def send_application_event(event, data, queue: 'default')
+  def send_application_event(event, data, queue: 'events')
     serialized_job = {
       "job_class"  => 'TriggerEventJob',
       "job_id"     => SecureRandom.uuid,
