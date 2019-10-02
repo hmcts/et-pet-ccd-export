@@ -57,6 +57,23 @@ RSpec.describe "create claim multiples" do
     external_events.assert_multiples_claim_export_succeeded(export: export, ccd_case: multiples_case)
   end
 
+  it 'raises an API event for every sub case showing progress' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    multiples_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
+    case_references = multiples_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+    sub_cases = case_references.map do |ref|
+      test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'Manchester_Dev')
+    end
+    external_events.assert_all_multiples_claim_export_progress(export: export, ccd_case: multiples_case, sub_cases: sub_cases)
+  end
+
   it 'creates many single claims all with status of Pending' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])

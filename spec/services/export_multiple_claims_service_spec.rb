@@ -167,8 +167,8 @@ RSpec.describe ExportMultipleClaimsService do
 
         # Assert - Check the worker has been queued, first time with the primary set to true
         aggregate_failures 'validating calls' do
-          expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'Manchester_Dev', true])
-          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map {|data| [data, 'Manchester_Dev']}
+          expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'Manchester_Dev', example_export.id, 11, true])
+          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map {|data| [data, 'Manchester_Dev', example_export.id, 11]}
         end
       end
 
@@ -373,7 +373,7 @@ RSpec.describe ExportMultipleClaimsService do
         JSON
       end
       # Act - call the service
-      service.export(example_ccd_data.to_json, 'Manchester_Dev')
+      service.export(example_ccd_data.to_json, 'Manchester_Dev', jid: 'examplejid', bid: 'examplebid', export_id: 1, claimant_count: 10)
 
       # Assert - ensure it has arrived in CCD
       ccd_case = test_ccd_client.caseworker_search_latest_by_reference(example_ccd_data[:feeGroupReference], case_type_id: 'Manchester_Dev')

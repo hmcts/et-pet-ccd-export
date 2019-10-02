@@ -23,7 +23,7 @@ module EtCcdExport
         jobs = Sidekiq::Worker.jobs.select { |j| j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' && j['args'].first['arguments'].first == 'ClaimExportSucceeded' }
         expect(jobs.length).to be 1
         parsed_job_data = JSON.parse(jobs.first['args'].first['arguments'][1])
-        expect(parsed_job_data).to include 'export_id' => export.id
+        expect(parsed_job_data).to include 'export_id' => export.id, 'message' => 'Multiples claim exported'
         expect(parsed_job_data['external_data']).to include 'case_id' => ccd_case['id'],
                                                             'case_reference' => ccd_case['case_fields']['multipleReference'],
                                                             'case_type_id' => 'Manchester_Multiples_Dev'
@@ -34,9 +34,32 @@ module EtCcdExport
         jobs = Sidekiq::Worker.jobs.select do |j|
           j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' &&
             j['args'].first['arguments'].first == 'ClaimExportFeedbackReceived' &&
-            JSON.parse(j['args'].first['arguments'][1]) >= {'state' => 'in_progress', 'export_id' => export.id, 'percent_complete' => 0}
+            JSON.parse(j['args'].first['arguments'][1]) >= {'state' => 'in_progress', 'export_id' => export.id, 'percent_complete' => 0, 'message' => 'Claim export started'}
         end
         expect(jobs.length).to be 1
+      end
+
+      def assert_all_multiples_claim_export_progress(export:, ccd_case:, sub_cases:)
+        # If we had a claim with 9 secondary claimants, giving 10 altogether - all together we would send 12 events
+        # including the header.
+        # The first would be the event that queues all 10 jobs and will contain the bid (batch id)
+        # Therefore each sub claim should represent a percentage complete of (100 / 12) so after the 10th one is sent
+        # the final 'complete' event will mark 100%
+        jobs = Sidekiq::Worker.jobs.select do |j|
+          j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' &&
+            j['args'].first['arguments'].first == 'ClaimExportFeedbackReceived' &&
+            JSON.parse(j['args'].first['arguments'][1]) >= {'state' => 'in_progress', 'export_id' => export.id} &&
+            JSON.parse(j['args'].first['arguments'][1])['percent_complete'] > 0 &&
+            ['Sub cases queued for export', 'Sub case exported'].include?(JSON.parse(j['args'].first['arguments'][1])['message'])
+        end
+        jobs_data = jobs.map do |j|
+          JSON.parse(j['args'].first['arguments'][1])
+        end
+        expected_progress_increment = 100.0 / (2 + sub_cases.length)
+        expected_progresses = (1..(sub_cases.length + 1)).map do |sub_case_number|
+          (sub_case_number * expected_progress_increment).to_i
+        end
+        expect(jobs_data.map {|d| d['percent_complete']}).to match_array expected_progresses
       end
     end
   end
