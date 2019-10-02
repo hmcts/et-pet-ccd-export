@@ -44,7 +44,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check for API event being received
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
     external_events.assert_claim_export_started(export: export)
   end
 

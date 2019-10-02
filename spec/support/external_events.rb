@@ -19,6 +19,17 @@ module EtCcdExport
 
       end
 
+      def assert_multiples_claim_export_succeeded(export:, ccd_case:)
+        jobs = Sidekiq::Worker.jobs.select { |j| j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' && j['args'].first['arguments'].first == 'ClaimExportSucceeded' }
+        expect(jobs.length).to be 1
+        parsed_job_data = JSON.parse(jobs.first['args'].first['arguments'][1])
+        expect(parsed_job_data).to include 'export_id' => export.id
+        expect(parsed_job_data['external_data']).to include 'case_id' => ccd_case['id'],
+                                                            'case_reference' => ccd_case['case_fields']['multipleReference'],
+                                                            'case_type_id' => 'Manchester_Multiples_Dev'
+
+      end
+
       def assert_claim_export_started(export:)
         jobs = Sidekiq::Worker.jobs.select do |j|
           j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' &&

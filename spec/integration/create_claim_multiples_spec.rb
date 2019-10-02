@@ -31,6 +31,32 @@ RSpec.describe "create claim multiples" do
     end
   end
 
+  it 'raises an API event to inform of start of case creation' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
+    external_events.assert_claim_export_started(export: export)
+  end
+
+  it 'raises an API event to inform of case creation complete' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    multiples_case = test_ccd_client.caseworker_search_latest_by_multiple_reference(export.resource.reference, case_type_id: 'Manchester_Multiples_Dev')
+    external_events.assert_multiples_claim_export_succeeded(export: export, ccd_case: multiples_case)
+  end
+
   it 'creates many single claims all with status of Pending' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
@@ -132,6 +158,11 @@ RSpec.describe "create claim multiples" do
       expect(lead_case['case_fields']).to match_json_schema('case_create')
     end
   end
+
+  it 'fires the correct event before any jobs are started'
+  it 'fires the correct event on completion'
+  it 'fires the correct events for each sub case'
+  it 'fires the correct event on error for a sub case'
   #
   # it 'populates the claimant data correctly with an address specifying UK country' do
   #   boom!

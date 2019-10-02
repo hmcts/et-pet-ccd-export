@@ -19,4 +19,34 @@ module AsyncApplicationEvents
           "queue"   => queue,
           "args"    => [ serialized_job.as_json ]
   end
+
+  def send_claim_exported_event(bid:, export_id:, jid:, case_id:, case_reference:, case_type_id:)
+    event_data = {
+      sidekiq: {
+        jid: jid,
+        bid: bid,
+      },
+      export_id: export_id,
+      external_data: {
+        case_id: case_id,
+        case_reference: case_reference,
+        case_type_id: case_type_id
+      }
+    }
+    send_application_event('ClaimExportSucceeded', event_data)
+  end
+
+  def send_claim_export_started_event(bid:, export_id:, jid:)
+    event_data = {
+      sidekiq: {
+        jid: jid,
+        bid: bid,
+      },
+      export_id: export_id,
+      external_data: {},
+      state: 'in_progress',
+      percent_complete: 0
+    }
+    send_application_event('ClaimExportFeedbackReceived', event_data)
+  end
 end
