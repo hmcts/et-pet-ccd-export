@@ -89,11 +89,11 @@ RSpec.describe ExportMultipleClaimsService do
         instance = nil
         reference = 1000001
         self.class::MockWorker = Class.new do
-          include Sidekiq::Worker
+          include ::Sidekiq::Worker
           define_singleton_method(:new) { instance ||= super() }
           define_method :perform do |*args|
             calls << args
-            Sidekiq.redis { |r| r.lpush("BID-#{bid}-references", reference) }
+            ::Sidekiq.redis { |r| r.lpush("BID-#{bid}-references", reference) }
             reference += 1
           end
         end
@@ -107,7 +107,7 @@ RSpec.describe ExportMultipleClaimsService do
       let(:mock_header_worker_class) do
         instance = mock_header_worker
         self.class::MockHeaderWorker = Class.new do
-          include Sidekiq::Worker
+          include ::Sidekiq::Worker
           define_singleton_method(:new) { instance }
         end
         self.class::MockHeaderWorker
@@ -115,7 +115,7 @@ RSpec.describe ExportMultipleClaimsService do
 
       let(:mock_header_worker) do
         fake_class_to_spy_on = Class.new do
-          include Sidekiq::Worker
+          include ::Sidekiq::Worker
           define_method(:perform) { |*| }
         end
         instance_spy(fake_class_to_spy_on)
@@ -137,7 +137,7 @@ RSpec.describe ExportMultipleClaimsService do
 
       it 'queues the header worker when done with the data from the header presenter' do
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, jid: 'examplejid')
+        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the batch
@@ -162,7 +162,7 @@ RSpec.describe ExportMultipleClaimsService do
         allow(mock_presenter).to receive(:present).and_return(*presented_values)
 
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, jid: 'examplejid')
+        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the worker has been queued, first time with the primary set to true
@@ -174,7 +174,7 @@ RSpec.describe ExportMultipleClaimsService do
 
       it 'calls the presenter 11 times with the correct parameters' do
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, jid: 'examplajid')
+        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the worker has been queued
@@ -373,12 +373,11 @@ RSpec.describe ExportMultipleClaimsService do
         JSON
       end
       # Act - call the service
-      service.export(example_ccd_data.to_json, 'Manchester_Dev', jid: 'examplejid', bid: 'examplebid', export_id: 1, claimant_count: 10)
+      service.export(example_ccd_data.to_json, 'Manchester_Dev', sidekiq_job_data: { jid: 'examplejid' }, bid: 'examplebid', export_id: 1, claimant_count: 10)
 
       # Assert - ensure it has arrived in CCD
       ccd_case = test_ccd_client.caseworker_search_latest_by_reference(example_ccd_data[:feeGroupReference], case_type_id: 'Manchester_Dev')
       expect(ccd_case['case_fields']).to include 'feeGroupReference' => example_ccd_data[:feeGroupReference]
     end
-
   end
 end

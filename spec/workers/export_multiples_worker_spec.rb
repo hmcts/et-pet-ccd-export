@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe ExportMultiplesWorker do
-  subject(:worker) { described_class.new }
+  subject(:worker) { described_class.new.tap {|w| w.job_hash = { jid: 'fakejid' }} }
   let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
 
   describe '#perform' do
@@ -140,26 +140,26 @@ RSpec.describe ExportMultiplesWorker do
     # fake ccd server will have to be modified to do the same thing as CCD and pre populate it
     it 'adds to the correct redis list when done' do
       # Act - Call the worker
-      batch=Sidekiq::Batch.new
+      batch=::Sidekiq::Batch.new
       batch.jobs do
         worker.perform(example_ccd_data.to_json, 'Manchester_Dev', 1, 1)
       end
 
       # Assert - Check in redis
-      references = Sidekiq.redis { |r| r.lrange("BID-#{batch.bid}-references", 0, -1) }
+      references = ::Sidekiq.redis { |r| r.lrange("BID-#{batch.bid}-references", 0, -1) }
       expect(references).to contain_exactly('exampleEthosCaseReference')
     end
 
     it 'stores the entry first in the list if primary flag is set' do
       # Act - Call the worker
-      batch=Sidekiq::Batch.new
+      batch=::Sidekiq::Batch.new
       batch.jobs do
         worker.perform(example_ccd_data.to_json, 'Manchester_Dev', 1, 10)
         worker.perform(example_ccd_data_primary.to_json, 'Manchester_Dev', 1, 10, true)
       end
 
       # Assert - Check in redis
-      references = Sidekiq.redis { |r| r.lrange("BID-#{batch.bid}-references", 0, -1) }
+      references = ::Sidekiq.redis { |r| r.lrange("BID-#{batch.bid}-references", 0, -1) }
       expect(references.first).to eql 'exampleEthosCaseReferencePrimary'
 
     end

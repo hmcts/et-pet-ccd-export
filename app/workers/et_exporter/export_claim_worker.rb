@@ -2,6 +2,8 @@ module EtExporter
   class ExportClaimWorker
     include Sidekiq::Worker
 
+    attr_accessor :job_hash
+
     def perform(json)
       logger.debug "---------------------------------------------------------------------------------------------------------"
       logger.debug "- THIS IS THE JSON THAT HAS COME FROM THE API                                                           -"
@@ -12,9 +14,9 @@ module EtExporter
       logger.debug JSON.generate(parsed_json)
 
       if parsed_json.dig('resource', 'secondary_claimants').present?
-        ExportMultipleClaimsService.new.call(parsed_json, jid: jid) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
+        ExportMultipleClaimsService.new.call(parsed_json, sidekiq_job_data: job_hash)
       else
-        ExportClaimService.new.call(parsed_json, jid: jid) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
+        ExportClaimService.new.call(parsed_json, sidekiq_job_data: job_hash)
       end
     end
   end

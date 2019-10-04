@@ -20,29 +20,23 @@ module AsyncApplicationEvents
           "args"    => [ serialized_job.as_json ]
   end
 
-  def send_claim_exported_event(bid:, export_id:, jid:, case_id:, case_reference:, case_type_id:)
+  def send_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
     event_data = {
-      sidekiq: {
-        jid: jid,
-        bid: bid,
-      },
+      sidekiq: sidekiq_job_data,
       export_id: export_id,
       external_data: {
         case_id: case_id,
         case_reference: case_reference,
         case_type_id: case_type_id
       },
-      message: 'Multiples claim exported'
+      message: 'Claim exported'
     }
     send_application_event('ClaimExportSucceeded', event_data)
   end
 
-  def send_claim_export_started_event(bid:, export_id:, jid:)
+  def send_claim_export_started_event(export_id:, sidekiq_job_data:)
     event_data = {
-      sidekiq: {
-        jid: jid,
-        bid: bid,
-      },
+      sidekiq: sidekiq_job_data,
       export_id: export_id,
       external_data: {},
       state: 'in_progress',
@@ -52,12 +46,9 @@ module AsyncApplicationEvents
     send_application_event('ClaimExportFeedbackReceived', event_data)
   end
 
-  def send_claim_export_multiples_queued_event(bid:, export_id:, jid:, percent_complete:)
+  def send_claim_export_multiples_queued_event(queued_bid:, export_id:, sidekiq_job_data:, percent_complete:)
     event_data = {
-      sidekiq: {
-        jid: jid,
-        bid: bid,
-      },
+      sidekiq: sidekiq_job_data.merge(queued_bid: queued_bid),
       export_id: export_id,
       external_data: {},
       state: 'in_progress',
@@ -67,12 +58,9 @@ module AsyncApplicationEvents
     send_application_event('ClaimExportFeedbackReceived', event_data)
   end
 
-  def send_claim_export_multiples_progress_event(bid:, export_id:, jid:, percent_complete:, case_id:, case_reference:, case_type_id:)
+  def send_claim_export_multiples_progress_event(export_id:, sidekiq_job_data:, percent_complete:, case_id:, case_reference:, case_type_id:)
     event_data = {
-      sidekiq: {
-        jid: jid,
-        bid: bid,
-      },
+      sidekiq: sidekiq_job_data,
       export_id: export_id,
       external_data: {
         case_id: case_id,
