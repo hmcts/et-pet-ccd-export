@@ -61,6 +61,24 @@ RSpec.describe "create claim" do
     external_events.assert_claim_export_succeeded(export: export, ccd_case: ccd_case)
   end
 
+  it 'raises an API event to inform of an error whilst still re raising the error' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_attrs: {primary_claimant_attrs: {first_name: 'Force', last_name: 'Error502'}})
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    begin
+      worker.drain
+    rescue EtCcdClient::Exceptions::Base
+      nil
+    end
+
+    # Assert - Check for API event being received
+    external_events.assert_claim_erroring(export: export)
+  end
+
+
+
   it 'populates the claimant data correctly with an address specifying UK country' do
     # Arrange - Produce the input JSON
     claimant = build(:claimant, :default, address: build(:address, :with_uk_country))

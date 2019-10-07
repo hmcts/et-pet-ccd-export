@@ -13,7 +13,7 @@ class ExportMultipleClaimsService
   # Schedules a worker to send the pre compiled data (as the ccd data is smaller than the export data for each multiples case)
   # @param [Hash] export - The export hash containing the claim as well as export data
   def call(export, worker: ExportMultiplesWorker, header_worker: ExportMultiplesHeaderWorker, batch: Sidekiq::Batch.new, sidekiq_job_data:)
-    send_claim_export_started_event(export_id: export['id'], sidekiq_job_data: sidekiq_job_data)
+    send_multiples_claim_export_started_event(export_id: export['id'], sidekiq_job_data: sidekiq_job_data)
     case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'case_type_id'}['value']
     multiples_case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'multiples_case_type_id'}['value']
     claimant_count = export.dig('resource', 'secondary_claimants').length + 1
@@ -50,6 +50,9 @@ class ExportMultipleClaimsService
         send_claim_export_multiples_progress_event sidekiq_job_data: sidekiq_job_data, export_id: export_id, percent_complete: percent_complete_for(1 + number, claimant_count: claimant_count), case_id: created_case['id'], case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: case_type_id
       end
     end
+  rescue Exception => ex
+    send_subclaim_erroring_event(export_id: export_id, sidekiq_job_data: sidekiq_job_data)
+    raise ex
   end
 
   # Export the header record (multiples case) to ccd
@@ -65,7 +68,7 @@ class ExportMultipleClaimsService
       event_token = resp['token']
       data = header_presenter.present(primary_reference: primary_reference, respondent_name: respondent_name, case_references: case_references, event_token: event_token)
       created_case = client.caseworker_case_create(data, case_type_id: case_type_id)
-      send_claim_exported_event(export_id: export_id, sidekiq_job_data: sidekiq_job_data, case_id: created_case['id'], case_reference: created_case.dig('case_data', 'multipleReference'), case_type_id: case_type_id)
+      send_multiples_claim_exported_event(export_id: export_id, sidekiq_job_data: sidekiq_job_data, case_id: created_case['id'], case_reference: created_case.dig('case_data', 'multipleReference'), case_type_id: case_type_id)
     end
   end
 
@@ -80,6 +83,9 @@ class ExportMultipleClaimsService
     include Sidekiq::Worker
 
     def on_complete(batch_status, options)
+      if batch_status.failures != 0
+        return
+      end
       case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
 
       options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id'], options['export_id']

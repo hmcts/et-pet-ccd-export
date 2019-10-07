@@ -6,7 +6,7 @@ require 'sidekiq/testing'
 end
 ::Sidekiq::Testing.server_middleware do |chain|
   chain.add ::Sidekiq::Batch::Middleware::ServerMiddleware
-  chain.add ::EtCcdExport::Sidekiq::Middleware::ExposeJobHash
+  chain.add ::EtCcdExport::Sidekiq::Middleware::ExposeJobHashMiddleware
 end
 
 RSpec.configure do |c|

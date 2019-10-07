@@ -1,5 +1,5 @@
 require_relative '../../lib/ccd_client_sentry_error_middleware'
-require_relative '../../lib/et_ccd_export/sidekiq/middleware/expose_job_hash'
+require_relative '../../lib/et_ccd_export/sidekiq/middleware/expose_job_hash_middleware'
 default_redis_host = ENV.fetch('REDIS_HOST', 'localhost')
 default_redis_port = ENV.fetch('REDIS_PORT', '6379')
 default_redis_database = ENV.fetch('REDIS_DATABASE', '1')
@@ -12,7 +12,7 @@ Sidekiq.configure_server do |config|
   config.redis = redis_config
   config.error_handlers.unshift CcdClientSentryErrorMiddleware.new
   config.server_middleware do |chain|
-    chain.add EtCcdExport::Sidekiq::Middleware::ExposeJobHash
+    chain.add EtCcdExport::Sidekiq::Middleware::ExposeJobHashMiddleware
   end
 end
 

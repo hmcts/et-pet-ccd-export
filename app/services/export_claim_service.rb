@@ -25,5 +25,8 @@ class ExportClaimService
       created_case = client.caseworker_case_create(data, case_type_id: case_type_id)
       send_claim_exported_event(export_id: export['id'], sidekiq_job_data: sidekiq_job_data, case_id: created_case['id'], case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: case_type_id)
     end
+  rescue Exception => ex
+    send_claim_erroring_event(export_id: export['id'], sidekiq_job_data: sidekiq_job_data)
+    raise ex
   end
 end
