@@ -8,7 +8,7 @@ module EtCcdExport
           yield
         rescue => ex
           puts "*************** RetryCountMiddleware - msg is #{msg} *************************"
-          if ex.is_a?(::EtCcdClient::Exceptions::UnprocessableEntity)
+          if worker&.prevent_retry?(ex)
             msg['retry'] = false
             msg['error_class'] = ex.class.to_s
             msg['error_message'] = ex.message
@@ -16,7 +16,7 @@ module EtCcdExport
             retries_exhausted(worker, msg, ex)
             kill_job(ex, msg)
           else
-            raise ex
+            raise x
           end
         end
 
