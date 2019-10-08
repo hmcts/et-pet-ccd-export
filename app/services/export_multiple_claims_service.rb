@@ -50,9 +50,6 @@ class ExportMultipleClaimsService
         send_claim_export_multiples_progress_event sidekiq_job_data: sidekiq_job_data, export_id: export_id, percent_complete: percent_complete_for(1 + number, claimant_count: claimant_count), case_id: created_case['id'], case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: case_type_id
       end
     end
-  rescue Exception => ex
-    send_subclaim_erroring_event(export_id: export_id, sidekiq_job_data: sidekiq_job_data)
-    raise ex
   end
 
   # Export the header record (multiples case) to ccd

@@ -4,7 +4,7 @@ module EtCcdExport
       class ExposeJobHashMiddleware
 
         def call(worker, msg, queue)
-          worker.try(:job_hash=, msg.symbolize_keys.except(:args, :class, :queue))
+          worker.try(:job_hash=, msg)
           yield
         end
       end

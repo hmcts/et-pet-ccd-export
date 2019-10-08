@@ -2,10 +2,13 @@ module EtExporter
   class ExportClaimWorker
     include Sidekiq::Worker
     include AsyncApplicationEvents
+    include ExportRetryControl
+    self.exceptions_without_retry = [EtCcdClient::Exceptions::UnprocessableEntity, PreventJobRetryingException].freeze
 
     attr_accessor :job_hash
 
     def perform(json)
+      before_perform
       logger.debug "---------------------------------------------------------------------------------------------------------"
       logger.debug "- THIS IS THE JSON THAT HAS COME FROM THE API                                                           -"
       logger.debug "-                                                                                                       -"
@@ -15,25 +18,23 @@ module EtExporter
       logger.debug JSON.generate(parsed_json)
 
       if parsed_json.dig('resource', 'secondary_claimants').present?
-        self.service = ExportMultipleClaimsService.new
+        perform_multiples(parsed_json)
       else
-        self.service = ExportClaimService.new
+        perform_single(parsed_json)
       end
-      service.call(parsed_json, sidekiq_job_data: job_hash)
-    end
-
-    sidekiq_retries_exhausted do |msg, ex|
-      json = JSON.parse(msg['args'][0])
-      new.send_claim_failed_event(export_id: json['id'], sidekiq_job_data: msg.except('args', 'class'))
-      raise ClaimNotExportedException
-    end
-
-    def prevent_retry?(ex)
-      service.prevent_retry?(ex)
     end
 
     private
 
-    attr_accessor :service
+    def perform_multiples(parsed_json)
+      ExportMultipleClaimsService.new.call(parsed_json, sidekiq_job_data: job_hash)
+    end
+
+    def perform_single(parsed_json)
+      ExportClaimService.new.call(parsed_json, sidekiq_job_data: job_hash)
+    rescue Exception => ex
+      send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
+      raise ex
+    end
   end
 end

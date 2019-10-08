@@ -22,7 +22,7 @@ module AsyncApplicationEvents
 
   def send_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {
         case_id: case_id,
@@ -37,7 +37,7 @@ module AsyncApplicationEvents
 
   def send_multiples_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {
         case_id: case_id,
@@ -52,7 +52,7 @@ module AsyncApplicationEvents
 
   def send_claim_erroring_event(export_id:, sidekiq_job_data:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {},
       message: 'Claim erroring',
@@ -64,7 +64,7 @@ module AsyncApplicationEvents
 
   def send_claim_failed_event(export_id:, sidekiq_job_data:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {},
       message: 'Claim failed to export',
@@ -74,9 +74,21 @@ module AsyncApplicationEvents
     send_application_event('ClaimExportFeedbackReceived', event_data)
   end
 
-  def send_subclaim_erroring_event(export_id:, sidekiq_job_data:)
+  def send_subclaim_failed_event(export_id:, sidekiq_job_data:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
+      export_id: export_id,
+      external_data: {},
+      message: 'Subclaim failed to export',
+      state: 'failed',
+      percent_complete: 0
+    }
+    send_application_event('ClaimExportFeedbackReceived', event_data)
+  end
+
+  def send_subclaim_erroring_event(export_id:, sidekiq_job_data:, exception:)
+    event_data = {
+      sidekiq: sidekiq_job_data.merge('error_message' => exception.message, 'error_class' => exception.class.to_s),
       export_id: export_id,
       external_data: {},
       message: 'Claim erroring due to subclaim error',
@@ -88,7 +100,7 @@ module AsyncApplicationEvents
 
   def send_claim_export_started_event(export_id:, sidekiq_job_data:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {},
       state: 'in_progress',
@@ -100,7 +112,7 @@ module AsyncApplicationEvents
 
   def send_multiples_claim_export_started_event(export_id:, sidekiq_job_data:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {},
       state: 'in_progress',
@@ -112,7 +124,7 @@ module AsyncApplicationEvents
 
   def send_claim_export_multiples_queued_event(queued_bid:, export_id:, sidekiq_job_data:, percent_complete:)
     event_data = {
-      sidekiq: sidekiq_job_data.merge(queued_bid: queued_bid),
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue').merge(queued_bid: queued_bid),
       export_id: export_id,
       external_data: {},
       state: 'in_progress',
@@ -124,7 +136,7 @@ module AsyncApplicationEvents
 
   def send_claim_export_multiples_progress_event(export_id:, sidekiq_job_data:, percent_complete:, case_id:, case_reference:, case_type_id:)
     event_data = {
-      sidekiq: sidekiq_job_data,
+      sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
       export_id: export_id,
       external_data: {
         case_id: case_id,
