@@ -62,7 +62,19 @@ module AsyncApplicationEvents
     send_application_event('ClaimExportFeedbackReceived', event_data)
   end
 
-def send_subclaim_erroring_event(export_id:, sidekiq_job_data:)
+  def send_claim_failed_event(export_id:, sidekiq_job_data:)
+    event_data = {
+      sidekiq: sidekiq_job_data,
+      export_id: export_id,
+      external_data: {},
+      message: 'Claim failed to export',
+      state: 'failed',
+      percent_complete: 0
+    }
+    send_application_event('ClaimExportFeedbackReceived', event_data)
+  end
+
+  def send_subclaim_erroring_event(export_id:, sidekiq_job_data:)
     event_data = {
       sidekiq: sidekiq_job_data,
       export_id: export_id,

@@ -1,0 +1,4 @@
+class ClaimNotExportedException < ApplicationException
+
+
+end
