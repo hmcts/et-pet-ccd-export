@@ -5,7 +5,7 @@ class ExportResponseService
     self.disallow_file_extensions = disallow_file_extensions
   end
 
-  def call(export)
+  def call(export, sidekiq_job_data:)
     do_export(export)
   end
 

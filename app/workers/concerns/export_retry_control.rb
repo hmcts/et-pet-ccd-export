@@ -14,8 +14,8 @@ module ExportRetryControl
 
     sidekiq_retries_exhausted do |msg, ex|
       json = JSON.parse(msg['args'][0])
-      job_data = msg.except('args', 'class').merge(ex&.job_hash || {})
-      new.send_claim_failed_event(export_id: json['id'], sidekiq_job_data: job_data)
+      job_data = msg.except('args', 'class').merge(ex.try(:job_hash) || {})
+      ApplicationEventsService.send_claim_failed_event(export_id: json['id'], sidekiq_job_data: job_data)
       raise ClaimNotExportedException
     end
   end
