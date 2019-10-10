@@ -1,7 +1,8 @@
 require 'rails_helper'
 RSpec.describe ::EtExporter::ExportResponseWorker do
   let(:fake_job_hash) { {  jid: 'fakejid' } }
-  let(:fake_service) { instance_spy(ExportResponseService) }
+  let(:fake_service) { instance_spy(ExportResponseService, call: fake_case_data) }
+  let(:fake_case_data) { {'case_type_id' => 'fake_case_type_id', 'id' => 'fake_id', 'case_data' => { 'ethosCaseReference' => 'fake_reference' }}  }
   let(:fake_events_service) { class_spy(ApplicationEventsService) }
   subject(:worker) do
     described_class.new(application_events_service: fake_events_service, service: fake_service).tap do |w|
@@ -29,6 +30,22 @@ RSpec.describe ::EtExporter::ExportResponseWorker do
 
       # Assert - make sure the singles service was called
       expect(fake_service).to have_received(:call).with(example_export.as_json, sidekiq_job_data: fake_job_hash)
+    end
+
+    it 'should inform the application events service of the process starting' do
+      # Act - Call the worker expecting the special error
+      worker.perform(example_export.as_json.to_json)
+
+      # Assert - Make sure the service was not called
+      expect(fake_events_service).to have_received(:send_response_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
+    end
+
+    it 'should inform the application events service of the process finishing if the service did not raise exception' do
+      # Act - Call the worker expecting the special error
+      worker.perform(example_export.as_json.to_json)
+
+      # Assert - Make sure the service was not called
+      expect(fake_events_service).to have_received(:send_response_exported_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'fake_id', case_reference: 'fake_reference', case_type_id: 'fake_case_type_id')
     end
 
     it 'informs the application events service of an error' do

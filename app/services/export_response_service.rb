@@ -21,6 +21,7 @@ class ExportResponseService
       resp = client.caseworker_start_upload_document(ctid: case_type_id, cid: claim['id'])
       event_token = resp['token']
       client.caseworker_update_case_documents(case_id: claim['id'], case_type_id: case_type_id, event_token: event_token, files: claim.dig('case_data', 'documentCollection') + files_data(client, export))
+      claim
     end
   end
 end
