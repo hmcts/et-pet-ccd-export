@@ -34,7 +34,9 @@ module EtExporter
     attr_accessor :events_service, :singles_service, :multiples_service
 
     def perform_multiples(parsed_json)
-      multiples_service.call(parsed_json, sidekiq_job_data: job_hash)
+      events_service.send_multiples_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
+      bid = multiples_service.call(parsed_json, sidekiq_job_data: job_hash)
+      events_service.send_claim_export_multiples_queued_event queued_bid: bid, sidekiq_job_data: job_hash, export_id: parsed_json['id'], percent_complete: percent_complete_for(1, claimant_count: parsed_json.dig('resource', 'secondary_claimants').length + 1)
     rescue Exception => ex
       events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
       raise ex
@@ -48,6 +50,10 @@ module EtExporter
     rescue Exception => ex
       events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
       raise ex
+    end
+
+    def percent_complete_for(number, claimant_count:)
+      (number * (100.0 / (claimant_count + 2))).to_i
     end
   end
 end

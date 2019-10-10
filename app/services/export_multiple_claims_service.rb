@@ -1,7 +1,6 @@
 class ExportMultipleClaimsService
   include ClaimFiles
   include GenerateEthosCaseReference
-  include AsyncApplicationEvents
   def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.presenter = presenter
     self.header_presenter = header_presenter
@@ -13,7 +12,6 @@ class ExportMultipleClaimsService
   # Schedules a worker to send the pre compiled data (as the ccd data is smaller than the export data for each multiples case)
   # @param [Hash] export - The export hash containing the claim as well as export data
   def call(export, worker: ExportMultiplesWorker, header_worker: ExportMultiplesHeaderWorker, batch: Sidekiq::Batch.new, sidekiq_job_data:)
-    send_multiples_claim_export_started_event(export_id: export['id'], sidekiq_job_data: sidekiq_job_data)
     case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'case_type_id'}['value']
     multiples_case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'multiples_case_type_id'}['value']
     claimant_count = export.dig('resource', 'secondary_claimants').length + 1
@@ -34,7 +32,7 @@ class ExportMultipleClaimsService
         worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code'))), case_type_id, export['id'], claimant_count
       end
     end
-    send_claim_export_multiples_queued_event queued_bid: batch.bid,sidekiq_job_data: sidekiq_job_data, export_id: export['id'], percent_complete: percent_complete_for(1, claimant_count: export.dig('resource', 'secondary_claimants').length + 1)
+    batch.bid
   end
 
   # @param [String] data The JSON data to send to ccd as the details part of the payload
@@ -43,12 +41,11 @@ class ExportMultipleClaimsService
       resp = client.caseworker_start_case_creation(case_type_id: case_type_id)
       event_token = resp['token']
       data = envelope_presenter.present(data, event_token: event_token)
-      client.caseworker_case_create(data, case_type_id: case_type_id).tap do |created_case|
-        number = Sidekiq.redis do |r|
-          r.incr("BID-#{bid}-references-count")
-        end
-        send_claim_export_multiples_progress_event sidekiq_job_data: sidekiq_job_data, export_id: export_id, percent_complete: percent_complete_for(1 + number, claimant_count: claimant_count), case_id: created_case['id'], case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: case_type_id
+      created_case = client.caseworker_case_create(data, case_type_id: case_type_id)
+      number = Sidekiq.redis do |r|
+        r.incr("BID-#{bid}-references-count")
       end
+      [created_case, number]
     end
   end
 
@@ -64,8 +61,7 @@ class ExportMultipleClaimsService
       resp = client.caseworker_start_bulk_creation(case_type_id: case_type_id)
       event_token = resp['token']
       data = header_presenter.present(primary_reference: primary_reference, respondent_name: respondent_name, case_references: case_references, event_token: event_token)
-      created_case = client.caseworker_case_create(data, case_type_id: case_type_id)
-      send_multiples_claim_exported_event(export_id: export_id, sidekiq_job_data: sidekiq_job_data, case_id: created_case['id'], case_reference: created_case.dig('case_data', 'multipleReference'), case_type_id: case_type_id)
+      client.caseworker_case_create(data, case_type_id: case_type_id)
     end
   end
 

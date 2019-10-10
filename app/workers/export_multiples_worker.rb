@@ -16,12 +16,13 @@ class ExportMultiplesWorker
   def perform(ccd_data, case_type_id, export_id, claimant_count, primary = false)
     before_perform
     Sidekiq.redis do |r|
-      data = multiples_service.export(ccd_data, case_type_id, sidekiq_job_data: job_hash, bid: bid, export_id: export_id, claimant_count: claimant_count)
+      data, number = multiples_service.export(ccd_data, case_type_id, sidekiq_job_data: job_hash, bid: bid, export_id: export_id, claimant_count: claimant_count)
       if primary
         r.lpush("BID-#{bid}-references", data.dig('case_data', 'ethosCaseReference'))
       else
         r.rpush("BID-#{bid}-references", data.dig('case_data', 'ethosCaseReference'))
       end
+      events_service.send_claim_export_multiples_progress_event sidekiq_job_data: job_hash, export_id: export_id, percent_complete: percent_complete_for(1 + number, claimant_count: claimant_count), case_id: data['id'], case_reference: data.dig('case_data', 'ethosCaseReference'), case_type_id: case_type_id
     end
   rescue Exception => ex
     events_service.send_subclaim_erroring_event(export_id: export_id, sidekiq_job_data: job_hash.except('class', 'args', 'queue'), exception: ex) unless ex.is_a?(PreventJobRetryingException)
@@ -38,5 +39,7 @@ class ExportMultiplesWorker
 
   attr_accessor :events_service, :multiples_service
 
-
+  def percent_complete_for(number, claimant_count:)
+    (number * (100.0 / (claimant_count + 2))).to_i
+  end
 end
