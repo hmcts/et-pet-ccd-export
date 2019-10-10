@@ -48,7 +48,7 @@ module ApplicationEventsService
         state: :complete,
         message: 'Response exported'
       }
-      send_application_event('ClaimExportFeedbackReceived', event_data)
+      send_application_event('ResponseExportFeedbackReceived', event_data)
     end
 
     def send_multiples_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
@@ -171,7 +171,7 @@ module ApplicationEventsService
         percent_complete: 0,
         message: 'Response export started'
       }
-      send_application_event('ClaimExportFeedbackReceived', event_data)
+      send_application_event('ResponseExportFeedbackReceived', event_data)
     end
 
     def send_multiples_claim_export_started_event(export_id:, sidekiq_job_data:)
