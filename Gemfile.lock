@@ -91,7 +91,7 @@ GEM
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.9.0)
-    et_fake_ccd (0.1.35)
+    et_fake_ccd (0.1.36)
       activemodel (>= 5.2.3)
       iodine (~> 0.7)
       roda (~> 3.21)
@@ -271,7 +271,7 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
-    zeitwerk (2.1.10)
+    zeitwerk (2.2.0)
 
 PLATFORMS
   ruby
