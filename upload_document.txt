@@ -1,288 +1,0 @@
-First, the UI calls the following URL
-    http://localhost:3453/data/internal/cases/1563450037366014/event-triggers/uploadDocument?ignore-warning=false
-
-which responds with
-{"id":"uploadDocument","name":"Upload Document","description":"Upload a Document","case_id":"1563450037366014","case_fields":[{"id":"documentCollection","label":"Case documentation","hidden":null,"value":null,"metadata":false,"hint_text":"Upload documentation for the case","field_type":{"id":"documentCollection-5a4fb6ff-284e-41e0-a6da-27ada1af6550","type":"Collection","min":null,"max":null,"regular_expression":null,"fixed_list_items":[],"complex_fields":[],"collection_field_type":{"id":"TRIB_DocumentType","type":"Complex","min":null,"max":null,"regular_expression":null,"fixed_list_items":[],"complex_fields":[{"id":"typeOfDocument","label":"Type of Document","hidden":null,"metadata":false,"case_type_id":null,"hint_text":"Upload any supplimentary documents","field_type":{"id":"FixedList-TRIB_fl_Documentation","type":"FixedList","min":null,"max":null,"regular_expression":null,"fixed_list_items":[{"code":"Other","label":"Other","order":"13"},{"code":"Preliminary Hearing","label":"Preliminary Hearing","order":"12"},{"code":"Index of checklist documents","label":"Index of checklist documents","order":"11"},{"code":"Correspondence","label":"Correspondence","order":"10"},{"code":"Risk assessment","label":"Risk assessment","order":"9"},{"code":"Notification to repondent","label":"Notification to repondent","order":"8"},{"code":"Referral notice","label":"Referral notice","order":"7"},{"code":"Initial assessment","label":"Initial assessment","order":"6"},{"code":"Other evidence","label":"Other evidence","order":"5"},{"code":"Respondent evidence","label":"Respondent evidence","order":"4"},{"code":"Claimant evidence","label":"Claimant evidence","order":"3"},{"code":"Power of attorney","label":"Power of attorney","order":"2"},{"code":"Application","label":"Application","order":"1"}],"complex_fields":[],"collection_field_type":null},"security_classification":"PUBLIC","live_from":null,"live_until":null,"show_condition":null,"acls":[{"role":"caseworker-employment","create":false,"read":true,"update":false,"delete":false},{"role":"caseworker-employment-tribunal-manchester","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-caseofficer","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-casesupervisor","create":true,"read":true,"update":true,"delete":true}]},{"id":"uploadedDocument","label":"Title","hidden":null,"metadata":false,"case_type_id":null,"hint_text":null,"field_type":{"id":"Document","type":"Document","min":null,"max":null,"regular_expression":null,"fixed_list_items":[],"complex_fields":[],"collection_field_type":null},"security_classification":"PUBLIC","live_from":null,"live_until":null,"show_condition":null,"acls":[{"role":"caseworker-employment","create":false,"read":true,"update":false,"delete":false},{"role":"caseworker-employment-tribunal-manchester","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-caseofficer","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-casesupervisor","create":true,"read":true,"update":true,"delete":true}]},{"id":"ownerDocument","label":"Owner","hidden":null,"metadata":false,"case_type_id":null,"hint_text":null,"field_type":{"id":"Text","type":"Text","min":null,"max":null,"regular_expression":null,"fixed_list_items":[],"complex_fields":[],"collection_field_type":null},"security_classification":"PUBLIC","live_from":null,"live_until":null,"show_condition":null,"acls":[{"role":"caseworker-employment","create":false,"read":true,"update":false,"delete":false},{"role":"caseworker-employment-tribunal-manchester","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-caseofficer","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-casesupervisor","create":true,"read":true,"update":true,"delete":true}]},{"id":"creationDate","label":"Creation Date","hidden":null,"metadata":false,"case_type_id":null,"hint_text":null,"field_type":{"id":"Date","type":"Date","min":null,"max":null,"regular_expression":null,"fixed_list_items":[],"complex_fields":[],"collection_field_type":null},"security_classification":"PUBLIC","live_from":null,"live_until":null,"show_condition":null,"acls":[{"role":"caseworker-employment","create":false,"read":true,"update":false,"delete":false},{"role":"caseworker-employment-tribunal-manchester","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-caseofficer","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-casesupervisor","create":true,"read":true,"update":true,"delete":true}]},{"id":"shortDescription","label":"Short Description","hidden":null,"metadata":false,"case_type_id":null,"hint_text":null,"field_type":{"id":"Text","type":"Text","min":null,"max":null,"regular_expression":null,"fixed_list_items":[],"complex_fields":[],"collection_field_type":null},"security_classification":"PUBLIC","live_from":null,"live_until":null,"show_condition":null,"acls":[{"role":"caseworker-employment","create":false,"read":true,"update":false,"delete":false},{"role":"caseworker-employment-tribunal-manchester","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-caseofficer","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-casesupervisor","create":true,"read":true,"update":true,"delete":true}]}],"collection_field_type":null}},"validation_expr":null,"security_label":"PUBLIC","order":null,"display_context":"OPTIONAL","display_context_parameter":null,"show_condition":null,"show_summary_change_option":true,"show_summary_content_option":null,"acls":[{"role":"caseworker-employment","create":false,"read":true,"update":false,"delete":false},{"role":"caseworker-employment-tribunal-manchester","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-caseofficer","create":true,"read":true,"update":true,"delete":true},{"role":"caseworker-employment-tribunal-manchester-casesupervisor","create":true,"read":true,"update":true,"delete":true}]}],"event_token":"eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJlNzdldGY1Ym00ZDJmdHF1b2owNDZpZjI2NiIsInN1YiI6IjQyZjQ2MjgwLTI0YjQtNGY0ZC1iOTNjLThjOTJjYmIyYjkzZiIsImlhdCI6MTU2NDA2NzkzOSwiY2FzZS1pZCI6IjIiLCJldmVudC1pZCI6InVwbG9hZERvY3VtZW50IiwiY2FzZS10eXBlLWlkIjoiRW1wVHJpYl9NVlBfMS4wX01hbmMiLCJqdXJpc2RpY3Rpb24taWQiOiJFTVBMT1lNRU5UIiwiY2FzZS1zdGF0ZSI6IjJfQWNjZXB0ZWQiLCJjYXNlLXZlcnNpb24iOiIzN2NjM2Q0NzA3ZTg4Y2IwZmU4OWI2MDJlN2U0MzhlZjY2ZDM3YWM2In0.O_yETARTCOG8vN-ZGO2gtfhQDuPdcI3VMBDW8X9JT34","wizard_pages":[{"id":"uploadDocument1","label":"Select document for case","order":1,"wizard_page_fields":[{"case_field_id":"documentCollection","order":1,"page_column_no":1,"display_context":"OPTIONAL","complex_field_overrides":[]}],"show_condition":null,"callback_url_mid_event":null,"retries_timeout_mid_event":[]}],"show_summary":null,"show_event_notes":false,"end_button_label":null,"can_save_draft":null,"_links":{"self":{"href":"http://ccd-data-store-api:4452/internal/cases/1563450037366014/event-triggers/uploadDocument?ignore-warning=false"}}}
-
-When the user uploads a document, the following happens
-
-Below was posted to http://localhost:3453/documents (response is at bottom, looks like some form of token)
-
------------------------------134719407413707113971489368010
-
-Content-Disposition: form-data; name="files"; filename="et1_first_last.pdf"
-
-Content-Type: application/pdf
-
-
-
-%PDF-1.4
-%Ã¤Ã¼Ã¶Ã
-2 0 obj
-<</Length 3 0 R/Filter/FlateDecode>>
-stream
-x=Ë
-1E÷ù»v¶é´0è~ àø ³ß·­d{r"Xé
-°Â²±G
-ÊË
-^ßY­åAS!0Xªr¹bVhlý£¨8ñâ(O²vN3Jè$oÑz6ëæÐ¡wìþ$Éj¨OýèQ¦ÎNfñË(
-
-endstream
-endobj
-
-3 0 obj
-134
-endobj
-
-5 0 obj
-<</Length 6 0 R/Filter/FlateDecode/Length1 23164>>
-stream
-xí|y|[Õÿ¹÷=-v¼È»¼EÏQ¼*^âØqËñBR7;Ô¤±,+±m)Ú&a+`ai)L1´ìm#ËeºÌPÒaÚÒNòk¡üÊt(eZbý¾÷êy#ig~ü>_¤ÜwÏ=÷l÷sÏ}Oy(BN÷ Ë¿$13þ¥º÷µ?Üµði"ÓÝþ=_xòßï#Ë#2ütÏÀþÝï¾ÙJô.Qü{ýWß#y4(ûmÈXÙÄ¥ÓWr ö¯è2®­ÄxÆU>·ë°åZÐç\qÎ ë
-ÿ,/Þ±6äôlT{3ÆG*ëü¾@ð§T%Ú(äkþa?yKÉ&¢O$Y|À1¼Åcfc®¨£É¿þ¿|SlSZD[ôõ6í¾.æDÏgåÇþÐ7è§¬i4ÁþLYô>ËfËi#©ô'dË:KwR:uÒ],R&m§Lnf÷D÷Eß¢èïèèSìêècÿ"ý½þMeTGA¿<ôòuG¿BfºÑZÚÆ2ÉE?Áû°ávº¾Í>}ZÓéjÈ«§Fj>ýÊèfõ°á¸'è6:ÁQwÔKi	rGô'Ñ×¨ºékô
-Øä`Sê* Ëé:ú2ËVþÐôuf	|§Òd8	Mé¢¥Çè,µ^1¼ýlôM2RÀ&/½ÅjÙ&þ ]ý9]JÇè{X¯xO©ª.nþ}ô9Ê §X<{=k¨6ÜzöªèýÑo!#h9<²zzéz¾OÿNà£iu@ó,i¬ÿ	ÏæøåeªÀjwÂÚÝGaDä8 gà¥ÓôKg¹ì¬ÝÆþÀxI¹G9ªüÊÔGáo;ÂGAzÄ~~^bÈ¯bíì3ÌÇ¾Äþæaþ6ÿjV¯Qÿ¢5MþKtsôd¥ú$]IáÛ¯Ñ¥Òéôô³°U¬ÝÏÂì4{Çñ%|÷ó»øüÊfå6åYµV]¯^®¾¨þÜðÃM&iú¦oþæô¢OEÜIü"jG¯BV<H'éeHÿ½J¿ùùkÙöih	°Øììö#ö[¬ä{	_Ë¡ÕÇá§«ùíüh	ïSüçüUþ;þGÅ ,QV*{û°2©R~­ZÔ"µB]®nQw¨QD¦Úp±¡ÃðáqÃswõÆ>£ßøÓÕ¦kÍÿt¶ìì¿MÓtÿtxz¹kF&]	O|@ÞE~ þ¦wVÀa÷jÖÊÚØ&ö)vó°«ÙõìïØÙ=ìö-¬ kà&Øîà¼»¸_Ë¯ç·ð£xçßç?á¯ð3°<K±+e¹²QÙ¡\ªa
-Aår-<{òòò²ò¦òå¢¥.VCêêÝêÃêQõGOñ~ÀpÒ0eøáÃFnÌ1æ+1>bü¥ÉhZij7ÝhúÓý,Árm~µàÙØùc<]=ÈÎ ÏTJÆÊCvÅP2¸$yØÁ³Õ4ÁitªaðÙ	ªe/ÐA#WPÕÓa¿à§ÕçùEôcÖÃ²Õ!Ãx=jt?ÍO°õt×óKø½
-±7Ø#ôòý
-º]Îô8;ÃÖ°Ï³:vþg*ìZª>ÀUÇ6²wÐUj}úã« [M¿ ·¦¿ª&ªC}¤»ÑoÐkìQú33DßFuSP\¨27#ß¯#QõvbÄ~ÌF0¾DGÅbª3®S¯¤wè?é-ÃqdÔzTÒ7§½êWÕ_Eë¢åØaØeôö]?]ó²äÅè2ìôxÔjìêvÚA}ôyT½Û¢áè½Ñk¢û£>úGðþ-cfcØà¨§ïáýEú»	ûðâÿÞ)0ÝGSô[fe¬ûáaá°á1ÃQÃ·
-/ÃÛ×Ò=Èè_"ã±7ý~KbfÄ&Q
-ì]Û»hw+ÏPË!?öl	êøz}%H¹Þ»ûùìwP'.£oÓ+³,¬È
-ýfÈiwú!Dð6LªvýëNb«xútªÖlúýÞJ»¡.4³K ëOô)êÔÎÆ'i5*k³òOð÷Rf¡õl	û:øz°C(V~Å8-Þ]Å½Ê38c¢ÀáôÊ¥Ø^Xu¥¶j§·ÁÎuÕ¯]³zU]mÍêåUåËe¥%ÅEKíK
-4Ûâü¼ÜlkVfFzZj%9)1aQ|Ùd4¨
-g´¬ÅÞÚ£zÂj}Ãr1¶»pÍCô5 ZÒµI¦-¤tr÷(1Jç,%³hõT_¾Lk±káíÚ$Û±µð-Íön-|FÂ$|XÂ
-À µXûµ0ëÑZÂ­ûúG[z!n|Q|½É_¾Æã\(e÷³¬uL<«eÍ8's"
-çØ[ÂÙöfaAX)lqõÛ·vµ4çt/³&·½7Löõád$¡&©&ll
-¤Í+VC7iãË¦Fo´Po#¡ÏÞçº¬+¬¸ºô6³®|Ý:7ðÔ¦®ëçÏæ*£-V¯&££×ká©­]ógÄµ»2ÀË[{F[¡úf8±­C6~]wW]XXUl}{Àô|FÇÙ×ÛûG?ÓÐäiÛþHNóXô4å´h£]öpC®½ÛÕ7N£ÛöOd;µì3åËÆ-)1Ç'%ë@Bâ|À3;'!I. ¶m³eÂ"ûF$DXsk°¤Ë5­Ï*u¯^Ý\á>DÄkêµ¬xÁ6ZìÚè	`?óöBKÇ-$<M5ÌÏÀa#\V&RÄÔÂÆur\[¾lß$_i÷[4tpµÃ·®î5pAðMNêÅ |hkWl¬Qonî0ï3S33ÛÅÌ¡Yö;2ù¨|Èfÿ%[2ÓZú×YæÇL{bómö¶­;º´ÑÝ·mF±ùU³s:NkêRr¹ñ\EÎ")/%®°ZFÔ}aI)Lk
-[z6Ä®ÝñÉ3i2Ïc¾#¸d7Ç¦[^ãX8^»`¼ÀºQöªE¼­sÇèhü¹V ÑÑV»Ö:Ú3êêµkûè1þ0xÔßÒ3ÐÉèñrÃ­7wcýl
-Óúq;»aë¸ÝÐ±£ëOo7tvE8ãM=ë»Çb®ënEËg±b¤µ1$zåTî1'Ñ!9«J»'IyÇÈ=Éc8ÄáUÛ|Þ8õM´þ(gÓFÓ$op¦AV(Þ¤N3Ê6
-Ó\yQnv­duXÞ«?[¿Ùòný¦³õÔ Øò.Ë«
-R
-R
-qa¸ø@S¦>pè/¤©SÐ'2¸ðe!t®(1Ä_åQ=	²¬ÕY2»3û3
-«³Væ^{·á®E[J!#Zl1g11Ódtj"nQ
-L¼Ùv¨iU¼ %U#ÍReáI~Ó¶¼Ãêi;m,;÷¾çØ»é4²AÚH;÷²iÕY©é¸ÄÛ^ÀRVT×­ãµ5EEÅEö;xþS=WMö×íÞtMï×Ï¾ÌJ^ý\Ý]õõë0Ï+znúÍ>qÍ»­Ì¦>÷AmRê%/<öØ»SÄ³÷-Ñß¨¸¯Ë¤{YJÙrA3fëy}JoKy'yÐ¢.Ê¤øôôø8cZzQFM²RgR¦S[Zs$E3Yfvf.YZsØ:få~ë;Vþ{+³Æ/*3©dÐÙ;ffÎÎj¨kß;ì«ßÕ;ÞCÛt¦Þ"#UoÎ/°µF£}IQQ-¢¹¢zåJ*×<ã½ü±O²lÛ¶
-Ãe,û¾í½~ì.>6m=íY»%ô:úËÏÅ:à~÷Ëê:*fkQ)Ùß`02	5J¹ÆZcoæ-æk³=AS*K;âzJÞWúuãÃ¦0>.=Uzº4J+KÛ1q²ôµRc©3'¯¦ãCrÒ`*PM9ùpY$ÞT <·X5YRRsóòã-E©)Îµ=)ÌÂR&y«39'·(?8_ëÉcyÀ-Dt|!*É× zçJØ]Òbg#Z=ÚÒâbçj*_*~­XI.¶*V¨X+®*«ÅÙ%¿ùZ¸8öB¶ßÛ¹×D{oïNÑÁçÒëâÝp¦áKI]MhË«Ø°cïNÁV±rEufÖJyÍÌ@jKF	ÍrÓÔî»ªZ¸,ô@IþôùÅ[×öWL¿¹¸aecùôjÑmvnßÞ¹ë²æ/íæ»¾ZQ¿á¦»¦9o½gÇ²Ökï>ûb4½UÝÜLc5GSK,m2zÚiMH®1g&&×ÄÅ(.Là¸p-gM
-ª&.J2Z8¥Õ4®*
-ÛÓz,Ì2É8S%'V&QÑ¡¼Á2ÕÞ·¸&#++G]­8­Ù5¦L²bg#T?1JÅÓ3oeFU¨Ùéß9Ø±él6®øg=»¹ÅÓükcïð&Ë»¯SÃ
-Òµ,uuôkêj ¦$Øè&ã²³-léh¯AÅ¨:}XôqÏïxuãD9FèoI)
-i´l\R­
-!>qLVwZAZZ3%)ö%ÅÅbËÔ%1ÇôûÌ>}cSaÓ§¶oÝ½¾¶÷ÓÙjÑÙ$þø±½-IùEb [ÔÀ;ñ,ø>j`2î·GFÃ±ôcVåbÛcø§¦&&%Q®¥.I&sæ9U/Ó_ßïÏ?oÈ·$k,æ,Qøò¾Ùº'ª^êêÊ¹Ú·"¥@CñËH7ÊgÏærã×ºw'ûW´íÀc½_Úüï?ûÀ}MÞP;f8Yðêë'½)gª>7ÝSÑÛØÞlúÖs-ÖGÃÎ³A5
-M¹Ê|ÒüY­46s³U¬'Ì¦ã<oSpòðmQÕ"¾H¿øù@ýz sËØ¹½b°Ôc5XHFl_RÎ]ËûÎÞk8þþôï½MT'+þkÃË¨ÂÎê*+S5Ò­²ÌêI+ÏÈLáé©)IiÉdIJcdáéqæäEl×¢(e&ÞÈRcXV×xØ½¢Á¼ÅÜnVÌ%Ê])<e©ÎÄ¤´"¾Æ2§2y&B÷d\BMfvÖÇ¸äÒ{ë7ÓòõïîÌ~¬XXZ.««ñByÅ!mEm(Y&Q22VdØQìÖ{Wßº"PÔ´î¢Úþçé7ïUÚ¿pmÇÒïXVom{õ§"×n±ß@lÄÙ>râ°PçqíqüP\8n*îTÜïã¶¸¸qc@£	¿LÌI§ðÄ¨ÐNÜ"
-FÏMEL{9®`imÖ~ %ÈÐÈè`Ã4ËÐngÙÓo²lõI¦NðO¨E8@Ø<;Är
-ûí~È6LN~o0Ø=1 07%\)b4c	e«çX¢ë^Ók8þçVx£gr1ÎªtÊc_;FèûÎÖE«ïûJâ]GÇ;8c6§³
-übcküÅ$>i|2ç»ñßKøIü+	ïþáÌÍ¯Ép&¥Ô$gÌx)C.yqì²Ðó[	ÉI©íI=I<ÉÊDdçÖ°©Âì|­FöKJc½£<Ö[ódïLNJ®÷å½+57¡.Jµ\ºÈD¬2£`KKÊ©\¼k±oñ}ÕÅÉf'¶9;ßÛóÆ¦3rûl:ó.À9gºÕYÞ`u.NÆ%×K^J,j
-geL HÆHö }dç,0ãLÌg.<¿N$è_w (ïêðRP$Ô'9á,BQ£õ¸Cðvî¥#Ç®ÕZhE5)òþ$M&cÿ3³®|ëÈôï®ó²ôÏ°TãY§rµkýbåK.«¯gl[åWîâ¶WÕù»ÓÏ|þ¦
-làÊMMù1øï×{ùqÿÉ]Éõ4gå§Cüª~îSÞjü2ªCmc3ÖMo¦¦¹Ô>ôS(ÃwéõWt)¨Jâ«qç{	Ý	ÜøcdÅøvÑ0×ô8³±ÿä|RÑ!å«
-jÈðY]z
-Ä#!*i;î¹6[|Ø»K½ÄÝ»4X^É/GäÂ¡+ÔÅ,:¬R:ë×aYÙçtØø6ÑwØ7tØLEÜ¯Ãq4ÊïÒáxõ9EÓáEÔkú¥'Ðns³'Óá$º,ùÓ³~;|\á6Ëjæ¤ZÖé°BË,ëuX¥xË(Ár_«Ã&êµÖa3¥Yþ ÃqÔbÐáxîJù/¢åiÏ~[¶"í:¨ìHOÖá$ªÈòÂ¦
-¯'e}IUÊÉzPÂàã³Nê°JYß°xcÖk:¬RjÖ6¸dýI¬¨ÍÀ'XÓtX%«Õ&á8_k#¾Ùµ:9Ù
-:øf_¬Ã}#¾Ù:øfÿ£#¾Ù¿ÒaÄ7çaF|s^ÔaÄ7÷S:øjÙ:øjÕaÄWû_:øß)áxá«â×aøª8¶ÆEÀ§dë°JKNk)Ù¨Ã°¿d«DæxtX¥¼-RÎm:,ä|MÂiÂç%Ïê0|^ò]	§{J~¦Ã°§äM	g ^ÊtX%­4CÂ¾´VA_Ú$álI¿Sý^	ç(½M¥÷H8_ØS:®Ã°§ô)	Û$ý÷uXÐ¿,á¥"JßÒaä@é%\&üS¨ÃðOYÌÎrQ	ÊJuXÍÒÿ³0ì/ùcë*ÛªÃ¿KÀ	1úý:,ð×KXÆ¥ì~z¥NÚO~òÐnr½F¢uR¿7Ð:é£aÀâêÞ+)4`À_¨Yâ]ÿCI³iÔ
-ÍÒÛ>¦o9­Æ»Êu¨ZbÁ1~xöÀ äÚy´aÚk¨1ïåz©£ï;×Ì£Ñf©ÖÐ%RJ`ÖêÐZ·*¿	X7f}÷Á³A*=¯1G[>Ï®ÎyøoIÏ
-¿õAÆ úaº8¡í¿ïs
-X¼åMAið± 	êR·#µK~¤¾M¸nîÝÒ÷.Ð>¤
-oHN!­â<6Åâì^a´û?Ê#óKÐH«öÌêõêÙ[.£ì£^ÝêÍr¦_zÑkÍÚ>,g¼2S;p
-I«ceÕ*äR´$(½<ã·aØ¢Ê¥çb,£¼Ò÷}2ÃDÎ
-I]óãîÖe¹¤msPJv÷Cÿ ó¾&­vI}n=±au@K®1Æ·6þ^=Ûýz=Ò7±ÕÍDÈ¥ÛÚ4©a¾U3¾ã)»^6ZÓ=y;¨{Ä­gjàº dz¤W¼èc²Ý:&$=-2j.§}rçKH~a©ç Î5£Á-ù÷éZ½úJcûQHóÂnP
-i1ì_½ºw}úJ¼>$GsQ
-È,Ö?'fjk`v-bnPÊ!êÅåºµ.ÝÿnYõ4}Îø¬OêÞ#±1~±Ã¼zûå¾óë9âÃUìè}º·cæª½KÆ*ô¡[_¿WFm@ÒøåÞeãä­d~v{g3Kìü+ôÈJkDnîÓ÷V¬îÌÚ1(GsÙüÐøÐúÜº^)!$=Ý· 7=´øÏÜvÏ®p·ÌmMæÀÒ·wÁÙzº°=¶ßzÕí¦esÕ36;(#â¢+%Ìj!×-gç2-¦½OzË/wÉþÙUÌè5SÌ»¤'ubÅ¼ü3ÏH÷ËusÆ¶
-yö1·gj%äw¤_a+duE¿ÜK
-Éyä(@»dÄ"^1KùWÃÌ­gÍ¨ô8÷[ÑyÞ¬8Zqý¤Ä· Ó«ÈÍq´à½Ib;)OS¢uÊl
-'×´Y|lÄ<ê×}>£Ý)6<ç^9»ô¡YîÙÚËç¹óh~µU¹:Û¿^½fô=½GJñÌÖD±[»umbwïÓkiïìiÓüÏÌÔÎÙêäÑwg6§eýêûy·çó×Ì.óÌ2·ÏÕ×§"{eeYÝ«GfH|¾ËU-ôT¬"çj©m¢¹ä½¨ZtoôòQº÷·3Wg÷~1ÿ+V½]Ò"¿ô¬W¿Óùkb®é¹84¯¶Íè¤OzÚ;ïw¯¼lzx^ÞÎÝï)aÝ ?W¾òFdü/Ñ:Sç(} Ý¡¤ÇüþÙõÄìÝzEù?¶«üz~ÌUÞ9ôq+ËríçFnæÞK9ý-¶Øý[FuèC1þ¿ç$äÝjHÞõÇÎ¡}òÞhæß]ý×Ñ7¬ßÿyõgóÝÅÇ·æîXÝRæ¹ûx&b®ùz÷ßdíÏÕ°ð¼_hG¿
-âì O)ö$P{øªÃóërÊñ|U#²Ä§#Û©M§¬ÂìrÌÔèpÆê$×JªÅ³hBúßvÖý÷OÆ¹Êyoö<ìÜï÷ìv¹=Ú£Zg¿GÛäòÒ|Ã~ß°+èõ
-iþwÖì
-ºþ¢J!Lëð
-& mßòÕ««Êq©®Ð´mÞ=ýÁ¶Íðïóô5{]ë}}32×H&Pk.ñèUUZÉ&¯{ØðíÎÌ§Ør)«SÂhÃ®>Ï kørÍ·ûc-×={¼ gØÓ§y´ H·whí® V¤unÒ¶ìÞ]¡¹ú4Ï@À3Ò²YIX³oÏ°Ëß¿>Ê£5»F¼C{¯î-×¶ùz!z³×Ýïp	éÃ^·×¥u¸BC}X\µªºÉ7ô
-Û÷k¼Gywk}wÏÐ2-¶v7¨\^Lú=ZhÐ5ó5w¿kØåÆ20ðºXkHÃÜ~±~/ÜîÇ=nO à:± äÜýW%òh#Þ`¿tÃ Ï×'¸³0Ä
-§fpÁÏPÐëµ@hx&=íÛçv!ÞÁa+8)Áà!æ¡LÄÑ3,MØ (múAxúB \j ¸À3ß"[BgxÐ;$)}C¬ö»CP`×µÇ'æGúás­ß3àG|Úï>$iïÒàmÐß
-yÝ wùý¸qÈí»½ÂYç
-,fÐ3°_ÃÚÈ!cÐ; ÝÔ7R@×çG¯GRÒ½!alÈ-ü¯íöaÉE"O°ôaâDj L¸L¦'®=®+½Cí	ºÅö>oÀ?àÚ/Tî!ÏHÀïòÃ4ôÁÄ 7 rÿ°oÐ'¥Uôþ5###zÂV¸}ýÁÁÊÁ øÛÊÁÀ.Xx@þ#`=eóÎ­;7nÙ¬miÕ>¹±©esGÖxñ¶M-;ãã;ûáÖ¯	ÀP¬ (=z-&#Y¬¹w¿¶ßnmð³ÜG±´DrÈE|±ý@îÚ3ìñL¬ÐºÁÖïBøzÅ6gp1";GD:y8ðô°ÇDwÃsvúöx$ñ,Bìí
-!fú°£æ-¨80cyÖ³Ì"Û´}®«æ
- CæsWhÛdÎîYÖ¤W.¤·Kø=n/Î¹+×àÅ!m×Õ×ç9¬Uy@KßÊÝý!£¼^± (t#¾áË±$ù(¾ÔPï7Ð/ô@VÌÝHTØPù÷k±äÕ=´PôÇÆÝsÕkoÈjP÷Üá!}ÃºÝ8Ðï
-ôaíózFbåêå:DÒ
-Ð7Wâf×³dauçb,æÒ­Þ}~±ÒäY}ßë Ç\#¶w4â(YUSWªÕ-_U^USU·½
-ÈªåËkjp­[Q§Õ­¬]]»:1þ#vÝÇnF1ªÔÍû«ý&IÜêÌÿeáLB,·o- Ãî¦sk:¦UÿÐcþSnPQ¾£Äu|þüü¯
-.|mpák_\øÚàÂ×¾6¸ðµÁ¯
-.|mpák_\øÚàÂ×¾6øøkÙÏ¼ôQ,Äf>>­>	- =wöbY5¨fp­ôÆÓ{ ¸:,á¹¿òWâÜì%OÃl£}òóógÚõÓ7$ý|rWÎ§>ßü|Où>Ò>Õ¦®S×ªMêJuêT/RÛÔÕó©Ï;ßyÞOtæ°­ç¬'i#¶4óçæ°mú½éå²x¥Ð/;²dÞü,î¯Í¿Ò7µ¼Ë+ýÿËS´~Jçy}:¯P2cdN)_°¤W;'»'ÓªåNjGãV6Ñ'rDã o/¯>&ø¤jèo"
-íBc¸29v¢	ú&Ò2øk"É)ï³ª0a±V·7¦+WS<ÊÙÉ¦@¿½}>ú^¥BØéH¶T¾7((C6¥QÉ¤jôÍJåJ²P$)¦'))«nW«$IVQlY1EªmÚ	EüÙ°S¹a"n°ï%£úå:ÅDé :ª,[ò3J<U¢tNÄ%VnLP:±ÌN¸Å¦ÿ¬¼:¡A_G»\É§ô­ÊâHmêr»$û;!úÖEÌ+D7T=Õ§¿+·Âã·Jm'VUScRBUø	M9è øÏâÊ( Qi¡EhFaÅ(ù1s#h*+É¯Ða´û «I`iIõ1%[±Âð6g".IXf¤¦I2ëDBRuÃ3J¶ qÈ²VûN(er)Ë&¬¹ÁKë²b± c¦Á3J²Xz"_z ÜhÃQ²b#ÆÀO	ïðùE|ÅOúÈþõþE½ÿa¬NñSÐâäÿ,úÓyü
-ÛÅ_¥û q~?£ÆÆÎ'ügü5 ã>ôÇÐ¯@<Rð=Û$@Ûï$fÅòç#J°ê@V®¤fV7òçø³?E¿ý³| ?Þ~é{èàµ´ýQ½ÿZä4?3ÓÆ'"IÂpÄ$º#£è¾¡Ø¨½Òö4ÿr@úÍHQ°L-µ%<ÆäÁH¾-µ1ßÏºØ» £WDO©üHr8ò´f;ÆóÃNk³ÐYî|H©*¬*¯zHÑ
-µr­N{Hk´ð[É çaÃòpÅùÌ=hN´ÃüÆZn<5uq:ëzpõKpµÌÎ¾#¡~mAãq í Ú!´«HÅõJ´Ï¢}íóD¡ |øÁá~Éá~pø%_j¡	pô£=£=àèGäöö£Gr´£íàhíàhG;8Ú%G;8ÚÁÑ.9àpÃ	§äpÃ	'8Ã	'8£
-Uà¨Gä¨G8ªÀQ%9ªÀQ*É¡CMrhàÐÀ¡C84phÃ8,à°H8,à°Ã"9,2>!4Áq§Áq§%ÇipÇip§Áq§ùÈ¸rªñ°Ë)°,§Àr
-,§ÀrJ²Ë)°ÒÎàHhÑ¡	Þ)ðNw
-¼SwJ¦WMðÁGaÉGap%Gap%Ç8ÆÀ11É11pcLrÉÄ
-¡	¿=)ÿæÐð«X+?ÄJeÞýzEö§qÙýgéjÙ_Iu²¡"ÙCìd3³­.¹1%`Ú.4Ú}hGÐN¢$ôÚkhQ^ë\¢&¶î314Nx²qñ>ããI£áñ´k¹<QÖQú¢¼Äõ÷h8DpmP¯ÞÔÙZ¼kx3åöû2öR;YÆ±/±Æ8~1Se¥Ã>á¬ËP´Îö
-Z]Qñ:T¦[|;Ë)ZidOÇºR§ýÛhãh¡]VVVVf¸2Ðw9è"F+F+@Ó
-ÊÌÄÝMjÙy'²&^H¤8¡§¸|'"ÅUè&#Å[Ð=)îµ5Æ±'©XÜ±'¹ÇÑØ^Çô7cÝ7"¶èØjÐíW »4Rü¢­1m'*X;õ¾ëý¶ímØJÑ9"ÅEº
-1[Êºèuô:×Ò&{Ä¶Ýmµ 6S±<3R¹4Ï&zeýþëRsíívÛÛ`ÿôø6©¢{©p]â·=]þU7Ú"ñçÃ¸ÞEÿí¡Âm÷@+|Òv·­Âvkù¤è[`÷REÄvµ6Éw¦ÙÙªlÁò×mÛ'l.Û6ÛÎBà#¶ËlO3©uñÇ´µCàF¬¢0b»¸pRØjÛosÚm«µ§iULn]ùÓÂTÓ¾þ-+9¾½n¥8ËLï.5­7­5ÙMKLMù¦tsªÙbN2'ãÍf³Ñ¬¹ÌéâçâÏ+Óâ¯×É¨«*aWûKSÎÌ>Aá4¥·u¬gmá)7µõjá÷:ì,~ë°Á¾SÛ¨­s}x£mÒÝ®s´Mív3vk7°a~Ã$£Î®I¨ërÅQ3ºîÜcÄXöu·tw5s_µ!u]ÊêÖæó\zô«cîeæïjëè
-?ß®@4¿»-|øªc<'¶4ãI¢ëî:¦úyrË6WýÍÝ {]!@FÅ¢y=iõd½ CbtE`]è@HE®(>QÒ©LÐ¿¢µ4k¤)$zEÒ¼RHóh1àm/*Tvu	*Öe×¤a¥RÍr$ÁM
-²1©,\9GR¨ÔÎÔJ]
-£±ÅhÒKfhÒK@ãø¾<ëlbyèÀóâ¿zì-´ðMûú­áC½6~ ¤ÿ$XQO¯»_ô.O8d÷4ØµñåÏgúy1½ÜÞ<NÏ·tv?ïô4G;·Ø]ÍÝ
-õ]tÝ8«««þ<Âê°.¡«¡ñ<ÓbºAèjº®gÔÕâyßÞ5n¦õâwAd?ÁÅ#{rº×gZüëDB[[`={\%ö-rtìëÃhbª¼±¼QLa©$ñónúõÀÚÜãì}Êt}=Í¸Q[¸vk[¸ cGH°ÓuþÄKN[©ÅÛeÃ{>%Îû
-ï
-ârà)¹-\ÖÑ^¹LPÕÓÜ
-\ÅNQ$n<.®e2:I`A¡N@&~#À§.3¸xTNääWûÁ	~
-Ïq|$R)ùÈÄBñü¨¬õx>}$§ ZüAXE_ë)å .?\7V8V>Vg?´ð¶ÄQ©|H¡ #0ãÁnýtôÝÉËÇàpt;ò7^èÃ®vè¿#§Ï:6 K
-HñÁÄðÇ&¡¦Î"'CE*ü?XÛ6
-endstream
-endobj
-
-6 0 obj
-10825
-endobj
-
-7 0 obj
-<</Type/FontDescriptor/FontName/BAAAAA+Arial-BoldMT
-/Flags 4
-/FontBBox[-627 -376 2000 1011]/ItalicAngle 0
-/Ascent 905
-/Descent 211
-/CapHeight 1010
-/StemV 80
-/FontFile2 5 0 R>>
-endobj
-
-8 0 obj
-<</Length 272/Filter/FlateDecode>>
-stream
-x]Ïn Æï<ÇíaZu»1ÙºÙÄCÿ¤¶ 0ZñàÛÛ&=@~ÃÌ7ùf`usm´rìÕÎ¢G¥¥e^­ ÚÃ¨4IR*p{·:C×¶Ûâ`jô0%ao>·8»ÑÃEÎ=Üöb%X¥Gzø¨[·«1_0vª¢ßç©3ÏÝUÇFú´rÛÑKþ
-Þ74Å8VÄ,a1 ÛéHÉyEËÛ­" å¿\²KúA|vÖ&¾ó,«<§È§<ð=rq
-Å÷sà9åäùû¢ùµÈuàÇÈ9ÜÝ»a?k bµÖ¯ ³©ß1³	*<ß;í
-endstream
-endobj
-
-9 0 obj
-<</Type/Font/Subtype/TrueType/BaseFont/BAAAAA+Arial-BoldMT
-/FirstChar 0
-/LastChar 11
-/Widths[750 722 610 889 556 277 666 610 333 277 277 556 ]
-/FontDescriptor 7 0 R
-/ToUnicode 8 0 R
->>
-endobj
-
-10 0 obj
-<<
-/F1 9 0 R
->>
-endobj
-
-11 0 obj
-<</Font 10 0 R
-/ProcSet[/PDF/Text]>>
-endobj
-
-1 0 obj
-<</Type/Page/Parent 4 0 R/Resources 11 0 R/MediaBox[0 0 595 842]/Group<</S/Transparency/CS/DeviceRGB/I true>>/Contents 2 0 R>>
-endobj
-
-12 0 obj
-<</Count 1/First 13 0 R/Last 13 0 R
->>
-endobj
-
-13 0 obj
-<</Title<FEFF00440075006D006D00790020005000440046002000660069006C0065>
-/Dest[1 0 R/XYZ 56.7 773.3 0]/Parent 12 0 R>>
-endobj
-
-4 0 obj
-<</Type/Pages
-/Resources 11 0 R
-/MediaBox[ 0 0 595 842 ]
-/Kids[ 1 0 R ]
-/Count 1>>
-endobj
-
-14 0 obj
-<</Type/Catalog/Pages 4 0 R
-/Outlines 12 0 R
->>
-endobj
-
-15 0 obj
-<</Author<FEFF004500760061006E00670065006C006F007300200056006C006100630068006F006700690061006E006E00690073>
-/Creator<FEFF005700720069007400650072>
-/Producer<FEFF004F00700065006E004F00660066006900630065002E006F0072006700200032002E0031>
-/CreationDate(D:20070223175637+02'00')>>
-endobj
-
-xref
-0 16
-0000000000 65535 f
-0000011997 00000 n
-0000000019 00000 n
-0000000224 00000 n
-0000012330 00000 n
-0000000244 00000 n
-0000011154 00000 n
-0000011176 00000 n
-0000011368 00000 n
-0000011709 00000 n
-0000011910 00000 n
-0000011943 00000 n
-0000012140 00000 n
-0000012196 00000 n
-0000012429 00000 n
-0000012494 00000 n
-trailer
-<</Size 16/Root 14 0 R
-/Info 15 0 R
-/ID [ <F7D77B3D22B9F92829D49FF5D78B8F28>
-<F7D77B3D22B9F92829D49FF5D78B8F28> ]
->>
-startxref
-12787
-%%EOF
-
-
------------------------------134719407413707113971489368010
-
-Content-Disposition: form-data; name="classification"
-
-
-
-PUBLIC
-
------------------------------134719407413707113971489368010--
-
-<<<RESPONSE>>>
-
-
-{"JSON":{"_embedded":{"documents":[{"size":13264,"mimeType":"application/pdf","originalDocumentName":"et1_first_last.pdf","createdBy":"42f46280-24b4-4f4d-b93c-8c92cbb2b93f","lastModifiedBy":"42f46280-24b4-4f4d-b93c-8c92cbb2b93f","modifiedOn":"2019-07-25T15:30:26+0000","createdOn":"2019-07-25T15:30:26+0000","classification":"PUBLIC","_links":{"self":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7"},"binary":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/binary"},"thumbnail":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/thumbnail"}},"_embedded":{"allDocumentVersions":{"_embedded":{"documentVersions":[{"size":13264,"mimeType":"application/pdf","originalDocumentName":"et1_first_last.pdf","createdBy":"42f46280-24b4-4f4d-b93c-8c92cbb2b93f","createdOn":"2019-07-25T15:30:26+0000","_links":{"document":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7"},"self":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/versions/ac711770-6681-4fd8-b662-f7f54ea7a27d"},"binary":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/versions/ac711770-6681-4fd8-b662-f7f54ea7a27d/binary"},"thumbnail":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/versions/ac711770-6681-4fd8-b662-f7f54ea7a27d/thumbnail"},"migrate":{"href":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/versions/ac711770-6681-4fd8-b662-f7f54ea7a27d/migrate"}}}]}}}}]}},"Response payload":{"EDITOR_CONFIG":{"text":"ewogICJfZW1iZWRkZWQiIDogewogICAgImRvY3VtZW50cyIgOiBbIHsKICAgICAgInNpemUiIDogMTMyNjQsCiAgICAgICJtaW1lVHlwZSIgOiAiYXBwbGljYXRpb24vcGRmIiwKICAgICAgIm9yaWdpbmFsRG9jdW1lbnROYW1lIiA6ICJldDFfZmlyc3RfbGFzdC5wZGYiLAogICAgICAiY3JlYXRlZEJ5IiA6ICI0MmY0NjI4MC0yNGI0LTRmNGQtYjkzYy04YzkyY2JiMmI5M2YiLAogICAgICAibGFzdE1vZGlmaWVkQnkiIDogIjQyZjQ2MjgwLTI0YjQtNGY0ZC1iOTNjLThjOTJjYmIyYjkzZiIsCiAgICAgICJtb2RpZmllZE9uIiA6ICIyMDE5LTA3LTI1VDE1OjMwOjI2KzAwMDAiLAogICAgICAiY3JlYXRlZE9uIiA6ICIyMDE5LTA3LTI1VDE1OjMwOjI2KzAwMDAiLAogICAgICAiY2xhc3NpZmljYXRpb24iIDogIlBVQkxJQyIsCiAgICAgICJfbGlua3MiIDogewogICAgICAgICJzZWxmIiA6IHsKICAgICAgICAgICJocmVmIiA6ICJodHRwOi8vZG0tc3RvcmU6ODA4MC9kb2N1bWVudHMvYTBhMTQ3M2QtYmNlNy00ZmNkLTgyOTktZjUwZjlmNTdiOGQ3IgogICAgICAgIH0sCiAgICAgICAgImJpbmFyeSIgOiB7CiAgICAgICAgICAiaHJlZiIgOiAiaHR0cDovL2RtLXN0b3JlOjgwODAvZG9jdW1lbnRzL2EwYTE0NzNkLWJjZTctNGZjZC04Mjk5LWY1MGY5ZjU3YjhkNy9iaW5hcnkiCiAgICAgICAgfSwKICAgICAgICAidGh1bWJuYWlsIiA6IHsKICAgICAgICAgICJocmVmIiA6ICJodHRwOi8vZG0tc3RvcmU6ODA4MC9kb2N1bWVudHMvYTBhMTQ3M2QtYmNlNy00ZmNkLTgyOTktZjUwZjlmNTdiOGQ3L3RodW1ibmFpbCIKICAgICAgICB9CiAgICAgIH0sCiAgICAgICJfZW1iZWRkZWQiIDogewogICAgICAgICJhbGxEb2N1bWVudFZlcnNpb25zIiA6IHsKICAgICAgICAgICJfZW1iZWRkZWQiIDogewogICAgICAgICAgICAiZG9jdW1lbnRWZXJzaW9ucyIgOiBbIHsKICAgICAgICAgICAgICAic2l6ZSIgOiAxMzI2NCwKICAgICAgICAgICAgICAibWltZVR5cGUiIDogImFwcGxpY2F0aW9uL3BkZiIsCiAgICAgICAgICAgICAgIm9yaWdpbmFsRG9jdW1lbnROYW1lIiA6ICJldDFfZmlyc3RfbGFzdC5wZGYiLAogICAgICAgICAgICAgICJjcmVhdGVkQnkiIDogIjQyZjQ2MjgwLTI0YjQtNGY0ZC1iOTNjLThjOTJjYmIyYjkzZiIsCiAgICAgICAgICAgICAgImNyZWF0ZWRPbiIgOiAiMjAxOS0wNy0yNVQxNTozMDoyNiswMDAwIiwKICAgICAgICAgICAgICAiX2xpbmtzIiA6IHsKICAgICAgICAgICAgICAgICJkb2N1bWVudCIgOiB7CiAgICAgICAgICAgICAgICAgICJocmVmIiA6ICJodHRwOi8vZG0tc3RvcmU6ODA4MC9kb2N1bWVudHMvYTBhMTQ3M2QtYmNlNy00ZmNkLTgyOTktZjUwZjlmNTdiOGQ3IgogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJzZWxmIiA6IHsKICAgICAgICAgICAgICAgICAgImhyZWYiIDogImh0dHA6Ly9kbS1zdG9yZTo4MDgwL2RvY3VtZW50cy9hMGExNDczZC1iY2U3LTRmY2QtODI5OS1mNTBmOWY1N2I4ZDcvdmVyc2lvbnMvYWM3MTE3NzAtNjY4MS00ZmQ4LWI2NjItZjdmNTRlYTdhMjdkIgogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJiaW5hcnkiIDogewogICAgICAgICAgICAgICAgICAiaHJlZiIgOiAiaHR0cDovL2RtLXN0b3JlOjgwODAvZG9jdW1lbnRzL2EwYTE0NzNkLWJjZTctNGZjZC04Mjk5LWY1MGY5ZjU3YjhkNy92ZXJzaW9ucy9hYzcxMTc3MC02NjgxLTRmZDgtYjY2Mi1mN2Y1NGVhN2EyN2QvYmluYXJ5IgogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJ0aHVtYm5haWwiIDogewogICAgICAgICAgICAgICAgICAiaHJlZiIgOiAiaHR0cDovL2RtLXN0b3JlOjgwODAvZG9jdW1lbnRzL2EwYTE0NzNkLWJjZTctNGZjZC04Mjk5LWY1MGY5ZjU3YjhkNy92ZXJzaW9ucy9hYzcxMTc3MC02NjgxLTRmZDgtYjY2Mi1mN2Y1NGVhN2EyN2QvdGh1bWJuYWlsIgogICAgICAgICAgICAgICAgfSwKICAgICAgICAgICAgICAgICJtaWdyYXRlIiA6IHsKICAgICAgICAgICAgICAgICAgImhyZWYiIDogImh0dHA6Ly9kbS1zdG9yZTo4MDgwL2RvY3VtZW50cy9hMGExNDczZC1iY2U3LTRmY2QtODI5OS1mNTBmOWY1N2I4ZDcvdmVyc2lvbnMvYWM3MTE3NzAtNjY4MS00ZmQ4LWI2NjItZjdmNTRlYTdhMjdkL21pZ3JhdGUiCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgfQogICAgICAgICAgICB9IF0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIH0KICAgIH0gXQogIH0KfQ==","mode":"application/json"}}}
-
-Once all files have been uploaded, we need to grab the urls from the above response (see links section)
-
-and then we create an upload document event as follows
-
-
-POST to http://localhost:3453/data/cases/1563450037366014/events
-
-{
-  "data": {
-    "documentCollection": [
-      {
-        "id": null,
-        "value": {
-          "typeOfDocument": "Power of attorney",
-          "ownerDocument": "owner",
-          "creationDate": "2010-01-01",
-          "shortDescription": "short description",
-          "uploadedDocument": {
-            "document_url": "http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7",
-            "document_binary_url": "http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/binary",
-            "document_filename": "et1_first_last.pdf"
-          }
-        }
-      }
-    ]
-  },
-  "event": {
-    "id": "uploadDocument",
-    "summary": "",
-    "description": ""
-  },
-  "event_token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJvZDhocWlyaDNxMDk2bGR1M3VucTc4MHZ2aCIsInN1YiI6IjQyZjQ2MjgwLTI0YjQtNGY0ZC1iOTNjLThjOTJjYmIyYjkzZiIsImlhdCI6MTU2NDA2ODU4MywiY2FzZS1pZCI6IjIiLCJldmVudC1pZCI6InVwbG9hZERvY3VtZW50IiwiY2FzZS10eXBlLWlkIjoiRW1wVHJpYl9NVlBfMS4wX01hbmMiLCJqdXJpc2RpY3Rpb24taWQiOiJFTVBMT1lNRU5UIiwiY2FzZS1zdGF0ZSI6IjJfQWNjZXB0ZWQiLCJjYXNlLXZlcnNpb24iOiIzN2NjM2Q0NzA3ZTg4Y2IwZmU4OWI2MDJlN2U0MzhlZjY2ZDM3YWM2In0.81SvsyTMbG3ttVGRF-nNtozGHhqbyYzbb2_qvfc1Wvs",
-  "ignore_warning": false
-}
-
-
-which responds with
-
-{"_links":{"self":{"href":"http://ccd-data-store-api:4452/cases/1563450037366014/events"}},"id":"1563450037366014","jurisdiction":"EMPLOYMENT","case_type":"Manchester_Dev","created_on":"2019-07-18T11:40:37.329","last_modified_on":"2019-07-25T15:33:17.351","state":"2_Accepted","security_classification":"PUBLIC","data":{"claimantWorkAddress":{"claimant_work_address":{"County":"Greater London","Country":null,"PostCode":"WD18 7SQ","PostTown":"London","AddressLine1":"101","AddressLine2":"Petty France"},"claimant_work_phone_number":"03333 423554"},"claimantRepresentedQuestion":"Yes","receiptDate":"2019-07-18","respondentCollection":[],"documentCollection":[{"value":{"typeOfDocument":"Power of attorney","ownerDocument":"owner","creationDate":"2010-01-01","shortDescription":"short description","uploadedDocument":{"document_url":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7","document_binary_url":"http://dm-store:8080/documents/a0a1473d-bce7-4fcd-8299-f50f9f57b8d7/binary","document_filename":"et1_first_last.pdf"}},"id":"7b2289a5-2189-4a42-928c-7fe6cfe6b84a"}],"preAcceptCase":{"caseAccepted":"Yes","dateAccepted":"2019-01-01"},"respondentSumType":{"respondent_ACAS":"AC123456/78/90","respondent_name":"McLaughlin, Reilly and Schulist","respondent_phone1":"02222 321654","respondent_address":{"County":"Greater London","PostCode":"SW1H 9QR","PostTown":"London","AddressLine1":"20119","AddressLine2":"Lavenia Cliffs"},"respondent_ACAS_question":"Yes"},"claimantOtherType":{"claimant_disabled":"Yes","claimant_occupation":"receptionist","claimant_employed_to":null,"claimant_employed_from":"2009-11-18","claimant_disabled_details":"My special needs are as follows","claimant_employed_currently":"Yes","claimant_employed_notice_period":null},"caseType":"Single","feeGroupReference":"332000000400","claimantType":{"claimant_addressUK":{"County":"Manchester","Country":"United Kingdom","PostCode":"SW1H 9AJ","PostTown":"London","AddressLine1":"90043","AddressLine2":"Lemke Common"},"claimant_phone_number":"01234 567890","claimant_email_address":"sivvoy.taing@hmcts.net","claimant_mobile_number":"01234 098765","claimant_contact_preference":"Email"},"ethosCaseReference":"caseRef0001_20190718114032.023374","claimantIndType":{"claimant_gender":"Not Known","claimant_title1":"Ms","claimant_last_name":"Koepp","claimant_first_names":"Garth","claimant_date_of_birth":"1982-11-21"},"claimant_TypeOfClaimant":"Individual","state":"Pending","representativeClaimantType":{"representative_dx":"dx1234567890","name_of_organisation":"generate web-enabled ROI","name_of_representative":"Buck Berge","representative_address":{"County":"Greater London","PostCode":"SW1H 9PP","PostTown":"London","AddressLine1":"106","AddressLine2":"Mayfair"},"representative_occupation":"Solicitor","representative_phone_number":"01111 123456","representative_email_address":"sivvoy.taing@hmcts.net","representative_mobile_number":"02222 654321"}},"data_classification":{"claimantWorkAddress":{"classification":"PUBLIC","value":{"claimant_work_address":{"classification":"PUBLIC","value":{"County":"PUBLIC","Country":"PUBLIC","PostCode":"PUBLIC","PostTown":"PUBLIC","AddressLine1":"PUBLIC","AddressLine2":"PUBLIC"}},"claimant_work_phone_number":"PUBLIC"}},"claimantRepresentedQuestion":"PUBLIC","receiptDate":"PUBLIC","respondentCollection":{"classification":"PUBLIC","value":[]},"documentCollection":{"classification":"PUBLIC","value":[{"value":{"typeOfDocument":"PUBLIC","ownerDocument":"PUBLIC","creationDate":"PUBLIC","shortDescription":"PUBLIC","uploadedDocument":"PUBLIC"},"id":"7b2289a5-2189-4a42-928c-7fe6cfe6b84a"}]},"preAcceptCase":{"classification":"PUBLIC","value":{"caseAccepted":"PUBLIC","dateAccepted":"PUBLIC"}},"respondentSumType":{"classification":"PUBLIC","value":{"respondent_ACAS":"PUBLIC","respondent_name":"PUBLIC","respondent_phone1":"PUBLIC","respondent_address":{"classification":"PUBLIC","value":{"County":"PUBLIC","PostCode":"PUBLIC","PostTown":"PUBLIC","AddressLine1":"PUBLIC","AddressLine2":"PUBLIC"}},"respondent_ACAS_question":"PUBLIC"}},"claimantOtherType":{"classification":"PUBLIC","value":{"claimant_disabled":"PUBLIC","claimant_occupation":"PUBLIC","claimant_employed_to":"PUBLIC","claimant_employed_from":"PUBLIC","claimant_disabled_details":"PUBLIC","claimant_employed_currently":"PUBLIC","claimant_employed_notice_period":"PUBLIC"}},"caseType":"PUBLIC","feeGroupReference":"PUBLIC","claimantType":{"classification":"PUBLIC","value":{"claimant_addressUK":{"classification":"PUBLIC","value":{"County":"PUBLIC","Country":"PUBLIC","PostCode":"PUBLIC","PostTown":"PUBLIC","AddressLine1":"PUBLIC","AddressLine2":"PUBLIC"}},"claimant_phone_number":"PUBLIC","claimant_email_address":"PUBLIC","claimant_mobile_number":"PUBLIC","claimant_contact_preference":"PUBLIC"}},"ethosCaseReference":"PUBLIC","claimantIndType":{"classification":"PUBLIC","value":{"claimant_gender":"PUBLIC","claimant_title1":"PUBLIC","claimant_last_name":"PUBLIC","claimant_first_names":"PUBLIC","claimant_date_of_birth":"PUBLIC"}},"claimant_TypeOfClaimant":"PUBLIC","state":"PUBLIC","representativeClaimantType":{"classification":"PUBLIC","value":{"representative_dx":"PUBLIC","name_of_organisation":"PUBLIC","name_of_representative":"PUBLIC","representative_address":{"classification":"PUBLIC","value":{"County":"PUBLIC","PostCode":"PUBLIC","PostTown":"PUBLIC","AddressLine1":"PUBLIC","AddressLine2":"PUBLIC"}},"representative_occupation":"PUBLIC","representative_phone_number":"PUBLIC","representative_email_address":"PUBLIC","representative_mobile_number":"PUBLIC"}}},"after_submit_callback_response":null,"callback_response_status_code":null,"callback_response_status":null,"delete_draft_response_status_code":null,"delete_draft_response_status":null}
