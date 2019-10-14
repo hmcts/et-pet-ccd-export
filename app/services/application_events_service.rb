@@ -154,7 +154,11 @@ module ApplicationEventsService
       event_data = {
         sidekiq: sidekiq_job_data.merge('error_message' => exception.message, 'error_class' => exception.class.to_s),
         export_id: export_id,
-        external_data: {},
+        external_data: {
+          'error' => {
+            'message' => exception.message
+          }
+        },
         message: 'Claim erroring due to subclaim error',
         state: 'erroring',
         percent_complete: nil
