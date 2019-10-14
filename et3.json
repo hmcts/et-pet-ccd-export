@@ -1,0 +1,97 @@
+{
+  "resource_type": "Response",
+  "external_system": {
+    "name": "CCD Manchester",
+    "reference": "ccd_manchester",
+    "enabled": true,
+    "office_codes": [
+      24
+    ],
+    "configurations": [
+      {
+        "key": "case_type_id",
+        "value": "Manchester_Dev"
+      },
+      {
+        "key": "multiples_case_type_id",
+        "value": "Manchester_Multiples_Dev"
+      }
+    ]
+  },
+  "resource": {
+    "reference": "242000088500",
+    "agree_with_claimant_notice": false,
+    "agree_with_claimant_pension_benefits": false,
+    "agree_with_claimants_description_of_job_or_title": false,
+    "agree_with_claimants_hours": false,
+    "agree_with_early_conciliation_details": false,
+    "agree_with_earnings_details": false,
+    "agree_with_employment_dates": false,
+    "case_number": "2454321/2017",
+    "claim_information": "lorem ipsum info",
+    "claimants_name": "Oliva Medhurst",
+    "continued_employment": false,
+    "date_of_receipt": "2019-09-03T06:17:13.584Z",
+    "defend_claim": true,
+    "defend_claim_facts": "lorem ipsum defence",
+    "disagree_claimant_notice_reason": "lorem ipsum notice reason",
+    "disagree_claimant_pension_benefits_reason": "lorem ipsum claimant pension",
+    "disagree_claimants_job_or_title": "lorem ipsum job title",
+    "disagree_conciliation_reason": "lorem ipsum conciliation",
+    "disagree_employment": "lorem ipsum employment",
+    "email_receipt": "sivvoy.taing@hmcts.net",
+    "employment_end": "2017-12-31",
+    "employment_start": "2017-01-01",
+    "make_employer_contract_claim": true,
+    "queried_pay_before_tax_period": "Monthly",
+    "queried_take_home_pay_period": "Monthly",
+    "queried_hours": 32.0,
+    "queried_pay_before_tax": 1000.0,
+    "queried_take_home_pay": 900.0,
+    "respondent": {
+      "name": "MacGyver-Langosh",
+      "acas_certificate_number": null,
+      "acas_exemption_code": null,
+      "address_telephone_number": "02081234567",
+      "alt_phone_number": "07123456789",
+      "contact": "Rachelle Klein",
+      "contact_preference": "email",
+      "disability": true,
+      "disability_information": "Lorem ipsum disability",
+      "dx_number": "234242342",
+      "email_address": "sivvoy.taing@hmcts.net",
+      "employment_at_site_number": null,
+      "fax_number": null,
+      "organisation_employ_gb": 100,
+      "organisation_more_than_one_site": false,
+      "work_address_telephone_number": null,
+      "address": {
+        "building": "the-shard",
+        "street": "Franecki Cliff",
+        "locality": "westminster",
+        "county": "london",
+        "post_code": "wc1 1aa"
+      },
+      "work_address": null
+    },
+    "representative": {
+      "name": "Miss Lawrence Klein",
+      "organisation_name": "engineer strategic markets",
+      "address_telephone_number": "01111 123456",
+      "mobile_number": "07987654321",
+      "email_address": null,
+      "representative_type": "Solicitor",
+      "dx_number": "dx1234567890",
+      "reference": "Rep Ref",
+      "contact_preference": "fax",
+      "fax_number": "0207 345 6789",
+      "address": {
+        "building": "106",
+        "street": "Mayfair",
+        "locality": "London",
+        "county": "Greater London",
+        "post_code": "SW1H 9PP"
+      }
+    }
+  }
+}

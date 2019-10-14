@@ -1,0 +1,27 @@
+{
+  "data": {
+    "documentCollection": [
+      {
+        "id": null,
+        "value": {
+          "typeOfDocument": "ET1",
+          "ownerDocument": null,
+          "creationDate": null,
+          "shortDescription": null,
+          "uploadedDocument": {
+            "document_url": "http://dm-store-demo.service.core-compute-demo.internal:443/documents/577a415b-8772-4a04-b30c-003071f0c6c2",
+            "document_binary_url": "http://dm-store-demo.service.core-compute-demo.internal:443/documents/577a415b-8772-4a04-b30c-003071f0c6c2/binary",
+            "document_filename": "et1_first_last.pdf"
+          }
+        }
+      }
+    ]
+  },
+  "event": {
+    "id": "uploadDocument",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI1MGNsMjZ0ZGdxbWtlYzNicGx0dGw3cTM5MiIsInN1YiI6IjY1MDY5MmJiLWNlZmUtNDY2YS1iYThkLTY4NzM3NzE3MzA2NCIsImlhdCI6MTU2NzU4Mjk1NywiY2FzZS1pZCI6IjExMzIzIiwiZXZlbnQtaWQiOiJ1cGxvYWREb2N1bWVudCIsImNhc2UtdHlwZS1pZCI6Ik1hbmNoZXN0ZXJfRGV2IiwianVyaXNkaWN0aW9uLWlkIjoiRU1QTE9ZTUVOVCIsImNhc2Utc3RhdGUiOiJBY2NlcHRlZCIsImNhc2UtdmVyc2lvbiI6ImRlODgwMzVlMWIyNWFkZmQxMmExOTkzMTI2Y2QwZjc1YTc3OWQ2ZjQiLCJlbnRpdHktdmVyc2lvbiI6MX0.xSX3dcCW6unWx9n5QpaNsERfXA1FLrHcIue3lZTSE-E",
+  "ignore_warning": false
+}

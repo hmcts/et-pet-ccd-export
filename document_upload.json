@@ -1,0 +1,46 @@
+{
+  "data": {
+    "documentCollection": [
+      {
+        "id": null,
+        "value": {
+          "typeOfDocument": "Correspondence",
+          "ownerDocument": "sfdfdsf",
+          "creationDate": "2019-01-01",
+          "shortDescription": "sdfdsfsdfds",
+          "uploadedDocument": {
+            "document_url": "http://dm-store-demo.service.core-compute-demo.internal:443/documents/4e5ca7bd-8873-46ef-92f0-6735cf8416e7",
+            "document_binary_url": "http://dm-store-demo.service.core-compute-demo.internal:443/documents/4e5ca7bd-8873-46ef-92f0-6735cf8416e7/binary",
+            "document_filename": "et1_first_last.pdf"
+          }
+        }
+      }
+    ]
+  },
+  "event": {
+    "id": "uploadDocument",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmMXRjOG8zaHM2aWZrc241Y2EyOXJwdDMzMCIsInN1YiI6IjY1MDY5MmJiLWNlZmUtNDY2YS1iYThkLTY4NzM3NzE3MzA2NCIsImlhdCI6MTU2NDA1NzM0MywiY2FzZS1pZCI6Ijk1NzEiLCJldmVudC1pZCI6InVwbG9hZERvY3VtZW50IiwiY2FzZS10eXBlLWlkIjoiRW1wVHJpYl9NVlBfMS4wX01hbmMiLCJqdXJpc2RpY3Rpb24taWQiOiJFTVBMT1lNRU5UIiwiY2FzZS1zdGF0ZSI6IjJfQWNjZXB0ZWQiLCJjYXNlLXZlcnNpb24iOiI1MjFiYzVhNTMyYmMyZDI5MjM4NjIwOTJiZmU0NmY5YzY1NTU0ZmI5IiwiZW50aXR5LXZlcnNpb24iOjF9._V3hos6Dyc03EMfMcMYuS_lr5bxeZGt55wLRdM1gzRg",
+  "ignore_warning": false,
+  "event_data": {
+    "documentCollection": [
+      {
+        "id": null,
+        "value": {
+          "typeOfDocument": "Correspondence",
+          "ownerDocument": "sfdfdsf",
+          "creationDate": "2019-01-01",
+          "shortDescription": "sdfdsfsdfds",
+          "uploadedDocument": {
+            "document_url": "http://dm-store-demo.service.core-compute-demo.internal:443/documents/4e5ca7bd-8873-46ef-92f0-6735cf8416e7",
+            "document_binary_url": "http://dm-store-demo.service.core-compute-demo.internal:443/documents/4e5ca7bd-8873-46ef-92f0-6735cf8416e7/binary",
+            "document_filename": "et1_first_last.pdf"
+          }
+        }
+      }
+    ]
+  },
+  "case_reference": "1564057310972076"
+}

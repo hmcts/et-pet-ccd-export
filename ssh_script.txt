@@ -1,0 +1,16 @@
+ssh -L 4501:idam-api.demo.platform.hmcts.net:443 -L 4502:rpe-service-auth-provider-demo.service.core-compute-demo.internal:80 -L 4452:ccd-data-store-api-demo.service.core-compute-demo.internal:443 gtaylor@reformMgmtDevBastion02
+
+sshuttle -r gtaylor@bastion.reform.hmcts.net 10.0.0.0/8 172.0.0.0/8 51.140.121.207/32 51.143.143.84/32
+
+curl -k http://proxyout.reform.hmcts.net:8080 https://idam-web-admin.ithc.platform.hmcts.net1
+
+CCD_DOCUMENT_STORE_BASE_URL=https://dm-store-demo.scm.service.core-compute-demo.internal
+CCD_AUTH_BASE_URL=http://rpe-service-auth-provider-demo.service.core-compute-demo.internal;
+CCD_DATA_STORE_BASE_URL=https://ccd-data-store-api-demo.service.core-compute-demo.internal;
+CCD_IDAM_BASE_URL=https://idam-api-idam-demo.service.core-compute-idam-demo.internal;
+CCD_MICROSERVICE_SECRET=IJCSR247WJMX4ZYF;
+CCD_MICROSERVICE_ID=employment_tribunals;
+CCD_SIDAM_USERNAME=eric.ccdcooper@gmail.com;
+CCD_SIDAM_PASSWORD=Nagoya0102
+
+ssh -L 4453:localhost:4453 -L 4451:localhost:4451 -L 4452:localhost:4452 -L 5000:localhost:5000 -L 4502:localhost:4502 -L 3451:localhost:3451 -L 3453:localhost:3453 -L 4506:localhost:4506 -L 3501:localhost:3501 -L 8082:localhost:8082 -L 9010:localhost:9010 -L 18080:localhost:18080 -L 1389:localhost:1389 -L 8080:localhost:8080 -L 5051:localhost:5051 -L 5600:localhost:5600 -L 10000:localhost:10000 -L 5050:localhost:5050 garytaylor@192.168.0.100
