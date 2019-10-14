@@ -53,13 +53,14 @@ RSpec.describe ::EtExporter::ExportClaimWorker do
       it 'informs the application events service of an error' do
         # Arrange - make the service raise an error
         MyError = Class.new(RuntimeError)
-        expect(fake_singles_service).to receive(:call).and_raise(MyError, "Something went wrong")
+        my_exception = MyError.new("Something went wrong")
+        expect(fake_singles_service).to receive(:call).and_raise(my_exception)
 
         # Act - Call the worker
         worker.perform(example_export.as_json.to_json) rescue MyError
 
         # Assert - Make sure the fake events service was called correctly
-        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
+        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, exception: my_exception)
       end
 
       it 're raises the error to mark it as failure and allow retrying' do
@@ -106,13 +107,14 @@ RSpec.describe ::EtExporter::ExportClaimWorker do
       it 'informs the application events service of an error' do
         # Arrange - make the service raise an error
         MyError = Class.new(RuntimeError)
-        expect(fake_multiples_service).to receive(:call).and_raise(MyError, "Something went wrong")
+        my_exception = MyError.new("Something went wrong")
+        expect(fake_multiples_service).to receive(:call).and_raise(MyError, my_exception)
 
         # Act - Call the worker
         worker.perform(example_export.as_json.to_json) rescue MyError
 
         # Assert - Make sure the fake events service was called correctly
-        expect(fake_events_service).to have_received(:send_multiples_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
+        expect(fake_events_service).to have_received(:send_multiples_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, exception: instance_of(MyError))
       end
     end
   end
