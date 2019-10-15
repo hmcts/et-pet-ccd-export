@@ -66,11 +66,15 @@ module ApplicationEventsService
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end
 
-    def send_claim_erroring_event(export_id:, sidekiq_job_data:)
+    def send_claim_erroring_event(export_id:, sidekiq_job_data:, exception:)
       event_data = {
         sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
         export_id: export_id,
-        external_data: {},
+        external_data: {
+          'error' => {
+            'message' => exception.message
+          }
+        },
         message: 'Claim erroring',
         state: 'erroring',
         percent_complete: nil
@@ -78,11 +82,15 @@ module ApplicationEventsService
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end
 
-    def send_response_erroring_event(export_id:, sidekiq_job_data:)
+    def send_response_erroring_event(export_id:, sidekiq_job_data:, exception:)
       event_data = {
         sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
         export_id: export_id,
-        external_data: {},
+        external_data: {
+          'error' => {
+            'message' => exception.message
+          }
+        },
         message: 'Response erroring',
         state: 'erroring',
         percent_complete: nil
@@ -90,11 +98,15 @@ module ApplicationEventsService
       send_application_event('ResponseExportFeedbackReceived', event_data)
     end
 
-    def send_multiples_claim_erroring_event(export_id:, sidekiq_job_data:)
+    def send_multiples_claim_erroring_event(export_id:, sidekiq_job_data:, exception:)
       event_data = {
         sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
         export_id: export_id,
-        external_data: {},
+        external_data: {
+          'error' => {
+            'message' => exception.message
+          }
+        },
         message: 'Multiples claim erroring',
         state: 'erroring',
         percent_complete: nil
@@ -142,7 +154,11 @@ module ApplicationEventsService
       event_data = {
         sidekiq: sidekiq_job_data.merge('error_message' => exception.message, 'error_class' => exception.class.to_s),
         export_id: export_id,
-        external_data: {},
+        external_data: {
+          'error' => {
+            'message' => exception.message
+          }
+        },
         message: 'Claim erroring due to subclaim error',
         state: 'erroring',
         percent_complete: nil

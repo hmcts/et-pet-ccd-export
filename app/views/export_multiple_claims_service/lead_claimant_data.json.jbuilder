@@ -97,7 +97,6 @@ if claim.dig('primary_representative').present?
     json.set! 'representative_phone_number', claim.dig('primary_representative', 'address_telephone_number')
     json.set! 'representative_mobile_number', claim.dig('primary_representative', 'mobile_number')
     json.set! 'representative_email_address', claim.dig('primary_representative', 'email_address')
-    json.set! 'representative_dx', claim.dig('primary_representative', 'dx_number')
   end
 end
 json.set! "documentCollection" do

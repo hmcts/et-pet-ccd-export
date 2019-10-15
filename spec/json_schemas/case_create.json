@@ -409,8 +409,7 @@
         "representative_address",
         "representative_phone_number",
         "representative_mobile_number",
-        "representative_email_address",
-        "representative_dx"
+        "representative_email_address"
       ],
       "properties": {
         "representative_occupation": {
@@ -546,18 +545,9 @@
             "sivvoy.taing@hmcts.net"
           ],
           "pattern": "^(.*)$"
-        },
-        "representative_dx": {
-          "$id": "#/properties/data/properties/representativeClaimantType/properties/representative_dx",
-          "type": "string",
-          "title": "The Representative_dx Schema",
-          "default": "",
-          "examples": [
-            "dx1234567890"
-          ],
-          "pattern": "^(.*)$"
         }
-      }
+      },
+      "additionalProperties": false
     },
     "respondent_for_collection": {
       "$id": "#/properties/data/properties/respondentCollection/items",

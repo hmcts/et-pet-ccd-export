@@ -25,7 +25,7 @@ module EtExporter
       updated_case = service.call(parsed_json, sidekiq_job_data: job_hash) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
       events_service.send_response_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: updated_case['id'], case_reference: updated_case.dig('case_data', 'ethosCaseReference'), case_type_id: updated_case['case_type_id'])
     rescue Exception => ex
-      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
+      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
       raise ex
     end
 

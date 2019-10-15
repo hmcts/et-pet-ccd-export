@@ -191,12 +191,6 @@ RSpec.describe ClaimPresenter do
       it { is_expected.to present_ccd_field('representativeClaimantType.representative_email_address').using(:claim, primary_representative_attrs: { email_address: nil }).with_result(nil) }
     end
 
-    context 'with representativeClaimantType.representative_dx' do
-      it { is_expected.to present_ccd_field('representativeClaimantType.representative_dx').using(:claim, primary_representative_attrs: { dx_number: 'Dx number 1' }).with_result('Dx number 1') }
-      it { is_expected.to present_ccd_field('representativeClaimantType.representative_dx').using(:claim, primary_representative_attrs: { dx_number: 'Dx number 2' }).with_result('Dx number 2') }
-      it { is_expected.to present_ccd_field('representativeClaimantType.representative_dx').using(:claim, primary_representative_attrs: { dx_number: nil }).with_result(nil) }
-    end
-
     context 'with claimantWorkAddress.claimant_work_address.AddressLine1' do
       it { is_expected.to present_ccd_field('claimantWorkAddress.claimant_work_address.AddressLine1').using(:claim, primary_respondent_attrs: { work_address: build(:address, building: 'Building 1') }).with_result('Building 1') }
       it { is_expected.to present_ccd_field('claimantWorkAddress.claimant_work_address.AddressLine1').using(:claim, primary_respondent_attrs: { work_address: build(:address, building: 'Building 2') }).with_result('Building 2') }
