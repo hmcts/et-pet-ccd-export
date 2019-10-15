@@ -100,7 +100,7 @@ GEM
       tilt (~> 2.0, >= 2.0.9)
     factory_bot (5.1.1)
       activesupport (>= 4.2.0)
-    faraday (0.16.2)
+    faraday (0.17.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.11.1)
     globalid (0.4.2)
