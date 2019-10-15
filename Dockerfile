@@ -20,6 +20,7 @@ ENV SSH_AUTH_SOCK /tmp/ssh-auth
 ENV SSH_AUTH_PROXY_PORT 1234
 
 RUN mkdir -p /usr/src/app
+RUN gem install bundler
 RUN bundle config --global without test:development
 WORKDIR /usr/src/app
 
