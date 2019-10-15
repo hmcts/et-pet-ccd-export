@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :respondent, class: ::EtCcdExport::Test::Json::Node do
     trait :basic do
-      name { "dodgy_co" }
+      sequence(:name) { |idx| "dodgy_co #{idx}" }
       address { build(:address) }
       work_address_telephone_number { "01234 567891" }
       address_telephone_number { "01234 567890" }
@@ -22,7 +22,7 @@ FactoryBot.define do
     end
 
     trait :full do
-      name { "dodgy_co" }
+      sequence(:name) { |idx| "dodgy_co #{idx}" }
       address { build(:address) }
       work_address_telephone_number { "" }
       address_telephone_number { "01234 567890" }
