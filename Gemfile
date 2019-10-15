@@ -39,7 +39,7 @@ group :test do
   gem 'et_fake_ccd', '~> 0.1'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
-  gem 'mock_redis', '~> 0.21.0'
+  gem 'mock_redis', '~> 0.22'
 end
 
 group :development do
