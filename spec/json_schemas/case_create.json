@@ -179,7 +179,7 @@
             },
             "Country": {
               "$id": "#/properties/data/properties/claimantType/properties/claimant_addressUK/properties/Country",
-              "type": "null",
+              "type": ["null", "string"],
               "title": "The Country Schema",
               "default": null,
               "examples": [

@@ -373,7 +373,13 @@ RSpec.describe ExportMultipleClaimsService do
         JSON
       end
       # Act - call the service
-      service.export(example_ccd_data.to_json, 'Manchester_Dev', sidekiq_job_data: { jid: 'examplejid' }, bid: 'examplebid', export_id: 1, claimant_count: 10)
+      begin
+        old_file = EtFakeCcd.config.create_case_schema_file
+        EtFakeCcd.config.create_case_schema_file = nil
+        service.export(example_ccd_data.to_json, 'Manchester_Dev', sidekiq_job_data: { jid: 'examplejid' }, bid: 'examplebid', export_id: 1, claimant_count: 10)
+      ensure
+        EtFakeCcd.config.create_case_schema_file = old_file
+      end
 
       # Assert - ensure it has arrived in CCD
       ccd_case = test_ccd_client.caseworker_search_latest_by_reference(example_ccd_data[:feeGroupReference], case_type_id: 'Manchester_Dev')
