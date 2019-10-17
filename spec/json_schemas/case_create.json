@@ -60,7 +60,9 @@
           "examples": [
             "Miss"
           ],
-          "pattern": "^(.*)$"
+          "enum": [
+            "Mr", "Mrs", "Miss", "Ms", "Dr", "Prof", "Sir", "Lord", "Lady", "Dame", "Capt", "Rev", "Other"
+          ]
         },
         "claimant_first_names": {
           "$id": "#/properties/data/properties/claimantIndType/properties/claimant_first_names",
@@ -100,9 +102,11 @@
               "title": "The Claimant_gender Schema",
               "default": "",
               "examples": [
-                "Male"
+                "MALE"
               ],
-              "pattern": "^(.*)$"
+              "enum": [
+                "Male", "Femaie", "Not Known", "Non-binary"
+              ]
             },
             {
               "$id": "#/properties/data/properties/claimantIndType/properties/claimant_gender",
@@ -208,7 +212,7 @@
               "examples": [
                 "01234 567890"
               ],
-              "pattern": "^(.*)$"
+              "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
             },
             {
               "$id": "#/properties/data/properties/claimantType/properties/claimant_phone_number",
@@ -227,7 +231,7 @@
                 "01234 098765"
               ],
               "$id": "#/properties/data/properties/claimantType/properties/claimant_mobile_number",
-              "pattern": "^(.*)$"
+              "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
             },
             {
               "type": "null"
@@ -262,7 +266,7 @@
               "examples": [
                 "Email"
               ],
-              "pattern": "^(.*)$"
+              "enum": ["Email", "Post"]
             },
             {
               "$id": "#/properties/data/properties/claimantType/properties/claimant_contact_preference",
@@ -363,7 +367,7 @@
           "examples": [
             "03333 423554"
           ],
-          "pattern": "^(.*)$"
+          "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
         }
       }
     },
@@ -524,7 +528,7 @@
           "examples": [
             "01111 123456"
           ],
-          "pattern": "^(.*)$"
+          "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
         },
         "representative_mobile_number": {
           "$id": "#/properties/data/properties/representativeClaimantType/properties/representative_mobile_number",
@@ -663,7 +667,7 @@
                   "examples": [
                     "02222 321654"
                   ],
-                  "pattern": "^(.*)$"
+                  "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
                 },
                 {
                   "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_phone1",

@@ -24,7 +24,7 @@ FactoryBot.define do
     trait :full do
       sequence(:name) { |idx| "dodgy_co #{idx}" }
       address { build(:address) }
-      work_address_telephone_number { "" }
+      work_address_telephone_number { "01234 567891" }
       address_telephone_number { "01234 567890" }
       work_address { build(:address) }
       alt_phone_number { "0333 321090" }
