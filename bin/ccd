@@ -11,9 +11,9 @@ class CcdCommand < ::Thor
   desc "export_multiple", "Export a multiples header record"
   def export_multiple(filename, case_type_id)
     cases = {}
-    CSV.foreach(filename, headers: :false) do |row|
+    CSV.foreach(filename, headers: false) do |row|
 
-      respondent, multiple_ref, case_ref = row.to_a.map(&:first)
+      respondent, multiple_ref, case_ref = row
       cases[multiple_ref] ||= {
         multipleReference: multiple_ref,
         bulkCaseTitle: respondent,
