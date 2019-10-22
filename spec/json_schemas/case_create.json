@@ -105,7 +105,7 @@
                 "MALE"
               ],
               "enum": [
-                "Male", "Femaie", "Not Known", "Non-binary"
+                "Male", "Female", "Not Known", "Non-binary"
               ]
             },
             {
@@ -217,6 +217,12 @@
             {
               "$id": "#/properties/data/properties/claimantType/properties/claimant_phone_number",
               "type": "null"
+            },
+            {
+              "$id": "#/properties/data/properties/claimantType/properties/claimant_phone_number",
+              "type": "string",
+              "title": "The Claimant_phone_number Schema",
+              "pattern": "^$"
             }
           ]
         },
@@ -235,7 +241,14 @@
             },
             {
               "type": "null"
+            },
+            {
+              "$id": "#/properties/data/properties/claimantType/properties/claimant_mobile_number",
+              "type": "string",
+              "title": "The Claimant_mobile_number Schema",
+              "pattern": "^$"
             }
+
           ]
         },
         "claimant_email_address": {
@@ -376,8 +389,7 @@
       "type": "object",
       "title": "The Claimantothertype Schema",
       "required": [
-        "claimant_disabled",
-        "claimant_disabled_details"
+        "claimant_disabled"
       ],
       "properties": {
         "claimant_disabled": {
@@ -399,7 +411,98 @@
             "My special needs are as follows"
           ],
           "pattern": "^(.*)$"
+        },
+        "claimant_employed_currently": {
+          "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_currently",
+          "type": "string",
+          "title": "The Claimant_claimant_employed_currently Schema",
+          "default": "",
+          "examples": [
+            "Yes"
+          ],
+          "enum": [
+            "Yes",
+            "No"
+          ]
+        },
+        "claimant_occupation": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_occupation",
+              "type": "string",
+              "title": "The Claimant_claimant_occupation Schema",
+              "default": "",
+              "examples": [
+                "Programmer"
+              ],
+              "pattern": "^(.*)$"
+            },
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_occupation",
+              "type": "null",
+              "title": "The Claimant_claimant_occupation Schema"
+            }
+          ]
+        },
+        "claimant_employed_from": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_from",
+              "type": "string",
+              "title": "The Claimant_claimant_employed_from Schema",
+              "default": "",
+              "examples": [
+                "2016-01-01"
+              ],
+              "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+            },
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_from",
+              "type": "null",
+              "title": "The Claimant_claimant_employed_from Schema"
+            }
+          ]
+        },
+        "claimant_employed_to": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_to",
+              "type": "string",
+              "title": "The Claimant_claimant_employed_to Schema",
+              "default": "",
+              "examples": [
+                "2016-01-01"
+              ],
+              "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+            },
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_to",
+              "type": "null",
+              "title": "The Claimant_claimant_employed_to Schema"
+            }
+          ]
+        },
+        "claimant_employed_notice_period": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_notice_period",
+              "type": "string",
+              "title": "The Claimant_claimant_employed_notice_period Schema",
+              "default": "",
+              "examples": [
+                "2016-01-01"
+              ],
+              "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+            },
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/claimant_employed_notice_period",
+              "type": "null",
+              "title": "The Claimant_claimant_employed_notice_period Schema"
+            }
+          ]
         }
+
+
       }
     },
     "representative_claimant_type": {
@@ -521,14 +624,28 @@
           }
         },
         "representative_phone_number": {
-          "$id": "#/properties/data/properties/representativeClaimantType/properties/representative_phone_number",
-          "type": "string",
-          "title": "The Representative_phone_number Schema",
-          "default": "",
-          "examples": [
-            "01111 123456"
-          ],
-          "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/representativeClaimantType/properties/representative_phone_number",
+              "type": "string",
+              "title": "The Representative_phone_number Schema",
+              "default": "",
+              "examples": [
+                "01111 123456"
+              ],
+              "pattern": "^(((\\+44\\s?\\d{4}|\\(?0\\d{4}\\)?)\\s?\\d{3}\\s?\\d{3})|((\\+44\\s?\\d{3}|\\(?0\\d{3}\\)?)\\s?\\d{3}\\s?\\d{4})|((\\+44\\s?\\d{2}|\\(?0\\d{2}\\)?)\\s?\\d{4}\\s?\\d{4}))(\\s?\\#(\\d{4}|\\d{3}))?$"
+            },
+            {
+              "$id": "#/properties/data/properties/representativeClaimantType/properties/representative_phone_number",
+              "type": "string",
+              "title": "The Representative_phone_number Schema",
+              "default": "",
+              "examples": [
+                "01111 123456"
+              ],
+              "pattern": "^$"
+            }
+          ]
         },
         "representative_mobile_number": {
           "$id": "#/properties/data/properties/representativeClaimantType/properties/representative_mobile_number",
@@ -671,6 +788,13 @@
                 },
                 {
                   "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_phone1",
+                  "type": "string",
+                  "title": "The Respondent_phone1 Schema",
+                  "default": "",
+                  "pattern": "^$"
+                },
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_phone1",
                   "type": "null",
                   "title": "The Respondent_phone1 Schema",
                   "default": null,
@@ -681,14 +805,23 @@
               ]
             },
             "respondent_ACAS": {
-              "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_ACAS",
-              "type": "string",
-              "title": "The Respondent_acas Schema",
-              "default": "",
-              "examples": [
-                "AC123456/78/90"
-              ],
-              "pattern": "^(.*)$"
+              "oneOf": [
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_ACAS",
+                  "type": "string",
+                  "title": "The Respondent_acas Schema",
+                  "default": "",
+                  "examples": [
+                    "AC123456/78/90"
+                  ],
+                  "pattern": "^(.*)$"
+                },
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_ACAS",
+                  "type": "null",
+                  "title": "The Respondent_acas Schema"
+                }
+              ]
             },
             "respondent_ACAS_question": {
               "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_ACAS_question",
@@ -822,7 +955,6 @@
     "respondentCollection",
     "claimantOtherType",
     "claimantRepresentedQuestion",
-    "representativeClaimantType",
     "positionType",
     "documentCollection"
   ],
