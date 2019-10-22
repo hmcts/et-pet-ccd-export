@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+require 'et_ccd_client'
+APP_PATH = File.expand_path('../config/application', __dir__)
+require 'rails'
+require_relative '../config/boot'
+require_relative '../config/environment'
+require_relative '../config/../config/initializers/ccd_client'
+require 'thor'
+require 'csv'
+class CcdCommand < ::Thor
+  desc "export_multiple", "Export a multiples header record"
+  def export_multiple(filename, case_type_id)
+    cases = {}
+    CSV.foreach(filename, headers: :false) do |row|
+
+      respondent, multiple_ref, case_ref = row.to_a.map(&:first)
+      cases[multiple_ref] ||= {
+        multipleReference: multiple_ref,
+        bulkCaseTitle: respondent,
+        caseIdCollection: []
+      }
+      cases[multiple_ref][:caseIdCollection] << {
+        id: nil,
+        value: {
+          ethos_CaseReference: case_ref
+        }
+      }
+    end
+    ::EtCcdClient::Client.use do |client|
+      cases.each_pair do |multiple_ref, case_data|
+        resp = client.caseworker_start_bulk_creation(case_type_id: case_type_id)
+        event_token = resp['token']
+        data = {
+          data: case_data,
+          event: {
+            id: 'createBulkAction',
+            summary: '',
+            description: ''
+          },
+          event_token: event_token,
+          ignore_warning: false,
+          draft_id: nil
+        }
+        result = client.caseworker_case_create(data.to_json, case_type_id: case_type_id)
+        puts result
+      end
+    end
+  end
+
+end
+CcdCommand.start(ARGV)
