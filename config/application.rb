@@ -33,5 +33,17 @@ module EtCcdExport
     config.api_only = true
     config.storage_redis_database = ENV.fetch('STORAGE_REDIS_DATABASE', '2')
     config.ccd_time_zone = 'London'
+
+    insights_key = ENV.fetch('AZURE_APP_INSIGHTS_KEY', false)
+    if insights_key
+      config.azure_insights.enable = true
+      config.azure_insights.key = insights_key
+      config.azure_insights.role_name = ENV.fetch('AZURE_APP_INSIGHTS_ROLE_NAME', 'et-ccd-export')
+      config.azure_insights.role_instance = ENV.fetch('HOSTNAME', 'all')
+      config.azure_insights.buffer_size = 500
+      config.azure_insights.send_interval = 60
+    else
+      config.azure_insights.enable = false
+    end
   end
 end
