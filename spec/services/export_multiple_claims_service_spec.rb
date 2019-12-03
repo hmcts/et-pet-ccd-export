@@ -180,9 +180,9 @@ RSpec.describe ExportMultipleClaimsService do
         # Assert - Check the worker has been queued
         aggregate_failures "validate all calls in one" do
           expect(mock_presenter).to have_received(:present).exactly(example_export.resource.secondary_claimants.length + 1).times
-          expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: example_export.resource.primary_claimant.as_json, files: an_instance_of(Array), lead_claimant: true, ethos_case_reference: anything)
+          expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: example_export.resource.primary_claimant.as_json, files: an_instance_of(Array), lead_claimant: true, ethos_case_reference: anything, state: 'Pending')
           example_export.resource.secondary_claimants.each do |claimant|
-            expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: claimant.as_json, lead_claimant: false, ethos_case_reference: anything)
+            expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: claimant.as_json, lead_claimant: false, ethos_case_reference: anything, state: 'Pending')
           end
         end
       end
