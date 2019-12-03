@@ -111,7 +111,7 @@ RSpec.describe "create claim multiples" do
   end
 
   context 'with auto accept turned on' do
-    it 'creates many single claims all with status of Accepted', wip: true do
+    it 'creates many single claims all with status of Accepted' do
       # Arrange - Produce the input JSON
       export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants], external_system: build(:system, :auto_accept_multiples))
 

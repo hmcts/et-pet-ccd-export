@@ -1,5 +1,5 @@
 {
-  "id": "file:/case_create.json",
+  "id": "file:/spec/json_schemas/case_create.json",
   "definitions": {
     "initiate_case_event": {
       "type": "object",
@@ -981,7 +981,7 @@
       "examples": [
         "Pending"
       ],
-      "enum": ["Pending"]
+      "enum": ["Pending", "Accepted"]
     },
     "stateAPI": {
       "type": "string",
@@ -989,7 +989,7 @@
       "examples": [
         "Pending"
       ],
-      "enum": ["Pending"]
+      "enum": ["Pending", "Accepted"]
     },
     "feeGroupReference": {
       "type": "string",
