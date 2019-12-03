@@ -110,6 +110,27 @@ RSpec.describe "create claim multiples" do
     end
   end
 
+  context 'with auto accept turned on' do
+    it 'creates many single claims all with status of Accepted' do
+      # Arrange - Produce the input JSON
+      export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants], external_system: build(:system, :auto_accept_multiples))
+
+      # Act - Call the worker in the same way the application would (minus using redis)
+      worker.perform_async(export.as_json.to_json)
+      drain_all_our_sidekiq_jobs
+
+      # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+      ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples_Dev')
+      case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+      aggregate_failures 'validating key fields' do
+        case_references.each do |ref|
+          created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'Manchester_Dev')
+          expect(created_case['case_fields']).to include 'state' => 'Accepted', 'stateAPI' => 'Accepted'
+        end
+      end
+    end
+  end
+
   it 'has the primary claimant first when the jobs are processed in order' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])

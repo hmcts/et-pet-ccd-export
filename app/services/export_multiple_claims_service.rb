@@ -14,6 +14,8 @@ class ExportMultipleClaimsService
   def call(export, worker: ExportMultiplesWorker, header_worker: ExportMultiplesHeaderWorker, batch: Sidekiq::Batch.new, sidekiq_job_data:)
     case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'case_type_id'}['value']
     multiples_case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'multiples_case_type_id'}['value']
+    multiples_auto_accept = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'multiples_auto_accept'}&.fetch('value')&.downcase == 'true'
+    state = multiples_auto_accept ? 'Accepted' : 'Pending'
     claimant_count = export.dig('resource', 'secondary_claimants').length + 1
     batch.description = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
     batch.callback_queue = 'external_system_ccd_callbacks'
@@ -26,10 +28,10 @@ class ExportMultipleClaimsService
              export_id: export['id']
     batch.jobs do
       client_class.use do |client|
-        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code'))), case_type_id, export['id'], claimant_count, true
+        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code')), state: state), case_type_id, export['id'], claimant_count, true
       end
       export.dig('resource', 'secondary_claimants').each do |claimant|
-        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code'))), case_type_id, export['id'], claimant_count
+        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code')), state: state), case_type_id, export['id'], claimant_count
       end
     end
     batch.bid
