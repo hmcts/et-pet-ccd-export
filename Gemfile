@@ -46,7 +46,7 @@ end
 group :development do
   gem 'listen', '~> 3.2'
   gem 'rubocop', '~> 0.74'
-  gem 'rubocop-rspec', '~> 1.33'
+  gem 'rubocop-rspec', '~> 1.37'
 end
 
 
