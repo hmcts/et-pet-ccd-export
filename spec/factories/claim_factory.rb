@@ -30,7 +30,7 @@ FactoryBot.define do
       case_type { "Single" }
       jurisdiction { 2 }
       office_code { 22 }
-      date_of_receipt { "2019-06-12T07:28:58.000Z" }
+      date_of_receipt { "2019-03-30T07:28:58.000Z" }
       other_known_claimant_names { "James Blunt, Punky Brewsters, Shirley Temple" }
       discrimination_claims { ["sex_including_equal_pay"] }
       pay_claims { ["redundancy"] }

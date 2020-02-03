@@ -32,5 +32,6 @@ module EtCcdExport
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
     config.storage_redis_database = ENV.fetch('STORAGE_REDIS_DATABASE', '2')
+    config.ccd_time_zone = 'London'
   end
 end

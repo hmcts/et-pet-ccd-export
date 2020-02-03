@@ -406,9 +406,13 @@ RSpec.describe ClaimPresenter do
       it { is_expected.not_to present_ccd_field('claimantOtherType.claimant_employed_to').using(:claim, employment_details_traits: [:blank]) }
     end
 
-    context 'with receiptDate' do
+    context 'with receiptDate presenting in London time zone' do
       it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-06-12T07:28:58.000Z').with_result('2019-06-12') }
       it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-07-13T07:28:58.000Z').with_result('2019-07-13') }
+      it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-03-31T23:00:00.000Z').with_result('2019-04-01') }
+      it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-03-31T22:59:59.999Z').with_result('2019-03-31') }
+      it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-10-26T23:00:00.000Z').with_result('2019-10-27') }
+      it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-10-27T23:00:00.000Z').with_result('2019-10-27') }
       it { is_expected.to present_ccd_field('receiptDate').using(:claim, date_of_receipt: '2019-07-14').with_result('2019-07-14') }
     end
 
