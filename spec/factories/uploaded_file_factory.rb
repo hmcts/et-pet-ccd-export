@@ -10,6 +10,12 @@ FactoryBot.define do
       content_type { "application/pdf" }
     end
 
+    trait :example_acas_pdf do
+      filename { "acas_naughty_boy.pdf" }
+      url { "http://dummy.com/examplepdf" }
+      content_type { "application/pdf" }
+    end
+
     trait :example_response_pdf do
       filename { "et3_atos_export.pdf" }
       url { "http://dummy.com/examplepdf" }

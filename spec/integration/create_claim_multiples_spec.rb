@@ -300,10 +300,11 @@ RSpec.describe "create claim multiples" do
   #                                       "Country" => nil
   #                                   }
   # end
-  it 'populates the documents collection correctly with a pdf file and a csv file input' do
+  it 'populates the documents collection correctly with 2 pdf files and a csv file input' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
     claimant = export.dig('resource', 'primary_claimant')
+    respondent = export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
@@ -335,6 +336,16 @@ RSpec.describe "create claim multiples" do
                              'document_url' => an_instance_of(String),
                              'document_binary_url' => an_instance_of(String),
                              'document_filename' => 'et1a_first_last.csv'
+                           )
+                         )),
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'Other',
+                           'shortDescription' => "ACAS certificate for #{respondent.name}",
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'acas_naughty_boy.pdf'
                            )
                          ))
   end

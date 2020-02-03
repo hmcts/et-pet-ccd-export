@@ -157,10 +157,11 @@ RSpec.describe "create claim" do
                                     }
   end
 
-  it 'populates the documents collection correctly with a single pdf file input' do
+  it 'populates the documents collection correctly with a dual pdf file input' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim)
     claimant = export.dig('resource', 'primary_claimant')
+    respondent = export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
@@ -171,7 +172,7 @@ RSpec.describe "create claim" do
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
       contain_exactly \
-        a_hash_including 'id' => nil,
+        a_hash_including('id' => nil,
                          'value' => a_hash_including(
                            'typeOfDocument' => 'Application',
                            'shortDescription' => "ET1 application for #{claimant.first_name} #{claimant.last_name}",
@@ -180,13 +181,25 @@ RSpec.describe "create claim" do
                              'document_binary_url' => an_instance_of(String),
                              'document_filename' => 'et1_chloe_goodwin.pdf'
                            )
-                         )
+                         )),
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'Other',
+                           'shortDescription' => "ACAS certificate for #{respondent.name}",
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'acas_naughty_boy.pdf'
+                           )
+                         ))
+
   end
 
   it 'populates the documents collection correctly with some extra un wanted files in the input' do
     # Arrange - Produce the input JSON
     claim = build(:claim, :default, :with_unwanted_claim_file)
     export = build(:export, :for_claim, resource: claim)
+    respondent = export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
@@ -197,13 +210,24 @@ RSpec.describe "create claim" do
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
       contain_exactly \
-        a_hash_including 'id' => nil,
+        a_hash_including('id' => nil,
                          'value' => a_hash_including(
                            'typeOfDocument' => 'Application',
                            'uploadedDocument' => a_hash_including(
                              'document_filename' => 'et1_chloe_goodwin.pdf'
                            )
-                         )
+                         )),
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'Other',
+                           'shortDescription' => "ACAS certificate for #{respondent.name}",
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'acas_naughty_boy.pdf'
+                           )
+                         ))
+
 
   end
 

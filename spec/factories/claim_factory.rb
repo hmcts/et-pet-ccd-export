@@ -18,6 +18,7 @@ FactoryBot.define do
 
     trait :default do
       with_pdf_file
+      with_acas_pdf_file
       sequence :reference do |n|
         "#{office_code}#{20000000 + n}00"
       end
@@ -60,6 +61,12 @@ FactoryBot.define do
     trait :with_pdf_file do
       after(:build) do |claim, _evaluator|
         claim.uploaded_files << build(:uploaded_file, :example_pdf)
+      end
+    end
+
+    trait :with_acas_pdf_file do
+      after(:build) do |claim, _evaluator|
+        claim.uploaded_files << build(:uploaded_file, :example_acas_pdf)
       end
     end
 
