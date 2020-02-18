@@ -1,5 +1,6 @@
 json.data do
   json.bulkCaseTitle respondent_name
+  json.caseSource 'ET1 Online'
   json.caseIdCollection(case_references) do |case_ref|
     json.id nil
     json.value do

@@ -19,6 +19,14 @@ RSpec.describe MultipleClaimsHeaderPresenter do
   end
   let(:example_event_token) { 'example-token-12345' }
 
+  it 'presents the caseSource' do
+    # Act
+    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+
+    # Assert
+    expect(result.dig('data', 'caseSource')).to eql 'ET1 Online'
+  end
+
   it 'presents the bulkCaseTitle' do
     # Act
     result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
@@ -26,6 +34,8 @@ RSpec.describe MultipleClaimsHeaderPresenter do
     # Assert
     expect(result.dig('data', 'bulkCaseTitle')).to eql example_respondent_name
   end
+
+
 
   it 'presents the caseIdCollection' do
     # Act

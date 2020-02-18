@@ -947,6 +947,7 @@
   "required": [
     "receiptDate",
     "feeGroupReference",
+    "caseSource",
     "claimant_TypeOfClaimant",
     "claimantIndType",
     "claimantType",
@@ -974,6 +975,13 @@
         "2019-06-21"
       ],
       "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+    },
+    "caseSource": {
+      "type": "string",
+      "title": "The source of the case",
+      "default": "ET1 Online",
+      "examples": "ET1 Online",
+      "enum": ["ET1 Online", "Manually Created"]
     },
     "state": {
       "type": "string",
