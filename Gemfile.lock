@@ -160,7 +160,7 @@ GEM
     parser (2.6.5.0)
       ast (~> 2.4.0)
     pg (1.1.4)
-    public_suffix (4.0.1)
+    public_suffix (4.0.3)
     rack (2.0.7)
     rack-protection (2.0.7)
       rack
@@ -271,7 +271,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.6)
     unicode-display_width (1.6.0)
-    webmock (3.7.6)
+    webmock (3.8.2)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
