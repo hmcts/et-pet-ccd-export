@@ -36,5 +36,4 @@ Rails.application.configure do
   config.ccd_disallowed_file_extensions = []
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
-  config.generate_ethos_case_reference = false
 end

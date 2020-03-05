@@ -1,6 +1,5 @@
 class ExportMultipleClaimsService
   include ClaimFiles
-  include GenerateEthosCaseReference
   def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.presenter = presenter
     self.header_presenter = header_presenter
@@ -28,10 +27,10 @@ class ExportMultipleClaimsService
              export_id: export['id']
     batch.jobs do
       client_class.use do |client|
-        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code')), state: state), case_type_id, export['id'], claimant_count, true
+        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, state: state), case_type_id, export['id'], claimant_count, true
       end
       export.dig('resource', 'secondary_claimants').each do |claimant|
-        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, ethos_case_reference: ethos_case_reference(export.dig('resource', 'office_code')), state: state), case_type_id, export['id'], claimant_count
+        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, state: state), case_type_id, export['id'], claimant_count
       end
     end
     batch.bid

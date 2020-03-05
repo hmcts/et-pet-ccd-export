@@ -33,7 +33,6 @@ Rails.application.configure do
   config.multiples_supervisor_adapter = {type: :memory}
 
   config.ccd_disallowed_file_extensions = []
-  config.generate_ethos_case_reference = ENV.fetch('CCD_GENERATE_ETHOS_CASE_REFERENCE', 'true') == 'true'
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
