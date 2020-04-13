@@ -1031,6 +1031,26 @@
       ],
       "enum": ["Single", "Multiple"]
     },
+    "multipleReference": {
+      "$id": "#/properties/data/properties/multipleReference",
+      "type": "string",
+      "title": "The reference of a multiple case that this case belongs to",
+      "default": "2100034/2019",
+      "examples": [
+        "2100034/2019"
+      ]
+    },
+    "leadClaimant": {
+      "$id": "#/properties/data/properties/leadClaimant",
+      "type": "string",
+      "title": "Indicates that this is the lead claimant of a multiple case",
+      "default": "No",
+      "examples": [
+        "Yes",
+        "No"
+      ],
+      "enum": ["Yes", "No"]
+    },
     "claimantWorkAddress": {
       "oneOf": [
         {

@@ -2,6 +2,7 @@ EtCcdClient.config do |c|
   c.auth_base_url = 'http://localhost:8080/auth'
   c.idam_base_url = 'http://localhost:8080/idam'
   c.data_store_base_url = 'http://localhost:8080/data_store'
+  c.ecm_base_url = 'http://localhost:8080/ecm'
   c.document_store_base_url = 'http://localhost:8080/document_store'
   c.document_store_url_rewrite = false
   c.gateway_api_url = 'http://localhost:8080/api-gateway'

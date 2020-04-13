@@ -1,5 +1,6 @@
 class ExportMultipleClaimsService
   include ClaimFiles
+
   def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.presenter = presenter
     self.header_presenter = header_presenter
@@ -11,11 +12,12 @@ class ExportMultipleClaimsService
   # Schedules a worker to send the pre compiled data (as the ccd data is smaller than the export data for each multiples case)
   # @param [Hash] export - The export hash containing the claim as well as export data
   def call(export, worker: ExportMultiplesWorker, header_worker: ExportMultiplesHeaderWorker, batch: Sidekiq::Batch.new, sidekiq_job_data:)
-    case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'case_type_id'}['value']
-    multiples_case_type_id = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'multiples_case_type_id'}['value']
-    multiples_auto_accept = export.dig('external_system', 'configurations').detect {|config| config['key'] == 'multiples_auto_accept'}&.fetch('value')&.downcase == 'true'
+    case_type_id = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'case_type_id' }['value']
+    multiples_case_type_id = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_case_type_id' }['value']
+    multiples_auto_accept = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_auto_accept' }&.fetch('value')&.downcase == 'true'
     state = multiples_auto_accept ? 'Accepted' : 'Pending'
-    claimant_count = export.dig('resource', 'secondary_claimants').length + 1
+    claimant_count = export.dig('resource', 'secondary_claimants').length + 1#
+
     batch.description = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
     batch.callback_queue = 'external_system_ccd_callbacks'
     batch.on :complete,
@@ -26,11 +28,16 @@ class ExportMultipleClaimsService
              multiples_case_type_id: multiples_case_type_id,
              export_id: export['id']
     batch.jobs do
+
       client_class.use do |client|
-        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, state: state), case_type_id, export['id'], claimant_count, true
-      end
-      export.dig('resource', 'secondary_claimants').each do |claimant|
-        worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, state: state), case_type_id, export['id'], claimant_count
+        result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
+        next_ref = result['startCaseRefNumber']
+        multiple_ref = result['multipleRefNumber']
+        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, state: state, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
+        export.dig('resource', 'secondary_claimants').each do |claimant|
+          next_ref = advance_ref(next_ref)
+          worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, state: state, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count
+        end
       end
     end
     batch.bid
@@ -68,11 +75,18 @@ class ExportMultipleClaimsService
 
   private
 
+  attr_accessor :presenter, :header_presenter, :envelope_presenter, :client_class, :disallow_file_extensions
+
   def percent_complete_for(number, claimant_count:)
     (number * (100.0 / (claimant_count + 2))).to_i
   end
 
-  attr_accessor :presenter, :header_presenter, :envelope_presenter, :client_class, :disallow_file_extensions
+  def advance_ref(ref)
+    match_data = ref.match(/\A(\d\d)(\d{5})\/(\d{4})\z/)
+    next_ref_number = (match_data[2].to_i + 1).to_s.rjust(5, '0')
+    "#{match_data[1]}#{next_ref_number}/#{match_data[3]}"
+  end
+
   class Callback
     include Sidekiq::Worker
 

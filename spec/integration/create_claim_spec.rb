@@ -18,7 +18,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     expect(ccd_case['case_fields']).to include 'feeGroupReference' => export.resource.reference
   end
 
@@ -31,7 +31,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     expect(ccd_case['case_fields']).to match_json_schema('case_create')
   end
 
@@ -44,7 +44,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check for API event being received
-    test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     external_events.assert_claim_export_started(export: export)
   end
 
@@ -57,7 +57,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check for API event being received
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     external_events.assert_claim_export_succeeded(export: export, ccd_case: ccd_case)
   end
 
@@ -89,7 +89,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
     expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
                                     "claimant_mobile_number" => claimant.mobile_number,
@@ -115,7 +115,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
     expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
                                     "claimant_mobile_number" => claimant.mobile_number,
@@ -141,7 +141,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
     expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
                                     "claimant_mobile_number" => claimant.mobile_number,
@@ -168,7 +168,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
       contain_exactly \
@@ -206,7 +206,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
     expect(ccd_documents).to \
       contain_exactly \
@@ -241,7 +241,7 @@ RSpec.describe "create claim" do
     worker.drain
 
     # Assert - Check with CCD (or fake CCD) to see what we sent - then download the file and compare size
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester_Dev')
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     url = ccd_case.dig('case_fields', 'documentCollection').first.dig('value', 'uploadedDocument', 'document_binary_url')
     raw = RestClient::Request.execute method: :get, url: url, raw_response: true, verify_ssl: false
     expect(File.size(raw.file.path)).to eql File.size(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__))

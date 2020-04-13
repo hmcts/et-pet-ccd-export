@@ -8,10 +8,10 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-ccd-client-ruby.git
-  revision: b2b80b22493a2547def1b6d8ed1dec1eb3a3971d
-  tag: v0.1.54
+  revision: 40d914bf070ae245187f5f3761a9095f0202905d
+  tag: v0.1.57
   specs:
-    et_ccd_client (0.1.54)
+    et_ccd_client (0.1.57)
       addressable (~> 2.6)
       connection_pool (~> 2.2, >= 2.2.2)
       rest-client (~> 2.0, >= 2.0.2)
@@ -110,7 +110,7 @@ GEM
       dotenv (= 2.7.5)
       railties (>= 3.2, < 6.1)
     erubi (1.9.0)
-    et_fake_ccd (1.0.2)
+    et_fake_ccd (1.0.5)
       activemodel (>= 5.2.3)
       iodine (~> 0.7)
       json-schema (~> 2.5)
@@ -125,7 +125,7 @@ GEM
     ffi (1.12.2)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    hashdiff (1.0.0)
+    hashdiff (1.0.1)
     http-accept (1.7.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -176,7 +176,7 @@ GEM
     parser (2.7.0.2)
       ast (~> 2.4.0)
     pg (1.2.2)
-    public_suffix (4.0.3)
+    public_suffix (4.0.4)
     rack (2.2.2)
     rack-protection (2.0.8.1)
       rack
@@ -220,7 +220,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     rexml (3.2.4)
-    roda (3.29.0)
+    roda (3.30.0)
       rack
     rotp (5.1.0)
       addressable (~> 2.5)
@@ -284,20 +284,20 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.10)
     to_regexp (0.2.1)
-    tzinfo (1.2.6)
+    tzinfo (1.2.7)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.6)
     unicode-display_width (1.6.1)
-    webmock (3.8.2)
+    webmock (3.8.3)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
-    zeitwerk (2.2.2)
+    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby

@@ -15,7 +15,7 @@ module EtCcdExport
             JSON.parse(j['args'].first['arguments'][1]) >= { 'state' => 'complete', 'export_id' => export.id } &&
             JSON.parse(j['args'].first['arguments'][1])['external_data'] >= { 'case_id' => ccd_case['id'],
                                                                               'case_reference' => ccd_case['case_fields']['ethosCaseReference'],
-                                                                              'case_type_id' => 'Manchester_Dev' }
+                                                                              'case_type_id' => 'Manchester' }
         end
         expect(jobs.length).to be 1
       end
@@ -27,7 +27,7 @@ module EtCcdExport
             JSON.parse(j['args'].first['arguments'][1]) >= { 'export_id' => export.id, 'state' => 'complete', 'message' => 'Multiples claim exported' } &&
             JSON.parse(j['args'].first['arguments'][1])['external_data'] >= {  'case_id' => ccd_case['id'],
                                                                                         'case_reference' => ccd_case['case_fields']['multipleReference'],
-                                                                                        'case_type_id' => 'Manchester_Multiples_Dev' }
+                                                                                        'case_type_id' => 'Manchester_Multiples' }
         end
         expect(jobs.length).to be 1
      end

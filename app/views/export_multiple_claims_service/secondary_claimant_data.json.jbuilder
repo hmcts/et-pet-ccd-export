@@ -2,6 +2,7 @@ json.set! 'receiptDate', optional_date(claim.dig('date_of_receipt'))
 json.set! 'caseSource', 'ET1 Online'
 json.set! 'state', state
 json.set! 'stateAPI', state
+json.set! 'ethosCaseReference', ethos_case_reference
 json.set! 'feeGroupReference', claim.dig('reference')
 json.set! 'claimant_TypeOfClaimant', 'Individual'
 json.set! 'positionType', 'Received by Auto-Import'
@@ -27,7 +28,9 @@ json.set! 'claimantType' do
   json.set! 'claimant_contact_preference', nil
 
 end
-json.set! 'caseType', 'Single'
+json.set! 'caseType', 'Multiple'
+json.set! 'multipleReference', multiple_reference
+json.set! 'leadClaimant', 'No'
 json.set! 'claimantWorkAddress', {}
 json.set! 'respondentCollection' do
   json.array!([claim['primary_respondent']] + claim.dig('secondary_respondents')) do |respondent|

@@ -2,6 +2,7 @@ EtCcdClient.config do |c|
   c.auth_base_url = ENV.fetch('CCD_AUTH_BASE_URL', 'http://localhost:4502')
   c.idam_base_url = ENV.fetch('CCD_IDAM_BASE_URL', 'http://localhost:5000')
   c.data_store_base_url = ENV.fetch('CCD_DATA_STORE_BASE_URL', 'http://localhost:4452')
+  c.ecm_base_url = ENV.fetch('CCD_ECM_BASE_URL', 'http://unknown:4452')
   c.document_store_base_url = ENV.fetch('CCD_DOCUMENT_STORE_BASE_URL', 'http://localhost:4506')
   if ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'false') == 'false'
     c.document_store_url_rewrite = false

@@ -21,14 +21,14 @@ RSpec.describe ExportMultiplesWorker do
       allow(fake_service).
         to receive(:export).
           with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything).
-          and_return([{'id' => 'fake_id', 'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'}, 'case_type_id' => 'Manchester_Dev'}, 1])
+          and_return([{'id' => 'fake_id', 'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'}, 'case_type_id' => 'Manchester'}, 1])
       # Act - Call the worker expecting the special error
       batch.jobs do
-        worker.perform(example_ccd_data.as_json.to_json, 'Manchester_Dev', example_export.id, 1)
+        worker.perform(example_ccd_data.as_json.to_json, 'Manchester', example_export.id, 1)
       end
 
       # Assert - Make sure the service was not called
-      expect(fake_events_service).to have_received(:send_claim_export_multiples_progress_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'fake_id', case_reference: 'exampleEthosCaseReference', case_type_id: 'Manchester_Dev', percent_complete: instance_of(Integer))
+      expect(fake_events_service).to have_received(:send_claim_export_multiples_progress_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'fake_id', case_reference: 'exampleEthosCaseReference', case_type_id: 'Manchester', percent_complete: instance_of(Integer))
     end
 
     it 'adds to the correct redis list when done' do
@@ -41,7 +41,7 @@ RSpec.describe ExportMultiplesWorker do
 
       # Act - Call the worker
       batch.jobs do
-        worker.perform(example_ccd_data.to_json, 'Manchester_Dev', example_export.id, 1)
+        worker.perform(example_ccd_data.to_json, 'Manchester', example_export.id, 1)
       end
 
       # Assert - Check in redis
@@ -63,8 +63,8 @@ RSpec.describe ExportMultiplesWorker do
 
       # Act - Call the worker
       batch.jobs do
-        worker.perform(example_ccd_data.to_json, 'Manchester_Dev', example_export.id, 10)
-        worker.perform(example_ccd_data_primary.to_json, 'Manchester_Dev', example_export.id, 10, true)
+        worker.perform(example_ccd_data.to_json, 'Manchester', example_export.id, 10)
+        worker.perform(example_ccd_data_primary.to_json, 'Manchester', example_export.id, 10, true)
       end
 
       # Assert - Check in redis
