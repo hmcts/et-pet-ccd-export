@@ -1024,8 +1024,8 @@
         "2100034/2019"
       ]
     },
-    "leadClaimant": {
-      "$id": "#/properties/data/properties/leadClaimant",
+    "leadClaimant1": {
+      "$id": "#/properties/data/properties/leadClaimant1",
       "type": "string",
       "title": "Indicates that this is the lead claimant of a multiple case",
       "default": "No",

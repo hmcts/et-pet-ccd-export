@@ -27,7 +27,7 @@ json.set! 'claimantType' do
 end
 json.set! 'caseType', 'Multiple'
 json.set! 'multipleReference', multiple_reference
-json.set! 'leadClaimant', 'Yes'
+json.set! 'leadClaimant1', 'Yes'
 json.set! 'claimantWorkAddress' do
   if claim.dig('primary_respondent', 'work_address').present?
     json.set! 'claimant_work_address' do
