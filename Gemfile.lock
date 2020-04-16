@@ -8,10 +8,10 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-ccd-client-ruby.git
-  revision: 40d914bf070ae245187f5f3761a9095f0202905d
-  tag: v0.1.57
+  revision: 22a957f93404fce1ab55e3224a83a8cd3004f389
+  tag: v0.1.58
   specs:
-    et_ccd_client (0.1.57)
+    et_ccd_client (0.1.58)
       addressable (~> 2.6)
       connection_pool (~> 2.2, >= 2.2.2)
       rest-client (~> 2.0, >= 2.0.2)
@@ -110,7 +110,7 @@ GEM
       dotenv (= 2.7.5)
       railties (>= 3.2, < 6.1)
     erubi (1.9.0)
-    et_fake_ccd (1.0.6)
+    et_fake_ccd (1.0.7)
       activemodel (>= 5.2.3)
       iodine (~> 0.7)
       json-schema (~> 2.5)
@@ -220,7 +220,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     rexml (3.2.4)
-    roda (3.30.0)
+    roda (3.31.0)
       rack
     rotp (5.1.0)
       addressable (~> 2.5)
