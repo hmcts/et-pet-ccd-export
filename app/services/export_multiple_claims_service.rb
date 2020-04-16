@@ -1,12 +1,16 @@
 class ExportMultipleClaimsService
   include ClaimFiles
 
-  def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter, header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
+  def initialize(client_class: EtCcdClient::Client, presenter: MultipleClaimsPresenter,
+                 header_presenter: MultipleClaimsHeaderPresenter, envelope_presenter: MultipleClaimsEnvelopePresenter,
+                 reference_generator: EthosReferenceGeneratorService,
+                 disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.presenter = presenter
     self.header_presenter = header_presenter
     self.envelope_presenter = envelope_presenter
     self.client_class = client_class
     self.disallow_file_extensions = disallow_file_extensions
+    self.reference_generator = reference_generator
   end
 
   # Schedules a worker to send the pre compiled data (as the ccd data is smaller than the export data for each multiples case)
@@ -35,7 +39,7 @@ class ExportMultipleClaimsService
         multiple_ref = result['multipleRefNumber']
         worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, state: state, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
         export.dig('resource', 'secondary_claimants').each do |claimant|
-          next_ref = advance_ref(next_ref)
+          next_ref = reference_generator.call(next_ref)
           worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, state: state, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count
         end
       end
@@ -75,16 +79,10 @@ class ExportMultipleClaimsService
 
   private
 
-  attr_accessor :presenter, :header_presenter, :envelope_presenter, :client_class, :disallow_file_extensions
+  attr_accessor :presenter, :header_presenter, :envelope_presenter, :client_class, :reference_generator, :disallow_file_extensions
 
   def percent_complete_for(number, claimant_count:)
     (number * (100.0 / (claimant_count + 2))).to_i
-  end
-
-  def advance_ref(ref)
-    match_data = ref.match(/\A(\d\d)(\d{5})\/(\d{4})\z/)
-    next_ref_number = (match_data[2].to_i + 1).to_s.rjust(5, '0')
-    "#{match_data[1]}#{next_ref_number}/#{match_data[3]}"
   end
 
   class Callback
