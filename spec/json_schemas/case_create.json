@@ -983,22 +983,6 @@
       "examples": "ET1 Online",
       "enum": ["ET1 Online", "Manually Created"]
     },
-    "state": {
-      "type": "string",
-      "title": "The state of the case (optional)",
-      "examples": [
-        "Pending"
-      ],
-      "enum": ["Pending", "Accepted"]
-    },
-    "stateAPI": {
-      "type": "string",
-      "title": "The state of the case from an API perspective (optional)",
-      "examples": [
-        "Pending"
-      ],
-      "enum": ["Pending", "Accepted"]
-    },
     "feeGroupReference": {
       "type": "string",
       "title": "The fee group reference",

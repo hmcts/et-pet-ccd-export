@@ -1,7 +1,5 @@
 json.set! 'receiptDate', optional_date(claim.dig('date_of_receipt'))
 json.set! 'caseSource', 'ET1 Online'
-json.set! 'state', state
-json.set! 'stateAPI', state
 json.set! 'ethosCaseReference', ethos_case_reference
 json.set! 'feeGroupReference', claim.dig('reference')
 json.set! 'claimant_TypeOfClaimant', 'Individual'
