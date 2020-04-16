@@ -18,33 +18,30 @@ class ExportMultipleClaimsService
   def call(export, worker: ExportMultiplesWorker, header_worker: ExportMultiplesHeaderWorker, batch: Sidekiq::Batch.new, sidekiq_job_data:)
     case_type_id = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'case_type_id' }['value']
     multiples_case_type_id = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_case_type_id' }['value']
-    multiples_auto_accept = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_auto_accept' }&.fetch('value')&.downcase == 'true'
-    state = multiples_auto_accept ? 'Accepted' : 'Pending'
     claimant_count = export.dig('resource', 'secondary_claimants').length + 1#
 
-    batch.description = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
-    batch.callback_queue = 'external_system_ccd_callbacks'
-    batch.on :complete,
-             Callback,
-             primary_reference: export.dig('resource', 'reference'),
-             respondent_name: export.dig('resource', 'primary_respondent', 'name'),
-             header_worker: header_worker.name,
-             multiples_case_type_id: multiples_case_type_id,
-             export_id: export['id']
-    batch.jobs do
-
-      client_class.use do |client|
-        result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
-        next_ref = result['startCaseRefNumber']
-        multiple_ref = result['multipleRefNumber']
-        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, state: state, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
+    client_class.use do |client|
+      start_multiple_result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
+      multiple_ref = start_multiple_result['multipleRefNumber']
+      batch.description = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
+      batch.callback_queue = 'external_system_ccd_callbacks'
+      batch.on :complete,
+               Callback,
+               primary_reference: multiple_ref,
+               respondent_name: export.dig('resource', 'primary_respondent', 'name'),
+               header_worker: header_worker.name,
+               multiples_case_type_id: multiples_case_type_id,
+               export_id: export['id']
+      batch.jobs do
+        next_ref = start_multiple_result['startCaseRefNumber']
+        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
         export.dig('resource', 'secondary_claimants').each do |claimant|
           next_ref = reference_generator.call(next_ref)
-          worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, state: state, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count
+          worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count
         end
       end
+      batch.bid
     end
-    batch.bid
   end
 
   # @param [String] data The JSON data to send to ccd as the details part of the payload

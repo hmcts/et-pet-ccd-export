@@ -141,7 +141,7 @@ RSpec.describe ExportMultipleClaimsService do
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the batch
-        expect(mock_header_worker).to have_received(:perform).with(example_export.resource.reference, example_export.resource.primary_respondent.name, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples', example_export.id)
+        expect(mock_header_worker).to have_received(:perform).with(match(/\d{7}\/\d{4}/), example_export.resource.primary_respondent.name, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples', example_export.id)
       end
 
       it 'queues the worker 11 times with the data from the presenter' do
@@ -180,9 +180,9 @@ RSpec.describe ExportMultipleClaimsService do
         # Assert - Check the worker has been queued
         aggregate_failures "validate all calls in one" do
           expect(mock_presenter).to have_received(:present).exactly(example_export.resource.secondary_claimants.length + 1).times
-          expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: example_export.resource.primary_claimant.as_json, files: an_instance_of(Array), lead_claimant: true, state: 'Pending', multiple_reference: an_instance_of(String), ethos_case_reference: an_instance_of(String))
+          expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: example_export.resource.primary_claimant.as_json, files: an_instance_of(Array), lead_claimant: true, multiple_reference: an_instance_of(String), ethos_case_reference: an_instance_of(String))
           example_export.resource.secondary_claimants.each do |claimant|
-            expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: claimant.as_json, lead_claimant: false, state: 'Pending', multiple_reference: an_instance_of(String), ethos_case_reference: an_instance_of(String))
+            expect(mock_presenter).to have_received(:present).with(example_export.resource.as_json, claimant: claimant.as_json, lead_claimant: false, multiple_reference: an_instance_of(String), ethos_case_reference: an_instance_of(String))
           end
         end
       end

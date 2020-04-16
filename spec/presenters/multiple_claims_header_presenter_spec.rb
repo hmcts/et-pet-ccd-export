@@ -1,7 +1,7 @@
 require 'rails_helper'
 RSpec.describe MultipleClaimsHeaderPresenter do
   subject(:presenter) { described_class }
-  let(:example_primary_reference) { "123456789012" }
+  let(:example_primary_reference) { "1234567/2020" }
   let(:example_respondent_name) { 'Dodgy Co' }
   let(:example_case_references) do
     [
@@ -25,6 +25,14 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
     # Assert
     expect(result.dig('data', 'caseSource')).to eql 'ET1 Online'
+  end
+
+  it 'presents the multipleReference' do
+    # Act
+    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+
+    # Assert
+    expect(result.dig('data', 'multipleReference')).to eql example_primary_reference
   end
 
   it 'presents the bulkCaseTitle' do
