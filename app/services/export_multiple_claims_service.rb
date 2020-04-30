@@ -22,7 +22,7 @@ class ExportMultipleClaimsService
 
     client_class.use do |client|
       start_multiple_result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
-      multiple_ref = start_multiple_result['multipleRefNumber']
+      multiple_ref = start_multiple_result.dig('data', 'multipleRefNumber')
       batch.description = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
       batch.callback_queue = 'external_system_ccd_callbacks'
       batch.on :complete,
@@ -33,7 +33,7 @@ class ExportMultipleClaimsService
                multiples_case_type_id: multiples_case_type_id,
                export_id: export['id']
       batch.jobs do
-        next_ref = start_multiple_result['startCaseRefNumber']
+        next_ref = start_multiple_result.dig('data', 'startCaseRefNumber')
         worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
         export.dig('resource', 'secondary_claimants').each do |claimant|
           next_ref = reference_generator.call(next_ref)
