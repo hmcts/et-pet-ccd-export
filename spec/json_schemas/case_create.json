@@ -860,21 +860,11 @@
               "title": "The type of document Schema",
               "default": "",
               "examples": [
-                "Application"
+                "ET1"
               ],
               "enum": [
-                "Application",
-                "Power of attorney",
-                "Claimant evidence",
-                "Respondent evidence",
-                "Other evidence",
-                "Initial assessment",
-                "Referral notice",
-                "Notification to repondent",
-                "Risk assessment",
-                "Correspondence",
-                "Index of checklist documents",
-                "Preliminary Hearing",
+                "ET1",
+                "ACAS Certificate",
                 "Other"
               ]
             },

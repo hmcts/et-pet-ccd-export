@@ -105,7 +105,6 @@ json.set! "documentCollection" do
     json.set! 'id', nil
     json.set! 'value' do
       json.set! 'typeOfDocument', file['document_type']
-      json.set! 'shortDescription', file['short_description']
       json.set! 'uploadedDocument' do
         json.set! 'document_url', file['document_url']
         json.set! 'document_binary_url', file['document_binary_url']

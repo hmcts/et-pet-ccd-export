@@ -174,8 +174,7 @@ RSpec.describe "create claim" do
       contain_exactly \
         a_hash_including('id' => nil,
                          'value' => a_hash_including(
-                           'typeOfDocument' => 'Application',
-                           'shortDescription' => "ET1 application for #{claimant.first_name} #{claimant.last_name}",
+                           'typeOfDocument' => 'ET1',
                            'uploadedDocument' => a_hash_including(
                              'document_url' => an_instance_of(String),
                              'document_binary_url' => an_instance_of(String),
@@ -184,8 +183,7 @@ RSpec.describe "create claim" do
                          )),
         a_hash_including('id' => nil,
                          'value' => a_hash_including(
-                           'typeOfDocument' => 'Other',
-                           'shortDescription' => "ACAS certificate for #{respondent.name}",
+                           'typeOfDocument' => 'ACAS Certificate',
                            'uploadedDocument' => a_hash_including(
                              'document_url' => an_instance_of(String),
                              'document_binary_url' => an_instance_of(String),
@@ -212,15 +210,14 @@ RSpec.describe "create claim" do
       contain_exactly \
         a_hash_including('id' => nil,
                          'value' => a_hash_including(
-                           'typeOfDocument' => 'Application',
+                           'typeOfDocument' => 'ET1',
                            'uploadedDocument' => a_hash_including(
                              'document_filename' => 'et1_chloe_goodwin.pdf'
                            )
                          )),
         a_hash_including('id' => nil,
                          'value' => a_hash_including(
-                           'typeOfDocument' => 'Other',
-                           'shortDescription' => "ACAS certificate for #{respondent.name}",
+                           'typeOfDocument' => 'ACAS Certificate',
                            'uploadedDocument' => a_hash_including(
                              'document_url' => an_instance_of(String),
                              'document_binary_url' => an_instance_of(String),

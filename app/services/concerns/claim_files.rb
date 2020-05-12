@@ -8,12 +8,21 @@ module ClaimFiles
     files_of_interest(export).map do |f|
       json = client.upload_file_from_url(f['url'], content_type: f['content_type'], original_filename: f['filename'])
       {
-        'document_type' => application_file?(f) ? 'Application' : 'Other',
-        'short_description' => short_description_for(f, export: export),
+        'document_type' => document_type(f),
         'document_url' => json.dig('_embedded', 'documents').first.dig('_links', 'self', 'href'),
         'document_binary_url' => json.dig('_embedded', 'documents').first.dig('_links', 'binary', 'href'),
         'document_filename' => f['filename']
       }
+    end
+  end
+
+  def document_type(file)
+    if application_file?(file)
+      'ET1'
+    elsif acas_file?(file)
+      'ACAS Certificate'
+    else
+      'Other'
     end
   end
 
@@ -39,21 +48,4 @@ module ClaimFiles
   def additional_info_file?(file)
     file['filename'].match? /\Aet1.*\.rtf\z/
   end
-
-  def short_description_for(file, export:)
-    claimant = export.dig('resource', 'primary_claimant')
-    respondent = export.dig('resource', 'primary_respondent')
-    if application_file?(file)
-      "ET1 application for #{claimant['first_name']} #{claimant['last_name']}"
-    elsif claimants_file?(file)
-      "Additional claimants file for #{claimant['first_name']} #{claimant['last_name']}"
-    elsif additional_info_file?(file)
-      "Additional information file for #{claimant['first_name']} #{claimant['last_name']}"
-    elsif acas_file?(file)
-      "ACAS certificate for #{respondent['name']}"
-    else
-      "Unknown"
-    end
-  end
-
 end
