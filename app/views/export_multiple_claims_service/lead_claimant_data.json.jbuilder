@@ -4,7 +4,7 @@ json.set! 'state', state
 json.set! 'stateAPI', state
 json.set! 'feeGroupReference', claim.dig('reference')
 json.set! 'claimant_TypeOfClaimant', 'Individual'
-json.set! 'positionType', 'received by auto-import'
+json.set! 'positionType', 'Received by Auto-Import'
 json.set! 'claimantIndType' do
   json.set! 'claimant_title1', claim.dig('primary_claimant', 'title')
   json.set! 'claimant_first_names', claim.dig('primary_claimant', 'first_name')

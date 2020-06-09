@@ -1080,9 +1080,9 @@
       "type": "string",
       "title": "The position type (fixed value)",
       "examples": [
-        "received by auto-import"
+        "Received by Auto-Import"
       ],
-      "enum": ["received by auto-import"]
+      "enum": ["Received by Auto-Import"]
     }
   }
 }
