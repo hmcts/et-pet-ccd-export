@@ -35,7 +35,7 @@ end
 
 group :test do
   gem 'rspec-rails', '~> 3.9'
-  gem 'factory_bot', '~> 5.0', '>= 5.0.2'
+  gem 'factory_bot', '~> 6.0'
   gem 'jsonpath', '~> 1.0'
   gem 'et_fake_ccd', '~> 1.0'
   gem 'json_matchers', '~> 0.11.0'
