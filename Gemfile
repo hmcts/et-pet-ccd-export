@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.0.3.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
@@ -34,8 +34,8 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails', '~> 3.9'
-  gem 'factory_bot', '~> 5.0', '>= 5.0.2'
+  gem 'rspec-rails', '~> 4.0'
+  gem 'factory_bot', '~> 6.0'
   gem 'jsonpath', '~> 1.0'
   gem 'et_fake_ccd', '~> 1.0'
   gem 'json_matchers', '~> 0.11.0'
