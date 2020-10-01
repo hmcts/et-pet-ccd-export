@@ -29,6 +29,7 @@ end
 json.set! 'caseType', 'Multiple'
 json.set! 'multipleReference', multiple_reference
 json.set! 'leadClaimant1', 'No'
+json.set! 'leadClaimant', 'No'
 json.set! 'claimantWorkAddress', {}
 json.set! 'respondentCollection' do
   json.array!([claim['primary_respondent']] + claim.dig('secondary_respondents')) do |respondent|
