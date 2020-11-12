@@ -1014,17 +1014,6 @@
         "2100034/2019"
       ]
     },
-    "leadClaimant1": {
-      "$id": "#/properties/data/properties/leadClaimant1",
-      "type": "string",
-      "title": "(deprecated) Indicates that this is the lead claimant of a multiple case",
-      "default": "No",
-      "examples": [
-        "Yes",
-        "No"
-      ],
-      "enum": ["Yes", "No"]
-    },
     "leadClaimant": {
       "$id": "#/properties/data/properties/leadClaimant",
       "type": "string",

@@ -154,7 +154,7 @@ RSpec.describe "create claim multiples" do
     aggregate_failures 'validating against schema' do
       lead_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_reference, case_type_id: 'Manchester')
       expect(lead_case['case_fields']).to match_json_schema('case_create')
-      expect(lead_case.dig('case_fields', 'leadClaimant1')).to eql 'Yes'
+      expect(lead_case.dig('case_fields', 'leadClaimant')).to eql 'Yes'
     end
   end
 
@@ -172,7 +172,7 @@ RSpec.describe "create claim multiples" do
     aggregate_failures 'validating against schema' do
       lead_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_reference, case_type_id: 'Manchester')
       expect(lead_case['case_fields']).to match_json_schema('case_create')
-      expect(lead_case.dig('case_fields', 'leadClaimant1')).to eql 'No'
+      expect(lead_case.dig('case_fields', 'leadClaimant')).to eql 'No'
     end
   end
 
