@@ -14,6 +14,10 @@ RSpec.describe EthosReferenceGeneratorService do
     expect(service.call('1299999/2019')).to eql '1200001/0019'
   end
 
+  it 'wraps around correctly given 6 digits' do
+    expect(service.call('12999999/2019')).to eql '12000001/0019'
+  end
+
   it 'raises an exception if wrapped around twice' do
     expect { service.call('1299999/0019') }.to raise_exception RuntimeError, 'All reference numbers used up'
   end
