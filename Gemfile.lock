@@ -117,7 +117,7 @@ GEM
       rotp (~> 5.1)
       thor (~> 1.0)
       tilt (~> 2.0, >= 2.0.9)
-    factory_bot (6.0.2)
+    factory_bot (6.1.0)
       activesupport (>= 5.0.0)
     faraday (0.17.3)
       multipart-post (>= 1.2, < 3)
@@ -315,7 +315,7 @@ DEPENDENCIES
   et_azure_insights (= 0.2.12)!
   et_ccd_client!
   et_fake_ccd (~> 1.1)
-  factory_bot (~> 6.0)
+  factory_bot (~> 6.1)
   ice_nine (~> 0.11.2)
   jbuilder (~> 2.9, >= 2.9.1)
   json_matchers (~> 0.11.0)
