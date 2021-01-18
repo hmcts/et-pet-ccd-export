@@ -7,18 +7,6 @@ GIT
       application_insights (~> 0.5.7)
 
 GIT
-  remote: https://github.com/hmcts/et-ccd-client-ruby.git
-  revision: 478c1a2f4d5068dcb9c8943c12cb43335b46f418
-  tag: v0.3.0
-  specs:
-    et_ccd_client (0.3.0)
-      addressable (~> 2.6)
-      connection_pool (~> 2.2, >= 2.2.2)
-      rest-client (~> 2.0, >= 2.0.2)
-      rotp (~> 5.0)
-      webmock (~> 3.6)
-
-GIT
   remote: https://github.com/microsoft/ApplicationInsights-Ruby.git
   revision: 5db6b4ad65262d23f26b678143a4a1fd7939e5c2
   ref: 5db6b4
@@ -114,12 +102,18 @@ GEM
       dotenv (= 2.7.6)
       railties (>= 3.2)
     erubi (1.10.0)
-    et_fake_ccd (1.1.1)
+    et_ccd_client (0.3.2)
+      addressable (~> 2.6)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rest-client (~> 2.0, >= 2.0.2)
+      rotp (~> 6.2)
+      webmock (~> 3.6)
+    et_fake_ccd (1.1.2)
       activemodel (>= 5.2.3)
       iodine (~> 0.7)
       json-schema (~> 2.5)
       roda (~> 3.21)
-      rotp (~> 5.1)
+      rotp (~> 6.0)
       thor (~> 1.0)
       tilt (~> 2.0, >= 2.0.9)
     factory_bot (6.1.0)
@@ -227,8 +221,7 @@ GEM
     rexml (3.2.4)
     roda (3.40.0)
       rack
-    rotp (5.1.0)
-      addressable (~> 2.5)
+    rotp (6.2.0)
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
     rspec-expectations (3.10.1)
@@ -309,7 +302,7 @@ DEPENDENCIES
   byebug
   dotenv-rails (~> 2.7)
   et_azure_insights (= 0.2.12)!
-  et_ccd_client!
+  et_ccd_client (~> 0.3)
   et_fake_ccd (~> 1.1)
   factory_bot (~> 6.1)
   ice_nine (~> 0.11.2)
