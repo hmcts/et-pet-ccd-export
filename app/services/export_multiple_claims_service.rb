@@ -86,23 +86,9 @@ class ExportMultipleClaimsService
     include Sidekiq::Worker
 
     def on_complete(batch_status, options)
-      if batch_status.failures != 0
-        unmark_event_complete(batch_status)
-        return
-      end
       case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
 
       options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id'], options['export_id']
-    end
-
-    private
-
-    # Required as as workaround otherwise once something has failed, the batch will never complete after the retries have succeeded
-    def unmark_event_complete(batch_status)
-      batch_key = "BID-#{batch_status.bid}"
-      ::Sidekiq.redis do |r|
-        r.hset(batch_key, :complete, false)
-      end
     end
   end
 end
