@@ -3,7 +3,7 @@ class ExportMultiplesHeaderWorker
   include ExportRetryControl
   sidekiq_options queue: 'external_system_ccd'
 
-  self.exceptions_without_retry = [EtCcdClient::Exceptions::UnprocessableEntity, PreventJobRetryingException].freeze
+  self.exceptions_without_retry = [PreventJobRetryingException].freeze
 
   attr_accessor :job_hash
 

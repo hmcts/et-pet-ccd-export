@@ -13,15 +13,15 @@ RSpec.describe ::EtExporter::ExportResponseWorker do
   describe '#perform' do
     let(:example_export) { build(:export, :for_response) }
 
-    it 'should not call the service twice if the service responds with a ::EtCcdClient::Exceptions::UnprocessableEntity' do
+    it 'should call the service twice if the service responds with a ::EtCcdClient::Exceptions::UnprocessableEntity' do
       # Arrange - change the fake job hash to look like sidekiq's 'job_retry' has had a previous error
       fake_job_hash['error_class'] = 'EtCcdClient::Exceptions::UnprocessableEntity'
 
       # Act - Call the worker expecting the special error
       worker.perform(example_export.as_json.to_json) rescue PreventJobRetryingException
 
-      # Assert - Make sure the service was not called
-      expect(fake_service).not_to have_received(:call)
+      # Assert - Make sure the service was called
+      expect(fake_service).to have_received(:call)
     end
 
     it 'should call the service with the parsed json as first param and the fake job hash as sidekiq_job_data' do
