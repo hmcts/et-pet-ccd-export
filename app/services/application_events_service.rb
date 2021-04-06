@@ -202,6 +202,23 @@ module ApplicationEventsService
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end
 
+    def send_multiples_claim_references_allocated_event(export_id:, sidekiq_job_data:, start_reference:, quantity:, case_type_id:)
+      event_data = {
+        sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
+        export_id: export_id,
+        external_data: {
+          start_reference: start_reference,
+          quantity: quantity,
+          case_type_id: case_type_id
+        },
+        state: 'in_progress',
+        percent_complete: 0,
+        message: 'Multiples claim references allocated'
+      }
+      send_application_event('ClaimExportFeedbackReceived', event_data)
+    end
+
+
     def send_claim_export_multiples_queued_event(queued_bid:, export_id:, sidekiq_job_data:, percent_complete:)
       event_data = {
         sidekiq: sidekiq_job_data.except('class', 'args', 'queue').merge(queued_bid: queued_bid),

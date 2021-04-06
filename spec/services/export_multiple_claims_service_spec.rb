@@ -2,13 +2,20 @@ require 'rails_helper'
 require 'ice_nine'
 require 'securerandom'
 RSpec.describe ExportMultipleClaimsService do
-  subject(:service) { described_class.new presenter: mock_presenter, header_presenter: mock_header_presenter, envelope_presenter: mock_envelope_presenter, disallow_file_extensions: [] }
+  subject(:service) do
+    described_class.new presenter: mock_presenter,
+                        header_presenter: mock_header_presenter,
+                        envelope_presenter: mock_envelope_presenter,
+                        disallow_file_extensions: [],
+                        application_events_service: fake_events_service
+  end
 
   let(:mock_presenter) { class_spy(MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
   let(:mock_header_presenter) do
     self.class::MockHeaderPresenter = class_spy(MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}')
   end
   let(:mock_envelope_presenter) { class_spy(MultipleClaimsEnvelopePresenter) }
+  let(:fake_events_service) { class_spy(ApplicationEventsService) }
 
   describe '#call' do
     def primaryClaimantIndTypeMatcher(claimant, has_gender: true)
@@ -143,6 +150,22 @@ RSpec.describe ExportMultipleClaimsService do
         # Assert - Check the batch
         expect(mock_header_worker).to have_received(:perform).with(match(/\d{7}\/\d{4}/), example_export.resource.primary_respondent.name, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples', example_export.id)
       end
+
+      it 'should inform the application events service of the references allocated' do
+        # Act - Call the service
+        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
+        drain_all_our_sidekiq_jobs
+
+        # Assert - Make sure the service was not called
+        expect(fake_events_service)
+          .to have_received(:send_multiples_claim_references_allocated_event)
+                .with export_id: example_export.id,
+                      sidekiq_job_data: { jid: 'examplejid' },
+                      case_type_id: 'Manchester',
+                      start_reference: a_string_matching(/24\d{5}\/\d{4}/),
+                      quantity: 11
+      end
+
 
       it 'queues the worker 11 times with the data from the presenter' do
         # Arrange - Setup the presenter to return different values each time
