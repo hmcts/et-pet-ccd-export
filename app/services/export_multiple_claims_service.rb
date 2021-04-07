@@ -31,22 +31,24 @@ class ExportMultipleClaimsService
     client_class.use do |client|
       start_multiple_result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
       multiple_ref          = start_multiple_result.dig('data', 'multipleRefNumber')
+      next_ref = start_multiple_result.dig('data', 'startCaseRefNumber')
       events_service.send_multiples_claim_references_allocated_event export_id:        export['id'],
                                                                      sidekiq_job_data: sidekiq_job_data,
-                                                                     start_reference:  multiple_ref,
+                                                                     start_reference:  next_ref,
                                                                      quantity:         claimant_count,
                                                                      case_type_id:     case_type_id
       batch.description    = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
       batch.callback_queue = 'external_system_ccd_callbacks'
-      batch.on :complete,
+      batch.on :success,
                Callback,
                primary_reference:      multiple_ref,
                respondent_name:        export.dig('resource', 'primary_respondent', 'name'),
                header_worker:          header_worker.name,
                multiples_case_type_id: multiples_case_type_id,
                export_id:              export['id']
+      batch.on :complete,
+               CompleteCallback
       batch.jobs do
-        next_ref = start_multiple_result.dig('data', 'startCaseRefNumber')
         worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
         export.dig('resource', 'secondary_claimants').each do |claimant|
           next_ref = reference_generator.call(next_ref)
@@ -100,10 +102,25 @@ class ExportMultipleClaimsService
   class Callback
     include Sidekiq::Worker
 
-    def on_complete(batch_status, options)
+    def on_success(batch_status, options)
       case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
 
       options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id'], options['export_id']
+    end
+  end
+
+  class CompleteCallback
+    include Sidekiq::Worker
+
+    def on_complete(batch_status, options)
+      if batch_status.pending.positive?
+        Sidekiq.logger.debug "WORKAROUND - bid #{batch_status.bid} Setting the complete flag to false to allow retry to complete batch"
+        Sidekiq.redis do |r|
+          r.multi do
+            r.hset("BID-#{batch_status.bid}", :complete, false)
+          end
+        end
+      end
     end
   end
 end

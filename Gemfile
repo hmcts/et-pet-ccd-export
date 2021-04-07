@@ -9,7 +9,7 @@ gem 'rails', '~> 6.1.3.1'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Sidekiq - Used to receive the jobs from the API service
-gem 'sidekiq', '~> 6.1'
+gem 'sidekiq', '~> 6.2'
 gem 'sidekiq_alive', '~> 2.0'
 gem 'sidekiq-failures', '~> 1.0'
 gem 'sidekiq-batch', '~> 0.1.5'
