@@ -35,7 +35,7 @@ Rails.application.configure do
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
   config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'debug').to_sym
-
+  Sidekiq.logger = Sidekiq::Logger.new($stdout, level: Logger.const_get(config.log_level.to_s.upcase))
   # Prepend all log lines with the following tags.
   config.log_tags = [ :request_id ]
 

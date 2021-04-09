@@ -189,5 +189,25 @@ then
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests.
 
+## Problem Solving
+
+### Batches That Never Complete
+
+Whilst it is believed that the root cause of this problem has been fixed, the procedure below was documented in case
+it isn't.
+In summary, under error recovery conditions, a multiple claim may never complete as the success event is never fired.
+
+Steps to fix
+
+1. Fix the cause of the sub claim erroring - e.g. fix the sidekiq job data (may be in failed by now) to prevent a 422 error
+2. If the success event did not fire, use 
+
+```ruby
+Sidekiq::Batch.enqueue_callbacks(:success, '<batch id>')
+
+```
+
+to trigger it
+
 ## License
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
