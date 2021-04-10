@@ -25,7 +25,7 @@ gem 'pg', '>= 0.18', '< 2.0'
 gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
-gem 'et_ccd_client', '~> 0.3'
+gem 'et_ccd_client', '~> 0.3', '>= 0.3.2'
 gem 'dotenv-rails', '~> 2.7'
 
 group :development, :test do
@@ -45,8 +45,8 @@ end
 
 group :development do
   gem 'listen', '~> 3.4'
-  gem 'rubocop', '~> 1.8'
-  gem 'rubocop-rspec', '~> 2.1'
+  gem 'rubocop', '~> 1.9', '>= 1.9.1'
+  gem 'rubocop-rspec', '~> 2.2', '>= 2.2.0'
 end
 
 
