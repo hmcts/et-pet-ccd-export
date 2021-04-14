@@ -1,5 +1,6 @@
 class ExportClaimService
   include ClaimFiles
+  include CcdExtraHeaders
 
   def initialize(client_class: EtCcdClient::Client, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.client_class = client_class
@@ -16,11 +17,12 @@ class ExportClaimService
 
   def do_export(export, sidekiq_job_data:)
     client_class.use do |client|
-      case_type_id = export.dig('external_system', 'configurations').detect {|c| c['key'] == 'case_type_id'}['value']
-      resp = client.caseworker_start_case_creation(case_type_id: case_type_id)
-      event_token = resp['token']
-      data = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export))
-      client.caseworker_case_create(data, case_type_id: case_type_id)
+      extra_headers     = extra_headers_for(export, sidekiq_job_data['jid'])
+      case_type_id      = export.dig('external_system', 'configurations').detect {|c| c['key'] == 'case_type_id'}['value']
+      resp              = client.caseworker_start_case_creation(case_type_id: case_type_id, extra_headers: extra_headers)
+      event_token       = resp['token']
+      data              = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export))
+      client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
     end
   end
 end

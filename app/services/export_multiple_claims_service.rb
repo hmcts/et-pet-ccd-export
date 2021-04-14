@@ -1,5 +1,6 @@
 class ExportMultipleClaimsService
   include ClaimFiles
+  include CcdExtraHeaders
 
   def initialize(client_class: EtCcdClient::Client,
                  presenter: MultipleClaimsPresenter,
@@ -19,6 +20,7 @@ class ExportMultipleClaimsService
 
   # Schedules a worker to send the pre compiled data (as the ccd data is smaller than the export data for each multiples case)
   # @param [Hash] export - The export hash containing the claim as well as export data
+  # @param [Hash] sidekiq_job_data
   def call(export,
            sidekiq_job_data:,
            worker: ExportMultiplesWorker,
@@ -33,9 +35,12 @@ class ExportMultipleClaimsService
     end
 
     client_class.use do |client|
-      start_multiple_result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
+      start_multiple_result = client.start_multiple case_type_id: case_type_id,
+                                                    quantity: claimant_count,
+                                                    extra_headers: extra_headers_for(export, sidekiq_job_data['jid'])
       multiple_ref          = start_multiple_result.dig('data', 'multipleRefNumber')
-      next_ref = start_multiple_result.dig('data', 'startCaseRefNumber')
+      next_ref              = start_multiple_result.dig('data', 'startCaseRefNumber')
+      send_request_id       = send_request_id?(export)
       events_service.send_multiples_claim_references_allocated_event export_id:        export['id'],
                                                                      sidekiq_job_data: sidekiq_job_data,
                                                                      start_reference:  next_ref,
@@ -49,14 +54,34 @@ class ExportMultipleClaimsService
                respondent_name:        export.dig('resource', 'primary_respondent', 'name'),
                header_worker:          header_worker.name,
                multiples_case_type_id: multiples_case_type_id,
-               export_id:              export['id']
+               export_id:              export['id'],
+               send_request_id:        send_request_id
       batch.on :complete,
                CompleteCallback
       batch.jobs do
-        worker.perform_async presenter.present(export['resource'], claimant: export.dig('resource', 'primary_claimant'), files: files_data(client, export), lead_claimant: true, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count, true
+        worker.perform_async presenter.present(export['resource'],
+                                               claimant: export.dig('resource', 'primary_claimant'),
+                                               files: files_data(client, export),
+                                               lead_claimant: true,
+                                               multiple_reference: multiple_ref,
+                                               ethos_case_reference: next_ref),
+                             case_type_id,
+                             export['id'],
+                             claimant_count,
+                             true,
+                             send_request_id
         export.dig('resource', 'secondary_claimants').each do |claimant|
           next_ref = reference_generator.call(next_ref)
-          worker.perform_async presenter.present(export['resource'], claimant: claimant, lead_claimant: false, multiple_reference: multiple_ref, ethos_case_reference: next_ref), case_type_id, export['id'], claimant_count
+          worker.perform_async presenter.present(export['resource'],
+                                                 claimant: claimant,
+                                                 lead_claimant: false,
+                                                 multiple_reference: multiple_ref,
+                                                 ethos_case_reference: next_ref),
+                               case_type_id,
+                               export['id'],
+                               claimant_count,
+                               false,
+                               send_request_id
         end
       end
       batch.bid
@@ -64,12 +89,13 @@ class ExportMultipleClaimsService
   end
 
   # @param [String] data The JSON data to send to ccd as the details part of the payload
-  def export(data, case_type_id, sidekiq_job_data:, bid:, export_id:, claimant_count:)
+  def export(data, case_type_id, sidekiq_job_data:, bid:, export_id:, claimant_count:, send_request_id: false)
+    extra_headers = send_request_id ? { request_id: sidekiq_job_data['jid'] } : {}
     client_class.use do |client|
-      resp         = client.caseworker_start_case_creation(case_type_id: case_type_id)
+      resp         = client.caseworker_start_case_creation(case_type_id: case_type_id, extra_headers: extra_headers)
       event_token  = resp['token']
       data         = envelope_presenter.present(data, event_token: event_token)
-      created_case = client.caseworker_case_create(data, case_type_id: case_type_id)
+      created_case = client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
       number       = Sidekiq.redis do |r|
         r.incr("BID-#{bid}-references-count")
       end
@@ -84,12 +110,13 @@ class ExportMultipleClaimsService
   # @param [String] case_type_id
   # @param [String] export_id
   # @param [Hash] sidekiq_job_data
-  def export_header(primary_reference, respondent_name, case_references, case_type_id, export_id, sidekiq_job_data:)
+  def export_header(primary_reference, respondent_name, case_references, case_type_id, export_id, sidekiq_job_data:, send_request_id: false)
+    extra_headers = send_request_id ? { request_id: sidekiq_job_data['jid'] } : {}
     client_class.use do |client|
-      resp        = client.caseworker_start_bulk_creation(case_type_id: case_type_id)
+      resp        = client.caseworker_start_bulk_creation(case_type_id: case_type_id, extra_headers: extra_headers)
       event_token = resp['token']
       data        = header_presenter.present(primary_reference: primary_reference, respondent_name: respondent_name, case_references: case_references, event_token: event_token)
-      client.caseworker_case_create(data, case_type_id: case_type_id)
+      client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
     end
   end
 
@@ -109,7 +136,7 @@ class ExportMultipleClaimsService
     def on_success(batch_status, options)
       case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
 
-      options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id'], options['export_id']
+      options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id'], options['export_id'], options['send_request_id']
     end
   end
 

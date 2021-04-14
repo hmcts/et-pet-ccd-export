@@ -15,12 +15,33 @@ RSpec.describe ExportMultiplesWorker do
     let(:example_ccd_data) { {"ethosCaseReference": "exampleEthosCaseReference"} }
     let(:example_ccd_data_primary) { {"ethosCaseReference": "exampleEthosCaseReferencePrimary"} }
 
+    it 'should call export with the correct args' do
+      # Arrange - prepare a batch to operate in
+      batch = ::Sidekiq::Batch.new
+
+      # Act - Call the worker
+      batch.jobs do
+        worker.perform(example_ccd_data.as_json.to_json, 'Manchester', example_export.id, 1, false, true)
+      end
+
+      # Assert - Make sure the service was called correctly
+      expect(fake_service).to have_received(:export)
+                                .with example_ccd_data.to_json,
+                                      'Manchester',
+                                      sidekiq_job_data: an_instance_of(Hash),
+                                      bid: batch.bid,
+                                      export_id: example_export.id,
+                                      claimant_count: 1,
+                                      send_request_id: true
+
+    end
+
     it 'should inform the application events service of the process finishing using a progress event if the service did not raise exception' do
       # Arrange - mock the output from the service
       batch = ::Sidekiq::Batch.new
       allow(fake_service).
         to receive(:export).
-          with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything).
+          with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything, send_request_id: anything).
           and_return([{'id' => 'fake_id', 'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'}, 'case_type_id' => 'Manchester'}, 1])
       # Act - Call the worker expecting the special error
       batch.jobs do
@@ -54,17 +75,17 @@ RSpec.describe ExportMultiplesWorker do
       batch = ::Sidekiq::Batch.new
       allow(fake_service).
         to receive(:export).
-          with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything).
+          with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything, send_request_id: anything).
           and_return([{'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'}}, 1])
       allow(fake_service).
         to receive(:export).
-          with(example_ccd_data_primary.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything).
+          with(example_ccd_data_primary.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything, send_request_id: anything).
           and_return([{'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReferencePrimary'}}, 2])
 
       # Act - Call the worker
       batch.jobs do
-        worker.perform(example_ccd_data.to_json, 'Manchester', example_export.id, 10)
-        worker.perform(example_ccd_data_primary.to_json, 'Manchester', example_export.id, 10, true)
+        worker.perform(example_ccd_data.to_json, 'Manchester', example_export.id, 10, false, {})
+        worker.perform(example_ccd_data_primary.to_json, 'Manchester', example_export.id, 10, true, {})
       end
 
       # Assert - Check in redis

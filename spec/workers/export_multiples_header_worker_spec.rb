@@ -7,7 +7,7 @@ RSpec.describe ExportMultiplesHeaderWorker do
     end
   end
   let(:fake_job_hash) { {'jid' => 'fakejid', 'args' => fake_job_args} }
-  let(:fake_job_args) { ['primary_reference', 'respondent_name', ['case_ref1'], 'fake_case_type_id', example_export.id] }
+  let(:fake_job_args) { ['primary_reference', 'respondent_name', ['case_ref1'], 'fake_case_type_id', example_export.id, true] }
   let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
   let(:fake_service) { instance_spy(ExportMultipleClaimsService, export_header: {'id' => 'fake_id', 'case_type_id' => 'fake_case_type_id', 'case_data' => { 'multipleReference' => 'fake_reference'}}) }
   let(:fake_events_service) { class_spy(ApplicationEventsService) }
@@ -25,7 +25,7 @@ RSpec.describe ExportMultiplesHeaderWorker do
     worker.perform(*fake_job_args)
 
     # Assert - Make sure the service was not called
-    expect(fake_service).to have_received(:export_header).with('primary_reference', 'respondent_name', ['case_ref1'], 'fake_case_type_id', example_export.id, sidekiq_job_data: fake_job_hash)
+    expect(fake_service).to have_received(:export_header).with('primary_reference', 'respondent_name', ['case_ref1'], 'fake_case_type_id', example_export.id, sidekiq_job_data: fake_job_hash, send_request_id: true)
   end
 
   it 'sends a failure to the events system when retries exhausted' do
