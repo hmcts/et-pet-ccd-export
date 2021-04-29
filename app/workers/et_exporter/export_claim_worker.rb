@@ -37,6 +37,8 @@ module EtExporter
       events_service.send_multiples_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
       bid = multiples_service.call(parsed_json, sidekiq_job_data: job_hash)
       events_service.send_claim_export_multiples_queued_event queued_bid: bid, sidekiq_job_data: job_hash, export_id: parsed_json['id'], percent_complete: percent_complete_for(1, claimant_count: parsed_json.dig('resource', 'secondary_claimants').length + 1)
+    rescue ClaimMultipleClaimantCountExceededException => ex
+      events_service.send_multiples_claim_size_exceeded_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
     rescue Exception => ex
       events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
       raise ex

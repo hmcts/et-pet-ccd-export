@@ -59,6 +59,15 @@ module EtCcdExport
         expect(jobs.length).to be 1
       end
 
+      def assert_multiples_claim_size_exceeded(export:)
+        jobs = ::Sidekiq::Worker.jobs.select do |j|
+          j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' &&
+            j['args'].first['arguments'].first == 'ClaimExportFeedbackReceived' &&
+            JSON.parse(j['args'].first['arguments'][1]) >= {'state' => 'failed', 'export_id' => export.id, 'percent_complete' => 0, 'message' => 'Multiples claim size exceeded'}
+        end
+        expect(jobs.length).to be 1
+      end
+
       def assert_sub_claim_erroring(export:)
         jobs = ::Sidekiq::Worker.jobs.select do |j|
           j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' &&

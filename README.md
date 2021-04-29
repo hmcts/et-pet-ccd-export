@@ -152,6 +152,14 @@ The application must be configured to use the same redis details as the API serv
     Without this, the CCD services that want to access this data from inside docker,
     will not be able to.
 
+6.1 'External System' config entries in admin
+
+  #### multiples_max_claimant_count
+
+  This allows the office to define the maximum amount of
+  claimants for a multiple.
+
+
 7. CCD Document Store - Disallowed types
 
 At the time of writing, ccd document store will not store RTF and CSV files.  There is a change going through to the whitelist
