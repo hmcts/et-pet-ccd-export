@@ -7,8 +7,6 @@ FactoryBot.define do
     enabled { true }
     configurations do
       [
-        build(:system_configuration, key: 'user_id', value: '22'),
-        build(:system_configuration, key: 'user_role', value: 'caseworker,caseworker-test,caseworker-employment-tribunal-manchester,caseworker-employment,caseworker-employment-tribunal-manchester-caseofficer,caseworker-publiclaw-localAuthority'),
         build(:system_configuration, key: 'case_type_id', value: 'Manchester'),
         build(:system_configuration, key: 'multiples_case_type_id', value: 'Manchester_Multiples')
       ]
@@ -19,6 +17,16 @@ FactoryBot.define do
           build(:system_configuration, key: 'case_type_id', value: 'Manchester'),
           build(:system_configuration, key: 'multiples_case_type_id', value: 'Manchester_Multiples'),
           build(:system_configuration, key: 'multiples_auto_accept', value: 'true')
+        ]
+      end
+    end
+
+    trait :limited_multiples_count do
+      configurations do
+        [
+          build(:system_configuration, key: 'case_type_id', value: 'Manchester'),
+          build(:system_configuration, key: 'multiples_case_type_id', value: 'Manchester_Multiples'),
+          build(:system_configuration, key: 'multiples_max_claimant_count', value: '1')
         ]
       end
     end

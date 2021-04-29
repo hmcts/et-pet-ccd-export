@@ -30,6 +30,18 @@ RSpec.describe "create claim multiples" do
     end
   end
 
+  it 'does not process a claim with too many claimants' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, :limited_multiples_count, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check that the event has been sent to the api
+    external_events.assert_multiples_claim_size_exceeded(export: export)
+  end
+
   it 'raises an API event to inform of start of case creation' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])

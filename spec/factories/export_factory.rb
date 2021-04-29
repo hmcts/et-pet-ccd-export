@@ -175,5 +175,9 @@ FactoryBot.define do
       resource { build(:response, *response_traits, **response_attrs) }
       resource_type { 'Response' }
     end
+
+    trait :limited_multiples_count do
+      external_system { build(:system, :limited_multiples_count) }
+    end
   end
 end

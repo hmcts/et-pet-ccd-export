@@ -1,0 +1,3 @@
+class ClaimMultipleClaimantCountExceededException < ApplicationException
+
+end

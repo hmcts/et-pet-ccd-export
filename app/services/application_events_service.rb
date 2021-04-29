@@ -114,6 +114,22 @@ module ApplicationEventsService
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end
 
+    def send_multiples_claim_size_exceeded_event(export_id:, sidekiq_job_data:, exception:)
+      event_data = {
+        sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
+        export_id: export_id,
+        external_data: {
+          'error' => {
+            'message' => exception.message
+          }
+        },
+        message: 'Multiples claim size exceeded',
+        state: 'failed',
+        percent_complete: 0
+      }
+      send_application_event('ClaimExportFeedbackReceived', event_data)
+    end
+
     def send_claim_failed_event(export_id:, sidekiq_job_data:)
       event_data = {
         sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),

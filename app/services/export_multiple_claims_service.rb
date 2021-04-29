@@ -26,7 +26,11 @@ class ExportMultipleClaimsService
            batch: Sidekiq::Batch.new)
     case_type_id           = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'case_type_id' }['value']
     multiples_case_type_id = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_case_type_id' }['value']
+    multiples_max_count    = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_max_claimant_count' }&.fetch('value')
     claimant_count         = export.dig('resource', 'secondary_claimants').length + 1 #
+    if multiples_max_count.present? && multiples_max_count =~ /\A\d+\z/ && claimant_count > multiples_max_count.to_i
+      raise ClaimMultipleClaimantCountExceededException, "Maximum claimant count of #{multiples_max_count} exceeded.  This must be dealt with manually"
+    end
 
     client_class.use do |client|
       start_multiple_result = client.start_multiple(case_type_id: case_type_id, quantity: claimant_count)
