@@ -13,7 +13,7 @@ class ExportMultiplesWorker
   end
 
 
-  def perform(ccd_data, case_type_id, export_id, claimant_count, primary = false, send_request_id = false)
+  def perform(ccd_data, case_type_id, export_id, claimant_count, primary = false, send_request_id = false, extra_headers = {})
     before_perform
     Sidekiq.redis do |r|
       data, number = multiples_service.export ccd_data,
@@ -22,7 +22,8 @@ class ExportMultiplesWorker
                                               bid: bid,
                                               export_id: export_id,
                                               claimant_count: claimant_count,
-                                              send_request_id: send_request_id
+                                              send_request_id: send_request_id,
+                                              extra_headers: extra_headers
       if primary
         r.lpush("BID-#{bid}-references", data.dig('case_data', 'ethosCaseReference'))
       else

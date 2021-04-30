@@ -13,9 +13,20 @@ class ExportMultiplesHeaderWorker
   end
 
 
-  def perform(primary_reference, respondent_name, case_references, case_type_id, export_id, send_request_id)
-    created_case = service.export_header(primary_reference, respondent_name, case_references, case_type_id, export_id, sidekiq_job_data: job_hash, send_request_id: send_request_id)
-    events_service.send_multiples_claim_exported_event(export_id: export_id, sidekiq_job_data: job_hash, case_id: created_case['id'], case_reference: created_case.dig('case_data', 'multipleReference'), case_type_id: case_type_id)
+  def perform(primary_reference, respondent_name, case_references, case_type_id, export_id, send_request_id = false, extra_headers = {})
+    created_case = service.export_header primary_reference,
+                                         respondent_name,
+                                         case_references,
+                                         case_type_id,
+                                         export_id,
+                                         sidekiq_job_data: job_hash,
+                                         send_request_id: send_request_id,
+                                         extra_headers: extra_headers
+    events_service.send_multiples_claim_exported_event export_id: export_id,
+                                                       sidekiq_job_data: job_hash,
+                                                       case_id: created_case['id'],
+                                                       case_reference: created_case.dig('case_data', 'multipleReference'),
+                                                       case_type_id: case_type_id
     logger.debug("Multiple header exported for export id #{export_id} with case reference #{created_case.dig('case_data', 'multipleReference')}")
   end
 

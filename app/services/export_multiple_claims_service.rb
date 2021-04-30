@@ -35,9 +35,10 @@ class ExportMultipleClaimsService
     end
 
     client_class.use do |client|
-      start_multiple_result = client.start_multiple case_type_id: case_type_id,
-                                                    quantity: claimant_count,
-                                                    extra_headers: extra_headers_for(export, sidekiq_job_data['jid'])
+      extra_headers = extra_headers_for(export, sidekiq_job_data['jid'])
+      start_multiple_result = client.start_multiple case_type_id:  case_type_id,
+                                                    quantity:      claimant_count,
+                                                    extra_headers: extra_headers
       multiple_ref          = start_multiple_result.dig('data', 'multipleRefNumber')
       next_ref              = start_multiple_result.dig('data', 'startCaseRefNumber')
       send_request_id       = send_request_id?(export)
@@ -55,10 +56,12 @@ class ExportMultipleClaimsService
                header_worker:          header_worker.name,
                multiples_case_type_id: multiples_case_type_id,
                export_id:              export['id'],
-               send_request_id:        send_request_id
+               send_request_id:        send_request_id,
+               extra_headers:          extra_headers.except('request_id')
       batch.on :complete,
                CompleteCallback
       batch.jobs do
+        extra_headers = extra_headers_for(export)
         worker.perform_async presenter.present(export['resource'],
                                                claimant: export.dig('resource', 'primary_claimant'),
                                                files: files_data(client, export),
@@ -69,7 +72,8 @@ class ExportMultipleClaimsService
                              export['id'],
                              claimant_count,
                              true,
-                             send_request_id
+                             send_request_id,
+                             extra_headers
         export.dig('resource', 'secondary_claimants').each do |claimant|
           next_ref = reference_generator.call(next_ref)
           worker.perform_async presenter.present(export['resource'],
@@ -81,7 +85,8 @@ class ExportMultipleClaimsService
                                export['id'],
                                claimant_count,
                                false,
-                               send_request_id
+                               send_request_id,
+                               extra_headers
         end
       end
       batch.bid
@@ -89,8 +94,8 @@ class ExportMultipleClaimsService
   end
 
   # @param [String] data The JSON data to send to ccd as the details part of the payload
-  def export(data, case_type_id, sidekiq_job_data:, bid:, export_id:, claimant_count:, send_request_id: false)
-    extra_headers = send_request_id ? { request_id: sidekiq_job_data['jid'] } : {}
+  def export(data, case_type_id, sidekiq_job_data:, bid:, export_id:, claimant_count:, send_request_id: false, extra_headers: {})
+    extra_headers = extra_headers.merge('request_id' => sidekiq_job_data['jid']) if send_request_id
     client_class.use do |client|
       resp         = client.caseworker_start_case_creation(case_type_id: case_type_id, extra_headers: extra_headers)
       event_token  = resp['token']
@@ -110,8 +115,8 @@ class ExportMultipleClaimsService
   # @param [String] case_type_id
   # @param [String] export_id
   # @param [Hash] sidekiq_job_data
-  def export_header(primary_reference, respondent_name, case_references, case_type_id, export_id, sidekiq_job_data:, send_request_id: false)
-    extra_headers = send_request_id ? { request_id: sidekiq_job_data['jid'] } : {}
+  def export_header(primary_reference, respondent_name, case_references, case_type_id, export_id, sidekiq_job_data:, send_request_id: false, extra_headers: {})
+    extra_headers = extra_headers.merge('request_id' => sidekiq_job_data['jid']) if send_request_id
     client_class.use do |client|
       resp        = client.caseworker_start_bulk_creation(case_type_id: case_type_id, extra_headers: extra_headers)
       event_token = resp['token']
@@ -136,7 +141,13 @@ class ExportMultipleClaimsService
     def on_success(batch_status, options)
       case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
 
-      options['header_worker'].safe_constantize.perform_async options['primary_reference'], options['respondent_name'], case_references, options['multiples_case_type_id'], options['export_id'], options['send_request_id']
+      options['header_worker'].safe_constantize.perform_async options['primary_reference'],
+                                                              options['respondent_name'],
+                                                              case_references,
+                                                              options['multiples_case_type_id'],
+                                                              options['export_id'],
+                                                              options['send_request_id'],
+                                                              options['extra_headers']
     end
   end
 

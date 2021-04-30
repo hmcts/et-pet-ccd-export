@@ -21,7 +21,7 @@ RSpec.describe ExportMultiplesWorker do
 
       # Act - Call the worker
       batch.jobs do
-        worker.perform(example_ccd_data.as_json.to_json, 'Manchester', example_export.id, 1, false, true)
+        worker.perform(example_ccd_data.as_json.to_json, 'Manchester', example_export.id, 1, false, true, { 'test_header' => 'true' })
       end
 
       # Assert - Make sure the service was called correctly
@@ -32,7 +32,8 @@ RSpec.describe ExportMultiplesWorker do
                                       bid: batch.bid,
                                       export_id: example_export.id,
                                       claimant_count: 1,
-                                      send_request_id: true
+                                      send_request_id: true,
+                                      extra_headers: { 'test_header' => 'true' }
 
     end
 
@@ -41,8 +42,21 @@ RSpec.describe ExportMultiplesWorker do
       batch = ::Sidekiq::Batch.new
       allow(fake_service).
         to receive(:export).
-          with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything, send_request_id: anything).
-          and_return([{'id' => 'fake_id', 'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'}, 'case_type_id' => 'Manchester'}, 1])
+          with(
+            example_ccd_data.to_json,
+            anything,
+            sidekiq_job_data: anything,
+            bid: batch.bid,
+            export_id: anything,
+            claimant_count: anything,
+            send_request_id: anything,
+            extra_headers: anything
+          ).
+          and_return([{
+                        'id' => 'fake_id',
+                        'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'},
+                        'case_type_id' => 'Manchester'
+                      }, 1])
       # Act - Call the worker expecting the special error
       batch.jobs do
         worker.perform(example_ccd_data.as_json.to_json, 'Manchester', example_export.id, 1)
@@ -75,11 +89,29 @@ RSpec.describe ExportMultiplesWorker do
       batch = ::Sidekiq::Batch.new
       allow(fake_service).
         to receive(:export).
-          with(example_ccd_data.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything, send_request_id: anything).
+          with(
+            example_ccd_data.to_json,
+            anything,
+            sidekiq_job_data: anything,
+            bid: batch.bid,
+            export_id: anything,
+            claimant_count: anything,
+            send_request_id: anything,
+            extra_headers: anything
+          ).
           and_return([{'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReference'}}, 1])
       allow(fake_service).
         to receive(:export).
-          with(example_ccd_data_primary.to_json, anything, sidekiq_job_data: anything, bid: batch.bid, export_id: anything, claimant_count: anything, send_request_id: anything).
+          with(
+            example_ccd_data_primary.to_json,
+            anything,
+            sidekiq_job_data: anything,
+            bid: batch.bid,
+            export_id: anything,
+            claimant_count: anything,
+            send_request_id: anything,
+            extra_headers: anything
+          ).
           and_return([{'case_data' => {'ethosCaseReference' => 'exampleEthosCaseReferencePrimary'}}, 2])
 
       # Act - Call the worker

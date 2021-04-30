@@ -9,7 +9,8 @@ FactoryBot.define do
       [
         build(:system_configuration, key: 'case_type_id', value: 'Manchester'),
         build(:system_configuration, key: 'multiples_case_type_id', value: 'Manchester_Multiples'),
-        build(:system_configuration, key: 'send_request_id', value: 'true')
+        build(:system_configuration, key: 'send_request_id', value: 'true'),
+        build(:system_configuration, key: 'extra_headers', value: { test_header: 'true' }.to_json)
       ]
     end
     trait :auto_accept_multiples do
@@ -18,7 +19,8 @@ FactoryBot.define do
           build(:system_configuration, key: 'case_type_id', value: 'Manchester'),
           build(:system_configuration, key: 'multiples_case_type_id', value: 'Manchester_Multiples'),
           build(:system_configuration, key: 'multiples_auto_accept', value: 'true'),
-          build(:system_configuration, key: 'send_request_id', value: 'true')
+          build(:system_configuration, key: 'send_request_id', value: 'true'),
+          build(:system_configuration, key: 'extra_headers', value: { test_header: 'true' }.to_json)
         ]
       end
     end
