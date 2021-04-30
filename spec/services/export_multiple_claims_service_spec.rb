@@ -148,7 +148,7 @@ RSpec.describe ExportMultipleClaimsService do
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the batch
-        expect(mock_header_worker).to have_received(:perform).with(match(/\d{7}\/\d{4}/), example_export.resource.primary_respondent.name, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples', example_export.id, true, { 'test_header' => 'true' })
+        expect(mock_header_worker).to have_received(:perform).with(match(/\d{7}\/\d{4}/), example_export.resource.primary_respondent.name, match_array((1000001..(1000001 + example_export.resource.secondary_claimants.length)).to_a.map(&:to_s)), 'Manchester_Multiples', example_export.id, true, { 'test_header' => '"true"' })
       end
 
       it 'should inform the application events service of the references allocated' do
@@ -190,8 +190,8 @@ RSpec.describe ExportMultipleClaimsService do
 
         # Assert - Check the worker has been queued, first time with the primary set to true
         aggregate_failures 'validating calls' do
-          expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'Manchester', example_export.id, 11, true, true, { 'test_header' => 'true' }])
-          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map {|data| [data, 'Manchester', example_export.id, 11, false, true, { 'test_header' => 'true' }]}
+          expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'Manchester', example_export.id, 11, true, true, { 'test_header' => '"true"' }])
+          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map {|data| [data, 'Manchester', example_export.id, 11, false, true, { 'test_header' => '"true"' }]}
         end
       end
 
