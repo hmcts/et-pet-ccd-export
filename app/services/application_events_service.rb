@@ -61,7 +61,8 @@ module ApplicationEventsService
           case_type_id: case_type_id
         },
         state: :complete,
-        message: 'Multiples claim exported'
+        message: 'Multiples claim exported',
+        percent_complete: 100
       }
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end

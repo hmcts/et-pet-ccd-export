@@ -86,14 +86,14 @@ module EtCcdExport
         jobs = ::Sidekiq::Worker.jobs.select do |j|
           j['queue'] == 'events' && j['wrapped'] == 'TriggerEventJob' &&
             j['args'].first['arguments'].first == 'ClaimExportFeedbackReceived' &&
-            JSON.parse(j['args'].first['arguments'][1]) >= {'state' => 'in_progress', 'export_id' => export.id} &&
+            JSON.parse(j['args'].first['arguments'][1]) >= {'export_id' => export.id} &&
             JSON.parse(j['args'].first['arguments'][1])['percent_complete'] > 0 &&
-            ['Sub cases queued for export', 'Sub case exported'].include?(JSON.parse(j['args'].first['arguments'][1])['message'])
+            ['Sub case exported', 'Multiples claim exported'].include?(JSON.parse(j['args'].first['arguments'][1])['message'])
         end
         jobs_data = jobs.map do |j|
           JSON.parse(j['args'].first['arguments'][1])
         end
-        expected_progress_increment = 100.0 / (2 + sub_cases.length)
+        expected_progress_increment = 100.0 / (1 + sub_cases.length)
         expected_progresses = (1..(sub_cases.length + 1)).map do |sub_case_number|
           (sub_case_number * expected_progress_increment).to_i
         end

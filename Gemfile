@@ -12,7 +12,6 @@ gem 'rails', '~> 6.1.3.1'
 gem 'sidekiq', '~> 6.2'
 gem 'sidekiq_alive', '~> 2.0'
 gem 'sidekiq-failures', '~> 1.0'
-gem 'sidekiq-batch', '~> 0.1.5'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -34,19 +33,19 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails', '~> 4.0'
+  gem 'rspec-rails', '~> 5.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
   gem 'et_fake_ccd', '~> 1.1'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
-  gem 'mock_redis', '~> 0.27'
+  gem 'mock_redis', '~> 0.28'
 end
 
 group :development do
-  gem 'listen', '~> 3.4'
-  gem 'rubocop', '~> 1.8'
-  gem 'rubocop-rspec', '~> 2.1'
+  gem 'listen', '~> 3.5'
+  gem 'rubocop', '~> 1.14'
+  gem 'rubocop-rspec', '~> 2.3'
 end
 
 

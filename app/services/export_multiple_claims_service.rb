@@ -24,8 +24,7 @@ class ExportMultipleClaimsService
   def call(export,
            sidekiq_job_data:,
            worker: ExportMultiplesWorker,
-           header_worker: ExportMultiplesHeaderWorker,
-           batch: Sidekiq::Batch.new)
+           header_worker: ExportMultiplesHeaderWorker)
     case_type_id           = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'case_type_id' }['value']
     multiples_case_type_id = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_case_type_id' }['value']
     multiples_max_count    = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_max_claimant_count' }&.fetch('value')
@@ -35,7 +34,7 @@ class ExportMultipleClaimsService
     end
 
     client_class.use do |client|
-      extra_headers = extra_headers_for(export, sidekiq_job_data['jid'])
+      extra_headers         = extra_headers_for(export, sidekiq_job_data['jid'])
       start_multiple_result = client.start_multiple case_type_id:  case_type_id,
                                                     quantity:      claimant_count,
                                                     extra_headers: extra_headers
@@ -47,10 +46,13 @@ class ExportMultipleClaimsService
                                                                      start_reference:  next_ref,
                                                                      quantity:         claimant_count,
                                                                      case_type_id:     case_type_id
-      batch.description    = "Batch of multiple cases for reference #{export.dig('resource', 'reference')}"
-      batch.callback_queue = 'external_system_ccd_callbacks'
+      batch = EtCcdExport::Sidekiq::Batch.start reference:      multiple_ref,
+                                                quantity:       claimant_count,
+                                                start_ref:      next_ref,
+                                                export_id:      export['id'],
+                                                case_type_id:   case_type_id
       batch.on :success,
-               Callback,
+               SuccessCallback,
                primary_reference:      multiple_ref,
                respondent_name:        export.dig('resource', 'primary_respondent', 'name'),
                header_worker:          header_worker.name,
@@ -58,53 +60,55 @@ class ExportMultipleClaimsService
                export_id:              export['id'],
                send_request_id:        send_request_id,
                extra_headers:          extra_headers.except('request_id')
-      batch.on :complete,
-               CompleteCallback
       batch.jobs do
         extra_headers = extra_headers_for(export)
-        worker.perform_async presenter.present(export['resource'],
-                                               claimant: export.dig('resource', 'primary_claimant'),
-                                               files: files_data(client, export),
-                                               lead_claimant: true,
-                                               multiple_reference: multiple_ref,
-                                               ethos_case_reference: next_ref),
-                             case_type_id,
-                             export['id'],
-                             claimant_count,
-                             true,
-                             send_request_id,
-                             extra_headers
-        export.dig('resource', 'secondary_claimants').each do |claimant|
-          next_ref = reference_generator.call(next_ref)
+        batch.child_job(next_ref) do
           worker.perform_async presenter.present(export['resource'],
-                                                 claimant: claimant,
-                                                 lead_claimant: false,
-                                                 multiple_reference: multiple_ref,
+                                                 claimant:             export.dig('resource', 'primary_claimant'),
+                                                 files:                files_data(client, export),
+                                                 lead_claimant:        true,
+                                                 multiple_reference:   multiple_ref,
                                                  ethos_case_reference: next_ref),
                                case_type_id,
                                export['id'],
                                claimant_count,
-                               false,
+                               true,
                                send_request_id,
                                extra_headers
         end
+        export.dig('resource', 'secondary_claimants').each do |claimant|
+          next_ref = reference_generator.call(next_ref)
+          batch.child_job(next_ref) do
+            worker.perform_async presenter.present(export['resource'],
+                                                   claimant:             claimant,
+                                                   lead_claimant:        false,
+                                                   multiple_reference:   multiple_ref,
+                                                   ethos_case_reference: next_ref),
+                                 case_type_id,
+                                 export['id'],
+                                 claimant_count,
+                                 false,
+                                 send_request_id,
+                                 extra_headers
+          end
+        end
       end
-      batch.bid
+      batch.reference
     end
   end
 
   # @param [String] data The JSON data to send to ccd as the details part of the payload
-  def export(data, case_type_id, sidekiq_job_data:, bid:, export_id:, claimant_count:, send_request_id: false, extra_headers: {})
+  # @return [String] The unique id of the case created in ccd
+  # @param [String] case_type_id The case type id to direct the case to the correct office in ccd
+  # @param [Hash] sidekiq_job_data The sidekiq data - only used for the 'jid'
+  def export(data, case_type_id, sidekiq_job_data:, export_id:, claimant_count:, send_request_id: false, extra_headers: {})
     extra_headers = extra_headers.merge('request_id' => sidekiq_job_data['jid']) if send_request_id
     client_class.use do |client|
       resp         = client.caseworker_start_case_creation(case_type_id: case_type_id, extra_headers: extra_headers)
       event_token  = resp['token']
       data         = envelope_presenter.present(data, event_token: event_token)
       created_case = client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
-      number       = Sidekiq.redis do |r|
-        r.incr("BID-#{bid}-references-count")
-      end
-      [created_case, number]
+      created_case['id']
     end
   end
 
@@ -135,12 +139,11 @@ class ExportMultipleClaimsService
     (number * (100.0 / (claimant_count + 2))).to_i
   end
 
-  class Callback
+  class SuccessCallback
     include Sidekiq::Worker
 
-    def on_success(batch_status, options)
-      case_references = Sidekiq.redis { |r| r.lrange("BID-#{batch_status.bid}-references", 0, -1) }
-
+    sidekiq_options queue: 'external_system_ccd_callbacks'
+    def perform(case_references, options)
       options['header_worker'].safe_constantize.perform_async options['primary_reference'],
                                                               options['respondent_name'],
                                                               case_references,
@@ -148,21 +151,6 @@ class ExportMultipleClaimsService
                                                               options['export_id'],
                                                               options['send_request_id'],
                                                               options['extra_headers']
-    end
-  end
-
-  class CompleteCallback
-    include Sidekiq::Worker
-
-    def on_complete(batch_status, options)
-      if batch_status.pending.positive?
-        Sidekiq.logger.debug "WORKAROUND - bid #{batch_status.bid} Setting the complete flag to false to allow retry to complete batch"
-        Sidekiq.redis do |r|
-          r.multi do
-            r.hset("BID-#{batch_status.bid}", :complete, false)
-          end
-        end
-      end
     end
   end
 end
