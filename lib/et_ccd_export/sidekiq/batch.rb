@@ -20,6 +20,18 @@ module EtCcdExport
         end
       end
 
+      def destroy
+        sidekiq.redis do |r|
+          r.del(redis_key)
+          r.del(callbacks_key)
+          r.del(done_redis_key)
+          r.del(failed_redis_key)
+          r.del(error_redis_key)
+          r.del(todo_redis_key)
+          r.del(in_progress_redis_key)
+        end
+      end
+
       def self.find(reference, sidekiq: ::Sidekiq)
         sidekiq.redis do |r|
           results = r.hgetall(redis_key(reference))

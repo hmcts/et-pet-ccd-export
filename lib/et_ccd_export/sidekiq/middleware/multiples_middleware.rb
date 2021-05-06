@@ -12,13 +12,13 @@ module EtCcdExport
             yield.tap do |id|
               child_ref = msg['et_ccd_export_multiple_batch_child_reference']
               batch.move_child_to_done(child_ref)
-              schedule_callbacks_when_done(batch)
               events_service.send_claim_export_multiples_progress_event sidekiq_job_data: msg,
                                                                         export_id: batch.export_id,
                                                                         percent_complete: batch.percent_complete,
                                                                         case_id: id,
                                                                         case_reference: child_ref,
                                                                         case_type_id: batch.case_type_id
+              on_done(batch)
             end
           rescue Exception => ex
             events_service.send_subclaim_erroring_event(export_id: batch.export_id, sidekiq_job_data: msg.except('class', 'args', 'queue'), exception: ex) unless ex.is_a?(PreventJobRetryingException)
@@ -28,7 +28,7 @@ module EtCcdExport
 
         private
 
-        def schedule_callbacks_when_done(batch)
+        def on_done(batch)
           return if batch.todo_count.positive? ||
             batch.done_count.zero? ||
             batch.error_count.positive? ||
@@ -39,6 +39,7 @@ module EtCcdExport
 
             cb['class_name'].safe_constantize.perform_async(batch.done_references, *cb['args'])
           end
+          batch.destroy
         end
 
         def batch_child_job?(msg)
