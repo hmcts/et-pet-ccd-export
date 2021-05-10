@@ -96,14 +96,28 @@ module EtCcdExport
 
       def move_child_to_in_progress(child_reference)
         sidekiq.redis do |r|
-          r.smove todo_redis_key, in_progress_redis_key, child_reference
+          r.smove(todo_redis_key, in_progress_redis_key, child_reference) ||
+          r.smove(error_redis_key, in_progress_redis_key, child_reference)
         end
       end
 
-      # @TODO This method needs to be able to move from in progress or error to done
       def move_child_to_done(child_reference)
         sidekiq.redis do |r|
-          r.smove in_progress_redis_key, done_redis_key, child_reference
+          r.smove(in_progress_redis_key, done_redis_key, child_reference) ||
+          r.smove(error_redis_key, done_redis_key, child_reference)
+        end
+      end
+
+      def move_child_to_error(child_reference)
+        sidekiq.redis do |r|
+          r.smove in_progress_redis_key, error_redis_key, child_reference unless r.sismember(error_redis_key, child_reference)
+        end
+      end
+
+      def move_child_to_failed(child_reference)
+        sidekiq.redis do |r|
+          r.smove(error_redis_key, failed_redis_key, child_reference) ||
+            r.smove(in_progress_redis_key, failed_redis_key, child_reference)
         end
       end
 
@@ -116,6 +130,12 @@ module EtCcdExport
       def todo_count
         sidekiq.redis do |r|
           r.scard(todo_redis_key)
+        end
+      end
+
+      def in_progress_count
+        sidekiq.redis do |r|
+          r.scard(in_progress_redis_key)
         end
       end
 
@@ -141,9 +161,42 @@ module EtCcdExport
         end
       end
 
+      def error_references
+        sidekiq.redis do |r|
+          r.smembers(error_redis_key)
+        end
+      end
+
+      def failed_references
+        sidekiq.redis do |r|
+          r.smembers(failed_redis_key)
+        end
+      end
+
+      def todo_references
+        sidekiq.redis do |r|
+          r.smembers(todo_redis_key)
+        end
+      end
+
+      def persisted?
+        sidekiq.redis do |r|
+          r.exists?(redis_key)
+        end
+      end
+
+      def more_work_to_be_done?
+        todo_count.positive? || in_progress_count.positive? || error_count.positive?
+      end
+
+      def failed?
+        !more_work_to_be_done? && failed_count.positive?
+      end
+
       private
 
       attr_reader :sidekiq
+
 
       def redis_key
         self.class.redis_key(reference)

@@ -60,6 +60,11 @@ class ExportMultipleClaimsService
                export_id:              export['id'],
                send_request_id:        send_request_id,
                extra_headers:          extra_headers.except('request_id')
+      batch.on :failed,
+               FailedCallback,
+               export_id: export['id'],
+               resource_id: export['resource_id'],
+               resource_type: export['resource_type']
       batch.jobs do
         extra_headers = extra_headers_for(export)
         batch.child_job(next_ref) do
@@ -141,8 +146,8 @@ class ExportMultipleClaimsService
 
   class SuccessCallback
     include Sidekiq::Worker
-
     sidekiq_options queue: 'external_system_ccd_callbacks'
+
     def perform(case_references, options)
       options['header_worker'].safe_constantize.perform_async options['primary_reference'],
                                                               options['respondent_name'],
@@ -151,6 +156,16 @@ class ExportMultipleClaimsService
                                                               options['export_id'],
                                                               options['send_request_id'],
                                                               options['extra_headers']
+    end
+  end
+  class FailedCallback
+    include Sidekiq::Worker
+    sidekiq_options queue: 'external_system_ccd_callbacks'
+
+    def perform(done_references, failed_references, options)
+      ApplicationEventsService.send_subclaim_failed_event(export_id: options['export_id'], sidekiq_job_data: job_data)
+      exception = ClaimNotExportedException.new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
+      Raven.capture_exception(exception)
     end
   end
 end

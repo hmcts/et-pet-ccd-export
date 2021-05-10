@@ -24,12 +24,6 @@ class ExportMultiplesWorker
                              extra_headers:    extra_headers
   end
 
-  sidekiq_retries_exhausted do |msg, ex|
-    job_data = msg.except('args', 'class').merge(ex.try(:job_hash) || {})
-    ApplicationEventsService.send_subclaim_failed_event(export_id: msg['args'][2], sidekiq_job_data: job_data)
-    raise ClaimNotExportedException
-  end
-
   private
 
   attr_accessor :events_service, :multiples_service

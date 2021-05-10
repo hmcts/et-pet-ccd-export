@@ -16,6 +16,9 @@ Sidekiq.configure_server do |config|
     chain.add EtCcdExport::Sidekiq::Middleware::ExposeJobHashMiddleware
     chain.add EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware
   end
+  config.client_middleware do |chain|
+    chain.add EtCcdExport::Sidekiq::Middleware::MultiplesClientMiddleware
+  end
 end
 
 Sidekiq.configure_client do |config|

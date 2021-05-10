@@ -27,7 +27,7 @@ class ExportMultiplesHeaderWorker
                                                        case_id: created_case['id'],
                                                        case_reference: created_case.dig('case_data', 'multipleReference'),
                                                        case_type_id: case_type_id
-    logger.debug("Multiple header exported for export id #{export_id} with case reference #{created_case.dig('case_data', 'multipleReference')}")
+    logger.debug("Multiple header exported for export id #{export_id} with case reference #{created_case.dig('case_data', 'multipleReference')} containing #{case_references.length} child cases")
   end
 
   sidekiq_retries_exhausted do |msg, ex, application_events_service: ApplicationEventsService|
