@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :claim, class: ::EtCcdExport::Test::Json::Node do
+  factory :claim, class: '::EtCcdExport::Test::Json::Node' do
     transient do
       number_of_claimants { 1 }
       number_of_respondents { 1 }
@@ -14,6 +14,7 @@ FactoryBot.define do
       primary_representative_attrs { {} }
       employment_details_traits { [:employed] }
       employment_details_attrs { {} }
+      number_of_acas_files { 0 }
     end
 
     trait :default do
@@ -44,18 +45,26 @@ FactoryBot.define do
       is_unfair_dismissal { false }
     end
 
+    trait :update_only do
+      number_of_respondents { 0 }
+      primary_representative_traits { nil }
+      employment_details_traits { nil }
+      number_of_claimants { nil }
+    end
+
     secondary_claimants { [] }
     secondary_respondents { [] }
     uploaded_files { [] }
 
     after(:build) do |claim, evaluator|
-      claim.primary_claimant = build(:claimant, *evaluator.primary_claimant_traits, **evaluator.primary_claimant_attrs) if claim.primary_claimant.blank? && evaluator.number_of_claimants > 0
-      claim.secondary_claimants.concat build_list(:claimant, evaluator.number_of_claimants - 1, *evaluator.secondary_claimant_traits) unless evaluator.number_of_claimants < 1
+      claim.primary_claimant = build(:claimant, *evaluator.primary_claimant_traits, **evaluator.primary_claimant_attrs) if claim.primary_claimant.blank? && evaluator.number_of_claimants && evaluator.number_of_claimants > 0
+      claim.secondary_claimants.concat build_list(:claimant, evaluator.number_of_claimants - 1, *evaluator.secondary_claimant_traits) unless evaluator.number_of_claimants.nil? || evaluator.number_of_claimants < 1
       claim.primary_respondent = build(:respondent, *evaluator.primary_respondent_traits, **evaluator.primary_respondent_attrs) if claim.primary_respondent.blank? && evaluator.number_of_respondents > 0
       claim.secondary_respondents.concat build_list(:respondent, evaluator.number_of_respondents - 1, *evaluator.secondary_respondent_traits, **evaluator.secondary_respondent_attrs) unless evaluator.number_of_respondents < 1
-      claim.claimant_count = evaluator.number_of_claimants
+      claim.claimant_count         = evaluator.number_of_claimants unless evaluator.number_of_claimants.nil?
       claim.primary_representative = build(:representative, *evaluator.primary_representative_traits, **evaluator.primary_representative_attrs) unless evaluator.primary_representative_traits.nil?
-      claim.employment_details = build(:employment_details, *evaluator.employment_details_traits, **evaluator.employment_details_attrs)
+      claim.employment_details     = build(:employment_details, *evaluator.employment_details_traits, **evaluator.employment_details_attrs) unless evaluator.employment_details_traits.nil?
+      claim.uploaded_files.concat build_list(:uploaded_file, evaluator.number_of_acas_files, :example_acas_pdf)
     end
 
     trait :with_pdf_file do
@@ -65,9 +74,7 @@ FactoryBot.define do
     end
 
     trait :with_acas_pdf_file do
-      after(:build) do |claim, _evaluator|
-        claim.uploaded_files << build(:uploaded_file, :example_acas_pdf)
-      end
+      number_of_acas_files { 1 }
     end
 
     trait :with_rtf_file do
@@ -94,6 +101,10 @@ FactoryBot.define do
 
     trait :default_multiple_claimants do
       default
+      multiple_claimants
+    end
+
+    trait :multiple_claimants do
       with_claimants_csv_file
       secondary_claimants do
         [
