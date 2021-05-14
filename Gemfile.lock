@@ -102,7 +102,7 @@ GEM
       dotenv (= 2.7.6)
       railties (>= 3.2)
     erubi (1.10.0)
-    et_ccd_client (0.3.3)
+    et_ccd_client (0.3.4)
       addressable (~> 2.6)
       connection_pool (~> 2.2, >= 2.2.2)
       rest-client (~> 2.0, >= 2.0.2)
