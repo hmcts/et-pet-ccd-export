@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/hmcts/et-azure-insights.git
-  revision: b2d677431b449062c6f7cb8a0cae6b28c6f76d65
-  tag: v0.2.12
+  revision: fc1d2cf84796764322c1939ab2e6a5c3ca893c35
+  tag: v0.2.14
   specs:
-    et_azure_insights (0.2.12)
+    et_azure_insights (0.2.14)
       application_insights (~> 0.5.7)
 
 GIT
@@ -308,7 +308,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   byebug
   dotenv-rails (~> 2.7)
-  et_azure_insights (= 0.2.12)!
+  et_azure_insights (= 0.2.14)!
   et_ccd_client (~> 0.3)
   et_fake_ccd (~> 1.1)
   factory_bot (~> 6.1)
