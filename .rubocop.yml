@@ -2,7 +2,7 @@ inherit_from:
   - .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.7
   # Exclude anything that isn't really part of our code.
   # rails_helper is excluded because it's full of solecisms, but it's mostly
   # generated code and copy-and-pasted snipets from READMEs.
@@ -19,7 +19,7 @@ Rails:
 
 # Allow long lines in specs, as it's almost impossible to fit RSpec's
 # expectations into 80 characters.
-Metrics/LineLength:
+Layout/LineLength:
   Max: 180
   Exclude:
     - 'spec/**/*'
@@ -42,7 +42,7 @@ Style/AsciiComments:
   Enabled: true
   Exclude:
     - 'spec/**/*'
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Enabled: true
 # Don't worry about long methods in specs.
 Metrics/MethodLength:
@@ -60,7 +60,7 @@ Layout/AccessModifierIndentation:
 
 # Just indent parameters by two spaces. It's less volatile if methods change,
 # and there's less busy work lining things up.
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
 
 Style/ClassAndModuleChildren:
@@ -195,7 +195,7 @@ Style/NumericPredicate:
 Rails/OutputSafety:
   Exclude:
     - 'app/helpers/yaml_helper.rb'
-Capybara/FeatureMethods:
+RSpec/Capybara/FeatureMethods:
   Exclude:
     - 'spec/features/**/*'
 
@@ -203,4 +203,6 @@ Naming/PredicateName:
   Exclude:
     - 'test_common/**/*'
 
-require: rubocop-rspec
+require:
+  - rubocop-rspec
+  - rubocop-rails
