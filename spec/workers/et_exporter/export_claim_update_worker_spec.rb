@@ -30,7 +30,7 @@ RSpec.describe ::EtExporter::ExportClaimUpdateWorker do
         worker.perform(example_export.as_json.to_json)
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service).to have_received(:send_claim_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
+        expect(fake_events_service).to have_received(:send_claim_update_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
       end
 
       it 'informs the application events service of the process finishing if the service did not raise exception' do
@@ -38,7 +38,7 @@ RSpec.describe ::EtExporter::ExportClaimUpdateWorker do
         worker.perform(example_export.as_json.to_json)
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service).to have_received(:send_claim_exported_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'case id', case_reference: 'case reference', case_type_id: 'Manchester')
+        expect(fake_events_service).to have_received(:send_claim_update_exported_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'case id', case_reference: 'case reference', case_type_id: 'Manchester')
       end
 
       it 'calls the service twice if the service responds with a ::EtCcdClient::Exceptions::UnprocessableEntity' do

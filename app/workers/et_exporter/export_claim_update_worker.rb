@@ -36,14 +36,14 @@ module EtExporter
     end
 
     def send_finished_event(parsed_json)
-      events_service.send_claim_exported_event export_id: parsed_json['id'],
+      events_service.send_claim_update_exported_event export_id: parsed_json['id'],
                                                sidekiq_job_data: job_hash,
                                                **parsed_json['external_data'].
                                                  slice('case_id', 'case_type_id', 'case_reference').symbolize_keys
     end
 
     def send_starting_event(parsed_json)
-      events_service.send_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
+      events_service.send_claim_update_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
     end
 
     attr_accessor :events_service, :update_case_service
