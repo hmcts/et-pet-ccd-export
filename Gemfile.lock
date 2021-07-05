@@ -82,7 +82,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     ast (2.4.2)
     bootsnap (1.7.5)
@@ -302,7 +302,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  addressable (~> 2.6)
+  addressable (~> 2.8)
   application_insights!
   azure_env_secrets!
   bootsnap (>= 1.1.0)

@@ -21,7 +21,7 @@ gem 'azure_env_secrets', git: 'https://github.com/ministryofjustice/azure_env_se
 # Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
 
-gem 'addressable', '~> 2.6'
+gem 'addressable', '~> 2.8'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
 gem 'et_ccd_client', '~> 0.3'
