@@ -10,7 +10,7 @@ gem 'rails', '~> 6.1.3.1'
 
 # Sidekiq - Used to receive the jobs from the API service
 gem 'sidekiq', '~> 6.2'
-gem 'sidekiq_alive', '~> 2.0'
+gem 'sidekiq_alive', '~> 2.1'
 gem 'sidekiq-failures', '~> 1.0'
 
 # Reduces boot times through caching; required in config/boot.rb
