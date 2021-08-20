@@ -13,7 +13,7 @@ EtCcdClient.config do |c|
   c.jurisdiction_id = ENV.fetch('CCD_JURISDICTION_ID', 'EMPLOYMENT')
   c.microservice = ENV.fetch('CCD_MICROSERVICE_ID', 'ccd_gw')
   c.microservice_secret = ENV.fetch('CCD_MICROSERVICE_SECRET', 'AAAAAAAAAAAAAAAC')
-  c.use_sidam = ENV.fetch('CCD_USE_SIDAM', 'true').downcase == 'true'
+  c.use_sidam = true
   c.sidam_username = ENV.fetch('CCD_SIDAM_USERNAME', 'm@m.com')
   c.sidam_password = ENV.fetch('CCD_SIDAM_PASSWORD', 'Pa55word11')
   c.case_management_ui_base_url = ENV.fetch('CCD_CASE_MANAGEMENT_UI_BASE_URL', 'http://localhost:3451')
