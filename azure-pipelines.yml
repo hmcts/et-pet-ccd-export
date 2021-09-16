@@ -27,8 +27,8 @@ jobs:
 - job: TestApplication
 
   pool:
-    vmImage: 'Ubuntu-16.04'
-  
+    vmImage: 'ubuntu-latest'
+
   steps:
   - task: UseRubyVersion@0
     inputs:
@@ -48,7 +48,7 @@ jobs:
   dependsOn: TestApplication
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
 
   - bash: |
@@ -78,7 +78,7 @@ jobs:
   #     command: 'Tag image'
   #     imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
   #     qualifyImageName: false
-    
+
   - task: Docker@1
     displayName: 'Push an image'
     inputs:
@@ -97,7 +97,7 @@ jobs:
   dependsOn: TestApplication
   condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.Reason'], 'Manual'))
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
 
   - bash: |
@@ -128,7 +128,7 @@ jobs:
   #     command: 'Tag image'
   #     imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
 
-    
+
   - task: Docker@1
     displayName: 'Push an image'
     inputs:
@@ -145,7 +145,7 @@ jobs:
 - job: ManualBuildAndPushImageNoTest
   condition: and(eq(variables['Skip.Test'], 'true'), ne(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['Build.Reason'], 'Manual'))
   pool:
-    vmImage: 'Ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
 
   - bash: |
@@ -175,7 +175,7 @@ jobs:
       azureContainerRegistry: $(azure.container.registry)
       command: 'Tag image'
       imageName: '$(application.name):$(getDockerTag.DOCKER_TAG)'
-    
+
   - task: Docker@1
     displayName: 'Push an image'
     inputs:
@@ -188,4 +188,3 @@ jobs:
     displayName: logout
     inputs:
       command: logout
-
