@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.3.1'
+gem 'rails', '~> 6.1.3.2'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
@@ -25,7 +25,7 @@ gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
 gem 'et_ccd_client', '~> 0.3'
-gem 'dotenv-rails', '~> 2.7'
+gem 'dotenv-rails', '~> 2.7', '>= 2.7.6'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -33,7 +33,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails', '~> 5.0'
+  gem 'rspec-rails', '~> 5.0', '>= 5.0.1'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
   gem 'et_fake_ccd', '~> 1.1'
