@@ -5,7 +5,7 @@ FactoryBot.define do
     content_type { nil }
 
     trait :example_pdf do
-      filename { "et1_chloe_goodwin.pdf" }
+      filename { "et1_chloe_goodwin_trimmed.pdf" }
       url { "http://dummy.com/examplepdf" }
       content_type { "application/pdf" }
     end
