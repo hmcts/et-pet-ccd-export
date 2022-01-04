@@ -1,0 +1,13 @@
+ARG source_image
+FROM ${source_image}
+ENV RAILS_ENV=test
+COPY --chown=app:app ./spec /home/app/ccd-export/spec
+COPY --chown=app:app ./.rspec /home/app/ccd-export/.rspec
+USER root
+RUN apk add --no-cache --virtual .build-tools git build-base && \
+    cd /home/app/ccd-export && \
+    bundle install --no-cache --jobs=5 --retry=3 --without=development --with=production test --deployment && \
+    apk del .build-tools && \
+    chown -R app:app /home/app/ccd-export/vendor/bundle
+USER app
+CMD ["sh", "-c", "bundle exec rspec"]

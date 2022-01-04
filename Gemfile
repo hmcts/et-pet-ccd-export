@@ -18,8 +18,6 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # Azure deployment so we need this
 gem 'azure_env_secrets', git: 'https://github.com/ministryofjustice/azure_env_secrets.git', tag: 'v0.1.3'
-# Use postgresql as the database for Active Record
-gem 'pg', '>= 0.18', '< 2.0'
 
 gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
