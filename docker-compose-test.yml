@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+      args:
+        source_image: ${SOURCE_DOCKER_IMAGE}
+    environment:
+      RAILS_LOG_LEVEL: info
+
