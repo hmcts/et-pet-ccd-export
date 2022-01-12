@@ -116,7 +116,7 @@ GEM
       rotp (~> 6.2)
       thor (~> 1.0)
       tilt (~> 2.0, >= 2.0.9)
-    factory_bot (6.1.0)
+    factory_bot (6.2.0)
       activesupport (>= 5.0.0)
     faraday (1.4.1)
       faraday-excon (~> 1.1)
@@ -310,7 +310,7 @@ DEPENDENCIES
   et_azure_insights (= 0.2.12)!
   et_ccd_client (~> 0.3)
   et_fake_ccd (~> 1.1)
-  factory_bot (~> 6.1)
+  factory_bot (~> 6.2)
   ice_nine (~> 0.11.2)
   jbuilder (~> 2.10)
   json_matchers (~> 0.11.0)
