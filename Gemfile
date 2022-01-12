@@ -19,10 +19,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # Azure deployment so we need this
 gem 'azure_env_secrets', git: 'https://github.com/ministryofjustice/azure_env_secrets.git', tag: 'v0.1.3'
 
-gem 'addressable', '~> 2.6'
+gem 'addressable', '~> 2.8', '>= 2.8.0'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
-gem 'et_ccd_client', '~> 0.3'
+gem 'et_ccd_client', '~> 0.3', '>= 0.3.4'
 gem 'dotenv-rails', '~> 2.7'
 
 group :development, :test do
@@ -34,7 +34,7 @@ group :test do
   gem 'rspec-rails', '~> 5.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
-  gem 'et_fake_ccd', '~> 1.1'
+  gem 'et_fake_ccd', '~> 1.1', '>= 1.1.9'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '~> 0.28'
