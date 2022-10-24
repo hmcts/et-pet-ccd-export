@@ -19,7 +19,7 @@ EXPOSE 8080
 
 COPY --chown=app:app . /home/app/ccd-export
 RUN chown -R app:app /usr/local/bundle
-RUN apk add --no-cache tzdata gettext shared-mime-info bash && \
+RUN apk add --no-cache tzdata gettext shared-mime-info libc6-compat bash && \
     apk add --no-cache --virtual .build-tools git build-base && \
     cd /home/app/ccd-export && \
     gem install bundler -v 1.17.3 && \
