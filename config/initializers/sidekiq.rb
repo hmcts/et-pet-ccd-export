@@ -1,11 +1,8 @@
 require_relative '../../lib/ccd_client_sentry_error_middleware'
 require_relative '../../lib/et_ccd_export/sidekiq/middleware/expose_job_hash_middleware'
 require_relative '../../lib/et_ccd_export/sidekiq/batch'
-default_redis_host = ENV.fetch('REDIS_HOST', 'localhost')
-default_redis_port = ENV.fetch('REDIS_PORT', '6379')
-default_redis_database = ENV.fetch('REDIS_DATABASE', '1')
-default_redis_url = "redis://#{default_redis_host}:#{default_redis_port}/#{default_redis_database}"
-redis_url = ENV.fetch('REDIS_URL', default_redis_url)
+config = Rails.application.config
+redis_url = config.redis_url
 
 Sidekiq.configure_server do |config|
   redis_config = { url: redis_url }

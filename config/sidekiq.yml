@@ -1,5 +1,5 @@
 ---
-:concurrency: 5
+:concurrency: <%= ENV.fetch('RAILS_MAX_THREADS', '7').to_i - 2  %>
 :max_retries: 8
 :verbose: true
 staging:

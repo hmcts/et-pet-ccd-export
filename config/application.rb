@@ -31,7 +31,12 @@ module EtCcdExport
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    config.storage_redis_database = ENV.fetch('STORAGE_REDIS_DATABASE', '2')
+    config.redis_host = ENV.fetch('REDIS_HOST', 'localhost')
+    config.redis_port = ENV.fetch('REDIS_PORT', '6379')
+    config.redis_database = ENV.fetch('REDIS_DATABASE', '2')
+    default_redis_url = "redis://#{config.redis_host}:#{config.redis_port}/#{config.redis_database}"
+    config.redis_url = ENV.fetch('REDIS_URL', default_redis_url)
+
     config.ccd_time_zone = 'London'
 
     insights_key = ENV.fetch('AZURE_APP_INSIGHTS_KEY', false)
