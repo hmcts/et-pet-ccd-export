@@ -34,6 +34,19 @@ Rails.application.configure do
 
   config.ccd_disallowed_file_extensions = []
 
+  config.redis_database = ENV.fetch('REDIS_DATABASE', '1')
+  default_redis_url = "redis://#{config.redis_host}:#{config.redis_port}/#{config.redis_database}"
+  config.redis_url = ENV.fetch('REDIS_URL', default_redis_url)
+
+  config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'debug').to_sym
+  Sidekiq.logger = Sidekiq::Logger.new($stdout, level: Logger.const_get(config.log_level.to_s.upcase))
+
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+  end
+
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
