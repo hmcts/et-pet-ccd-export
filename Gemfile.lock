@@ -149,7 +149,7 @@ GEM
     json_matchers (0.11.1)
       json_schema
     json_schema (0.21.0)
-    jsonpath (1.1.0)
+    jsonpath (1.1.2)
       multi_json
     listen (3.7.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
