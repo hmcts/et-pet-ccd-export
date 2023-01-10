@@ -9,9 +9,9 @@ gem 'rails', '~> 7.0.4'
 # gem 'bcrypt', '~> 3.1.7'
 
 # Sidekiq - Used to receive the jobs from the API service
-gem 'sidekiq', '~> 6.2'
-gem 'sidekiq_alive', '~> 2.0'
-gem 'sidekiq-failures', '~> 1.0'
+gem 'sidekiq', '~> 7.0', '>= 7.0.0'
+gem 'sidekiq_alive', '~> 2.0', '>= 2.0.6'
+gem 'sidekiq-failures', '~> 1.0', '>= 1.0.0'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -38,7 +38,7 @@ group :test do
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '~> 0.28'
-  gem 'rspec-sidekiq', '~> 3.1'
+  gem 'rspec-sidekiq', '~> 3.1', '>= 3.1.0'
 end
 
 group :development do
