@@ -67,16 +67,4 @@ Rails.application.configure do
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
   end
-
-  Raven.configure do |config|
-    config.dsn = ENV.fetch('RAVEN_DSN', '')
-    config.ssl_verification = ENV.fetch('RAVEN_SSL_VERIFICATION', 'true').downcase == 'true'
-    config.processors = config.processors - [
-      Raven::Processor::SanitizeData,
-      Raven::Processor::Cookies,
-      Raven::Processor::PostData,
-      Raven::Processor::HTTPHeaders
-    ]
-    config.processors.freeze
-  end
 end

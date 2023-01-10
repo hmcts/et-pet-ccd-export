@@ -72,13 +72,7 @@ The application must be configured to use the same redis details as the API serv
     ```
     RAVEN_DSN=<your sentry dsn>
     ```
-    
-    and if your sentry doesnt have a valid SSL cert do
-    
-    ```
-    RAVEN_SSL_VERIFICATION=false
-    ```
-    
+        
 6. Configuration for CCD
 
     There are 3 base urls which have defaults to allow the system to work alongside ccd-docker.
