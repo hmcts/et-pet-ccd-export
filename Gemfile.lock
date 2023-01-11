@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/hmcts/et-azure-insights.git
-  revision: b2d677431b449062c6f7cb8a0cae6b28c6f76d65
-  tag: v0.2.12
+  revision: 1aa89eff387d15f680e5aa2368422f091ebdeae0
+  tag: v0.3.2
   specs:
-    et_azure_insights (0.2.12)
+    et_azure_insights (0.3.2)
       application_insights (~> 0.5.7)
 
 GIT
@@ -126,10 +126,6 @@ GEM
       tilt (~> 2.0, >= 2.0.9)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
-    faraday (2.7.2)
-      faraday-net_http (>= 2.0, < 3.1)
-      ruby2_keywords (>= 0.0.4)
-    faraday-net_http (3.0.2)
     ffi (1.15.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
@@ -284,8 +280,14 @@ GEM
       rubocop (~> 1.33)
     ruby-progressbar (1.11.0)
     ruby2_keywords (0.0.5)
-    sentry-raven (3.1.2)
-      faraday (>= 1.0)
+    sentry-rails (5.7.0)
+      railties (>= 5.0)
+      sentry-ruby (~> 5.7.0)
+    sentry-ruby (5.7.0)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+    sentry-sidekiq (5.7.0)
+      sentry-ruby (~> 5.7.0)
+      sidekiq (>= 3.0)
     sidekiq (6.5.8)
       connection_pool (>= 2.2.5, < 3)
       rack (~> 2.0)
@@ -327,7 +329,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   byebug
   dotenv-rails (~> 2.7)
-  et_azure_insights (= 0.2.12)!
+  et_azure_insights (= 0.3.2)!
   et_ccd_client (~> 0.3)
   et_fake_ccd (~> 2.0)
   factory_bot (~> 6.1)
@@ -344,7 +346,9 @@ DEPENDENCIES
   rubocop (~> 1.14)
   rubocop-rails (~> 2.10, >= 2.10.1)
   rubocop-rspec (~> 2.3)
-  sentry-raven (~> 3.1)
+  sentry-rails (~> 5.7)
+  sentry-ruby (~> 5.7)
+  sentry-sidekiq (~> 5.7)
   sidekiq (~> 6.2)
   sidekiq-failures (~> 1.0)
   sidekiq_alive (~> 2.0)
