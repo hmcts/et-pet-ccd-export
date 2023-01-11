@@ -165,7 +165,7 @@ class ExportMultipleClaimsService
     def perform(done_references, failed_references, options)
       ApplicationEventsService.send_subclaim_failed_event(export_id: options['export_id'], sidekiq_job_data: job_data)
       exception = ClaimNotExportedException.new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
-      Raven.capture_exception(exception)
+      Sentry.capture_exception(exception)
     end
   end
 end
