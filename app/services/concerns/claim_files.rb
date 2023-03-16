@@ -21,7 +21,7 @@ module ClaimFiles
     elsif acas_file?(file)
       'ACAS Certificate'
     else
-      'Other'
+      'ET1 attachment'
     end
   end
 
