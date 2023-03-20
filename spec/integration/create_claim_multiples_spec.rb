@@ -318,7 +318,7 @@ RSpec.describe "create claim multiples" do
                          )),
         a_hash_including('id' => nil,
                          'value' => a_hash_including(
-                           'typeOfDocument' => 'Other',
+                           'typeOfDocument' => 'ET1 Attachment',
                            'uploadedDocument' => a_hash_including(
                              'document_url' => an_instance_of(String),
                              'document_binary_url' => an_instance_of(String),
