@@ -24,7 +24,7 @@ module ResponseFiles
 
   def files_of_interest(export)
     export.dig('resource', 'uploaded_files').select do |file|
-      file['filename'].match?(/\Aet3_.*\.pdf\z|\.rtf\z/) &&
+      file['filename'].match?(/\Aet3_.*\.pdf\z|\Aadditional_information\.pdf\z/) &&
         !disallow_file_extensions.include?(File.extname(file['filename']))
     end
   end
@@ -34,7 +34,7 @@ module ResponseFiles
   end
 
   def additional_info_file?(file)
-    file['filename'].match? /\Aet1.*\.rtf\z/
+    file['filename'].match? /\Aadditional_information\.pdf\z/
   end
 
   def short_description_for(file, export:)
