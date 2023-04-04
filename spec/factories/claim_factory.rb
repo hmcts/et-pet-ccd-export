@@ -77,9 +77,9 @@ FactoryBot.define do
       number_of_acas_files { 1 }
     end
 
-    trait :with_rtf_file do
+    trait :with_claim_details_file do
       after(:build) do |claim, _evaluator|
-        claim.uploaded_files << build(:uploaded_file, :example_claim_rtf)
+        claim.uploaded_files.unshift build(:uploaded_file, :example_claim_details)
       end
     end
 

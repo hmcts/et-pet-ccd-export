@@ -159,7 +159,7 @@ RSpec.describe "create claim" do
 
   it 'populates the documents collection correctly with a dual pdf file input' do
     # Arrange - Produce the input JSON
-    export = build(:export, :for_claim)
+    export = build(:export, :for_claim, claim_traits: [:with_claim_details_file, :default])
     claimant = export.dig('resource', 'primary_claimant')
     respondent = export.dig('resource', 'primary_respondent')
 
@@ -183,6 +183,15 @@ RSpec.describe "create claim" do
                          )),
         a_hash_including('id' => nil,
                          'value' => a_hash_including(
+                           'typeOfDocument' => 'ET1 Attachment',
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'et1_attachment_First_Last.pdf'
+                           )
+                         )),
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
                            'typeOfDocument' => 'ACAS Certificate',
                            'uploadedDocument' => a_hash_including(
                              'document_url' => an_instance_of(String),
@@ -191,6 +200,22 @@ RSpec.describe "create claim" do
                            )
                          ))
 
+  end
+
+  it 'populates the documents collection in the correct order' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:with_claim_details_file, :default])
+    claimant = export.dig('resource', 'primary_claimant')
+    respondent = export.dig('resource', 'primary_respondent')
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
+    ccd_document_types = ccd_case.dig('case_fields', 'documentCollection').map { |doc| doc['value']['typeOfDocument'] }
+    expect(ccd_document_types).to eq ['ET1', 'ET1 Attachment', 'ACAS Certificate']
   end
 
   it 'populates the documents collection correctly with some extra un wanted files in the input' do
