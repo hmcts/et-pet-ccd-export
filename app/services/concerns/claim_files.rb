@@ -4,7 +4,7 @@ module ClaimFiles
   private
 
   def files_data(client, export)
-    files_of_interest(export).map do |f|
+    sort_files(files_of_interest(export)).map do |f|
       json = client.upload_file_from_url(f['url'], content_type: f['content_type'], original_filename: f['filename'])
       {
         'document_type' => document_type(f),
@@ -30,6 +30,22 @@ module ClaimFiles
     export.dig('resource', 'uploaded_files').select do |file|
       file['filename'].match?(/\Aet1_.*_trimmed\.pdf\z|\Aacas_.*\.pdf\z|\Aet1_attachment_.*\.pdf\z|\.csv/) &&
         !disallow_file_extensions.include?(File.extname(file['filename']))
+    end
+  end
+
+  def sort_files(files)
+    files.sort_by do |file|
+      if application_file?(file)
+        1
+      elsif additional_info_file?(file)
+        2
+      elsif acas_file?(file)
+        3
+      elsif claimants_file?(file)
+        4
+      else
+        5
+      end
     end
   end
 
