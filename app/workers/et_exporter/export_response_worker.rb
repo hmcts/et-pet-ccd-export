@@ -22,11 +22,14 @@ module EtExporter
       logger.debug JSON.generate(parsed_json)
 
       events_service.send_response_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
-      updated_case = service.call(parsed_json, sidekiq_job_data: job_hash) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
-      events_service.send_response_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: updated_case['id'], case_reference: updated_case.dig('case_data', 'ethosCaseReference'), case_type_id: updated_case['case_type_id'])
-    rescue Exception => ex
-      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
-      raise ex
+      claim = service.call(parsed_json, sidekiq_job_data: job_hash) unless ENV.fetch('ET_CCD_SIMULATION', 'false').downcase == 'true'
+
+      case_type_id = parsed_json.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
+      events_service.send_response_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: claim&.fetch('id'),
+                                                  case_reference: parsed_json.dig('resource', 'case_number'), case_type_id: case_type_id, office: claim&.dig('case_data', 'managingOffice'))
+    rescue StandardError => e
+      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+      raise e
     end
 
     sidekiq_retries_exhausted do |msg, ex|

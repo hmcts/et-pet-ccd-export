@@ -51,14 +51,15 @@ module ApplicationEventsService
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end
 
-    def send_response_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
+    def send_response_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:, office:)
       event_data = {
         sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
         export_id: export_id,
         external_data: {
           case_id: case_id,
           case_reference: case_reference,
-          case_type_id: case_type_id
+          case_type_id: case_type_id,
+          office: office
         },
         state: :complete,
         message: 'Response exported'
