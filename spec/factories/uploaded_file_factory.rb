@@ -33,5 +33,11 @@ FactoryBot.define do
       url { "http://dummy.com/first_last.txt" }
       content_type { "text/plain" }
     end
+
+    trait :example_claim_details do
+      filename { 'et1_attachment_First_Last.pdf' }
+      url { "http://dummy.com/examplepdf" }
+      content_type { "application/pdf" }
+    end
   end
 end
