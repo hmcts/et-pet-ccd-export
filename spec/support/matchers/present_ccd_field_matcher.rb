@@ -26,7 +26,7 @@ RSpec::Matchers.define :present_ccd_field do |ccd_field_path|
     if expected_result != undefined
       "expected the presenter not to present \"#{expected_result}\" in \"data.#{ccd_field_path}\" but it did"
     else
-    "expected the presenter not to present \"data.#{ccd_field_path}\" but it did"
+      "expected the presenter not to present \"data.#{ccd_field_path}\" but it did"
     end
   end
 

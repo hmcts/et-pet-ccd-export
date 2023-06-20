@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :representative, class: ::EtCcdExport::Test::Json::Node do
+  factory :representative, class: '::EtCcdExport::Test::Json::Node' do
     trait :full do
       name { "Rep Name" }
       organisation_name { "Org name" }

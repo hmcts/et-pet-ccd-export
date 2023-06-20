@@ -4,7 +4,7 @@ module EtCcdExport
       class MultiplesMiddleware
         DEFAULT_MAX_RETRY_ATTEMPTS = 25
 
-        def call(worker, msg, queue, events_service: ApplicationEventsService)
+        def call(_worker, msg, _queue, events_service: ApplicationEventsService)
           return yield unless batch_child_job?(msg)
 
           batch = find_batch(msg)
@@ -21,16 +21,19 @@ module EtCcdExport
                                                                         case_type_id: batch.case_type_id
               on_done(batch)
             end
-          rescue Exception => ex
+          rescue Exception => e
             child_ref = msg['et_ccd_export_multiple_batch_child_reference']
             if last_retry?(msg)
               batch.move_child_to_failed(child_ref)
             else
               batch.move_child_to_error(child_ref)
             end
-            events_service.send_subclaim_erroring_event(export_id: batch.export_id, sidekiq_job_data: msg.except('class', 'args', 'queue'), exception: ex) unless ex.is_a?(PreventJobRetryingException)
+            unless e.is_a?(PreventJobRetryingException)
+              events_service.send_subclaim_erroring_event(export_id: batch.export_id, sidekiq_job_data: msg.except('class', 'args', 'queue'),
+                                                          exception: e)
+            end
             schedule_failed_callbacks(batch) unless batch.more_work_to_be_done?
-            raise ex
+            raise e
           end
         end
 

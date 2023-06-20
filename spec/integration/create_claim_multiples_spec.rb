@@ -1,15 +1,17 @@
 require 'rails_helper'
 RSpec.describe "create claim multiples" do
-  subject(:worker) { ::EtExporter::ExportClaimWorker }
   subject(:multiples_worker) { ::ExportMultiplesWorker }
+
+  let(:worker) { ::EtExporter::ExportClaimWorker }
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login(username: 'm@m.com', password: 'Pa55word11') } }
+
   include_context 'with stubbed ccd'
 
   before do
     stub_request(:get, "http://dummy.com/examplepdf").
-      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf'})
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
     stub_request(:get, "http://dummy.com/examplecsv").
-      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv'})
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
   end
 
   it 'creates a multiples claim referencing many single claims in ccd' do
@@ -112,17 +114,17 @@ RSpec.describe "create claim multiples" do
     drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
-    primary_claimant=export.resource.primary_claimant
+    primary_claimant = export.resource.primary_claimant
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
     aggregate_failures 'validating key fields' do
       created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester')
       expect(created_case['case_fields']).to include \
         'claimantIndType' => a_hash_including(
-        'claimant_title1' => primary_claimant.title,
-        'claimant_first_names' => primary_claimant.first_name,
-        'claimant_last_name' => primary_claimant.last_name
-      )
+          'claimant_title1' => primary_claimant.title,
+          'claimant_first_names' => primary_claimant.first_name,
+          'claimant_last_name' => primary_claimant.last_name
+        )
     end
   end
 
@@ -138,17 +140,17 @@ RSpec.describe "create claim multiples" do
     drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
-    primary_claimant=export.resource.primary_claimant
+    primary_claimant = export.resource.primary_claimant
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
     aggregate_failures 'validating key fields' do
       created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester')
       expect(created_case['case_fields']).to include \
         'claimantIndType' => a_hash_including(
-        'claimant_title1' => primary_claimant.title,
-        'claimant_first_names' => primary_claimant.first_name,
-        'claimant_last_name' => primary_claimant.last_name
-      )
+          'claimant_title1' => primary_claimant.title,
+          'claimant_first_names' => primary_claimant.first_name,
+          'claimant_last_name' => primary_claimant.last_name
+        )
     end
   end
 

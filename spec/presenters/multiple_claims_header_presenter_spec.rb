@@ -1,6 +1,7 @@
 require 'rails_helper'
 RSpec.describe MultipleClaimsHeaderPresenter do
   subject(:presenter) { described_class }
+
   let(:example_primary_reference) { "1234567/2020" }
   let(:example_respondent_name) { 'Dodgy Co' }
   let(:example_case_references) do
@@ -42,8 +43,6 @@ RSpec.describe MultipleClaimsHeaderPresenter do
     # Assert
     expect(result.dig('data', 'multipleName')).to eql example_respondent_name
   end
-
-
 
   it 'presents the caseIdCollection' do
     # Act

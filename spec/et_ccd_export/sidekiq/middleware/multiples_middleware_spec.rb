@@ -20,10 +20,10 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
       retry_count = job_hash.fetch('retry_count', 0)
       if retry_count <= 1
         job_hash.merge! 'retry_count' => retry_count + 1,
-                   'error_message' => 'An error occurred in the worker',
-                   'error_class' => ExampleException,
-                   'failed_at' => Time.now.to_f,
-                   'retried_at' => Time.now.to_f
+                        'error_message' => 'An error occurred in the worker',
+                        'error_class' => ExampleException,
+                        'failed_at' => Time.now.to_f,
+                        'retried_at' => Time.now.to_f
 
         raise ExampleException, "An error occurred in the worker"
       end
@@ -47,10 +47,13 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
       raise ExampleException, "An error occurred in the worker"
     end
   end
+
   class ExampleException < ::Exception; end
+
   class ExampleSuccessCallback
     include Sidekiq::Worker
   end
+
   class ExampleFailedCallback
     include Sidekiq::Worker
   end
@@ -59,10 +62,10 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
   let(:example_child_reference1) { "24001001/#{Time.now.year}" }
   let(:example_child_reference2) { "24001002/#{Time.now.year}" }
   let(:batch) do
-    EtCcdExport::Sidekiq::Batch.start reference:    example_multiple_reference,
-                                      quantity:     10,
-                                      start_ref:    example_child_reference1,
-                                      export_id:    'fakeexportid',
+    EtCcdExport::Sidekiq::Batch.start reference: example_multiple_reference,
+                                      quantity: 10,
+                                      start_ref: example_child_reference1,
+                                      export_id: 'fakeexportid',
                                       case_type_id: 'fakecasetypeid'
   end
 
@@ -94,8 +97,9 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
         # Assert - the done reference should include the first and todo should contain second (as it hasn't ran)
         expect(batch).to have_attributes done_references: [example_child_reference1],
                                          todo_references: [example_child_reference2],
-                                         persisted?:      true
+                                         persisted?: true
       end
+
       it 'removes the batch when all jobs are done' do
         # Arrange - call the example worker in a batch
         batch.jobs do
@@ -110,6 +114,7 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
         # Assert - the batch will no longer be persisted (ensures it is removed from redis)
         expect(batch.persisted?).to be false
       end
+
       it 'moves the job to error if the worker has an error' do
         # Arrange - schedule the failing job once - then drain the queue, then schedule again
         batch.jobs do
@@ -129,10 +134,11 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
 
         # Assert
         expect(batch).to have_attributes error_references: [example_child_reference2],
-                                         done_references:  [],
-                                         todo_references:  [],
-                                         persisted?:       true
+                                         done_references: [],
+                                         todo_references: [],
+                                         persisted?: true
       end
+
       it 'keeps the job in error if the worker has an error for the first and second time' do
         batch.jobs do
           batch.child_job(example_child_reference1) do
@@ -146,15 +152,16 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
         # Act - Drain the job ignoring the exception
         begin
           drain_all_our_sidekiq_jobs
-        rescue ExampleException;
+        rescue ExampleException
         end
 
         # Assert
         expect(batch).to have_attributes error_references: [example_child_reference2],
-                                         done_references:  [example_child_reference1],
-                                         todo_references:  [],
-                                         persisted?:       true
+                                         done_references: [example_child_reference1],
+                                         todo_references: [],
+                                         persisted?: true
       end
+
       it 'moves from error to done if the child job succeeds a third time' do
         batch.jobs do
           batch.child_job(example_child_reference2) do
@@ -170,6 +177,7 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
         # Assert - the batch should have disappeared as it is done
         expect(batch.persisted?).to be false
       end
+
       it 'schedules the success worker when done with no failures' do
         # Arrange - call the example worker in a batch and setup callbacks
         batch.jobs do

@@ -2,23 +2,23 @@ module ApplicationEventsService
   class << self
     def send_application_event(event, data, queue: 'events')
       serialized_job = {
-        "job_class"  => 'TriggerEventJob',
-        "job_id"     => SecureRandom.uuid,
+        "job_class" => 'TriggerEventJob',
+        "job_id" => SecureRandom.uuid,
         "provider_job_id" => nil,
         "queue_name" => queue,
-        "priority"   => 5,
-        "arguments"  => [ event, data.to_json ],
+        "priority" => 5,
+        "arguments" => [event, data.to_json],
         "executions" => 0,
         "exception_executions" => 0,
-        "locale"     => 'en',
-        "timezone"   => Time.zone.try(:name),
+        "locale" => 'en',
+        "timezone" => Time.zone.try(:name),
         "enqueued_at" => Time.now.utc.iso8601
       }
       Sidekiq::Client.push \
-          "class"   => 'ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper',
-          "wrapped" => 'TriggerEventJob',
-          "queue"   => queue,
-          "args"    => [ serialized_job.as_json ]
+        "class" => 'ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper',
+        "wrapped" => 'TriggerEventJob',
+        "queue" => queue,
+        "args" => [serialized_job.as_json]
     end
 
     def send_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
@@ -262,7 +262,6 @@ module ApplicationEventsService
       }
       send_application_event('ClaimExportFeedbackReceived', event_data)
     end
-
 
     def send_claim_export_multiples_queued_event(queued_bid:, export_id:, sidekiq_job_data:, percent_complete:)
       event_data = {

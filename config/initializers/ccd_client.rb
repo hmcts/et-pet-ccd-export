@@ -4,11 +4,11 @@ EtCcdClient.config do |c|
   c.data_store_base_url = ENV.fetch('CCD_DATA_STORE_BASE_URL', 'http://localhost:4452')
   c.ecm_base_url = ENV.fetch('CCD_ECM_BASE_URL', 'http://unknown:4452')
   c.document_store_base_url = ENV.fetch('CCD_DOCUMENT_STORE_BASE_URL', 'http://localhost:4506')
-  if ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'false') == 'false'
-    c.document_store_url_rewrite = false
-  else
-    c.document_store_url_rewrite = ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'localhost:4506:dm-store:8080').split(':')
-  end
+  c.document_store_url_rewrite = if ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'false') == 'false'
+                                   false
+                                 else
+                                   ENV.fetch('CCD_DOCUMENT_STORE_URL_REWRITE', 'localhost:4506:dm-store:8080').split(':')
+                                 end
   c.gateway_api_url = ENV.fetch('CCD_GATEWAY_API_URL', 'http://localhost:3453')
   c.jurisdiction_id = ENV.fetch('CCD_JURISDICTION_ID', 'EMPLOYMENT')
   c.microservice = ENV.fetch('CCD_MICROSERVICE_ID', 'ccd_gw')

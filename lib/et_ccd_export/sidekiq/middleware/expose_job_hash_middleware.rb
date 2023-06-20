@@ -3,7 +3,7 @@ module EtCcdExport
     module Middleware
       class ExposeJobHashMiddleware
 
-        def call(worker, msg, queue)
+        def call(worker, msg, _queue)
           worker.try(:job_hash=, msg)
           yield
         end
