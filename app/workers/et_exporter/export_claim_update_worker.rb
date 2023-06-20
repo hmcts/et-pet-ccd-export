@@ -21,10 +21,11 @@ module EtExporter
 
       parsed_json = JSON.parse(json)
       logger.debug JSON.generate(parsed_json)
-      Sentry.with_scope do |scope|
-        scope.set_tags reference: parsed_json.dig('resource', 'external_data', 'case_reference')
-        perform_update(parsed_json)
-      end
+      perform_update(parsed_json)
+    end
+
+    def tag_sentry(job, scope:)
+      scope.set_tags reference: JSON.parse(job['args'].first).dig('resource', 'external_data', 'case_reference')
     end
 
     private

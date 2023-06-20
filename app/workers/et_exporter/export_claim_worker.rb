@@ -22,17 +22,15 @@ module EtExporter
       parsed_json = JSON.parse(json)
       logger.debug JSON.generate(parsed_json)
 
-      Sentry.with_scope do |scope|
-        scope.set_tags reference: parsed_json.dig('resource', 'reference')
-        if parsed_json.dig('resource', 'secondary_claimants').present?
-          perform_multiples(parsed_json)
-        else
-          perform_single(parsed_json)
-        end
-      rescue => e # rubocop:disable Style/RescueStandardError
-        Sentry.capture_exception(e)
-        raise e
+      if parsed_json.dig('resource', 'secondary_claimants').present?
+        perform_multiples(parsed_json)
+      else
+        perform_single(parsed_json)
       end
+    end
+
+    def tag_sentry(job, scope:)
+      scope.set_tags reference: JSON.parse(job['args'].first).dig('resource', 'reference')
     end
 
     private

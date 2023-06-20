@@ -27,6 +27,10 @@ class ExportMultiplesWorker
     end
   end
 
+  def tag_sentry(job, scope:)
+    scope.set_tags reference: JSON.parse(job['args'].first)['feeGroupReference']
+  end
+
   private
 
   attr_accessor :events_service, :multiples_service

@@ -8,6 +8,7 @@ end
 ::Sidekiq::Testing.server_middleware do |chain|
   chain.add ::EtCcdExport::Sidekiq::Middleware::ExposeJobHashMiddleware
   chain.add ::EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware
+  chain.add ::EtCcdExport::Sidekiq::Middleware::SentryMiddleware
 end
 
 RSpec.configure do |c|
