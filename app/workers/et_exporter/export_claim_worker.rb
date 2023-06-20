@@ -29,6 +29,9 @@ module EtExporter
         else
           perform_single(parsed_json)
         end
+      rescue => e # rubocop:disable Style/RescueStandardError
+        Sentry.capture_exception(e)
+        raise e
       end
     end
 
