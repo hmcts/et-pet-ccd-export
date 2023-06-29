@@ -1,12 +1,14 @@
 require 'rails_helper'
 RSpec.describe "create claim" do
   subject(:worker) { ::EtExporter::ExportClaimWorker }
+
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login } }
+
   include_context 'with stubbed ccd'
 
   before do
     stub_request(:get, "http://dummy.com/examplepdf").
-      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: {'Content-Type' => 'application/pdf'})
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
   end
 
   it 'creates a claim in ccd' do
@@ -63,7 +65,7 @@ RSpec.describe "create claim" do
 
   it 'raises an API event to inform of an error whilst still re raising the error' do
     # Arrange - Produce the input JSON
-    export = build(:export, :for_claim, claim_attrs: {primary_claimant_attrs: {first_name: 'Force', last_name: 'Error502'}})
+    export = build(:export, :for_claim, claim_attrs: { primary_claimant_attrs: { first_name: 'Force', last_name: 'Error502' } })
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
@@ -76,8 +78,6 @@ RSpec.describe "create claim" do
     # Assert - Check for API event being received
     external_events.assert_claim_erroring(export: export)
   end
-
-
 
   it 'populates the claimant data correctly with an address specifying UK country' do
     # Arrange - Produce the input JSON
@@ -249,7 +249,6 @@ RSpec.describe "create claim" do
                              'document_filename' => 'acas_naughty_boy.pdf'
                            )
                          ))
-
 
   end
 

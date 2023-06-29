@@ -1,4 +1,3 @@
 class BatchNotFoundException < ApplicationException
 
-
 end

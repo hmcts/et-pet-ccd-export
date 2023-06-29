@@ -12,7 +12,6 @@ class ExportMultiplesHeaderWorker
     self.service = service
   end
 
-
   def perform(primary_reference, respondent_name, case_references, case_type_id, export_id, send_request_id = false, extra_headers = {})
     created_case = service.export_header primary_reference,
                                          respondent_name,
@@ -27,7 +26,12 @@ class ExportMultiplesHeaderWorker
                                                        case_id: created_case['id'],
                                                        case_reference: created_case.dig('case_data', 'multipleReference'),
                                                        case_type_id: case_type_id
-    logger.debug("Multiple header exported for export id #{export_id} with case reference #{created_case.dig('case_data', 'multipleReference')} containing #{case_references.length} child cases")
+    logger.debug("Multiple header exported for export id #{export_id} with case reference #{created_case.dig('case_data',
+                                                                                                             'multipleReference')} containing #{case_references.length} child cases")
+  end
+
+  def tag_sentry(job, scope:)
+    scope.set_tags primary_reference: job['args'].first
   end
 
   sidekiq_retries_exhausted do |msg, ex, application_events_service: ApplicationEventsService|

@@ -42,7 +42,7 @@ Rails.application.configure do
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
 
-  config.multiples_supervisor_adapter = {type: :memory}
+  config.multiples_supervisor_adapter = { type: :memory }
 
   config.ccd_disallowed_file_extensions = []
 

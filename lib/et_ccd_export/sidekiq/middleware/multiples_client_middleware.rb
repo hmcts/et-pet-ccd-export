@@ -12,8 +12,9 @@ module EtCcdExport
         #   the job is not to be enqueued into redis, otherwise the block's
         #   return value is returned
         # @yield the next middleware in the chain or the enqueuing of the job
-        def call(worker_class, job, queue, redis_pool)
+        def call(_worker_class, job, _queue, _redis_pool)
           return yield if Thread.current[:et_ccd_export_multiple_batch].nil?
+
           job['et_ccd_export_multiple_batch_reference'] = Thread.current[:et_ccd_export_multiple_batch].reference
           batch = EtCcdExport::Sidekiq::Batch.find(Thread.current[:et_ccd_export_multiple_batch].reference)
           unless Thread.current[:et_ccd_export_multiple_batch_child_reference].nil?

@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :respondent, class: ::EtCcdExport::Test::Json::Node do
+  factory :respondent, class: '::EtCcdExport::Test::Json::Node' do
     trait :basic do
       sequence(:name) { |idx| "dodgy_co #{idx}" }
       address { build(:address) }

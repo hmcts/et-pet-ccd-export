@@ -21,7 +21,7 @@ module EtExporter
         }
       end
       ::EtCcdClient::Client.use do |client|
-        cases.each_pair do |multiple_ref, case_data|
+        cases.each_pair do |_multiple_ref, case_data|
           resp = client.caseworker_start_bulk_creation(case_type_id: case_type_id)
           event_token = resp['token']
           data = {
@@ -39,9 +39,7 @@ module EtExporter
           puts result
         end
       end
-
     end
-
 
   end
 end

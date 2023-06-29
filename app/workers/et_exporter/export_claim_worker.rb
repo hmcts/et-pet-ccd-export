@@ -29,6 +29,10 @@ module EtExporter
       end
     end
 
+    def tag_sentry(job, scope:)
+      scope.set_tags reference: JSON.parse(job['args'].first).dig('resource', 'reference')
+    end
+
     private
 
     attr_accessor :events_service, :singles_service, :multiples_service
@@ -37,21 +41,21 @@ module EtExporter
       events_service.send_multiples_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
       bid = multiples_service.call(parsed_json, sidekiq_job_data: job_hash)
       events_service.send_claim_export_multiples_queued_event queued_bid: bid, sidekiq_job_data: job_hash, export_id: parsed_json['id'], percent_complete: 0
-    rescue ClaimMultipleClaimantCountExceededException => ex
-      events_service.send_multiples_claim_size_exceeded_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
-    rescue Exception => ex
-      events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
-      raise ex
+    rescue ClaimMultipleClaimantCountExceededException => e
+      events_service.send_multiples_claim_size_exceeded_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+    rescue Exception => e
+      events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+      raise e
     end
 
     def perform_single(parsed_json)
       events_service.send_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
       created_case = singles_service.call(parsed_json, sidekiq_job_data: job_hash)
-      events_service.send_claim_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: created_case['id'], case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: created_case['case_type_id'])
-
-    rescue Exception => ex
-      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: ex)
-      raise ex
+      events_service.send_claim_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: created_case['id'],
+                                               case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: created_case['case_type_id'])
+    rescue Exception => e
+      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+      raise e
     end
 
     def percent_complete_for(number, claimant_count:)

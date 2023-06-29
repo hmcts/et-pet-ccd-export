@@ -3,10 +3,10 @@ require 'ice_nine'
 require 'securerandom'
 RSpec.describe ExportMultipleClaimsService do
   subject(:service) do
-    described_class.new presenter:                  mock_presenter,
-                        header_presenter:           mock_header_presenter,
-                        envelope_presenter:         mock_envelope_presenter,
-                        disallow_file_extensions:   [],
+    described_class.new presenter: mock_presenter,
+                        header_presenter: mock_header_presenter,
+                        envelope_presenter: mock_envelope_presenter,
+                        disallow_file_extensions: [],
                         application_events_service: fake_events_service
   end
 
@@ -19,28 +19,28 @@ RSpec.describe ExportMultipleClaimsService do
 
   describe '#call' do
     def primaryClaimantIndTypeMatcher(claimant, has_gender: true)
-      a_hash_including 'claimant_title1'        => claimant.title,
-                       'claimant_first_names'   => claimant.first_name,
-                       'claimant_last_name'     => claimant.last_name,
+      a_hash_including 'claimant_title1' => claimant.title,
+                       'claimant_first_names' => claimant.first_name,
+                       'claimant_last_name' => claimant.last_name,
                        'claimant_date_of_birth' => claimant.date_of_birth,
-                       'claimant_gender'        => has_gender ? claimant.gender : nil
+                       'claimant_gender' => has_gender ? claimant.gender : nil
     end
 
     def primaryClaimantTypeMatcher(claimant)
-      a_hash_including 'claimant_addressUK'          => address_matcher(claimant.address),
-                       'claimant_phone_number'       => claimant.address_telephone_number,
-                       'claimant_mobile_number'      => claimant.mobile_number,
-                       'claimant_email_address'      => claimant.email_address,
+      a_hash_including 'claimant_addressUK' => address_matcher(claimant.address),
+                       'claimant_phone_number' => claimant.address_telephone_number,
+                       'claimant_mobile_number' => claimant.mobile_number,
+                       'claimant_email_address' => claimant.email_address,
                        'claimant_contact_preference' => claimant.contact_preference&.humanize
     end
 
     def address_matcher(address, has_country: true)
       a_hash_including 'AddressLine1' => address.building,
                        'AddressLine2' => address.street,
-                       'PostTown'     => address.locality,
-                       'County'       => address.county,
-                       'PostCode'     => address.post_code,
-                       'Country'      => has_country && ['United Kingdom'].include?(address.country) ? address.country : nil
+                       'PostTown' => address.locality,
+                       'County' => address.county,
+                       'PostCode' => address.post_code,
+                       'Country' => has_country && ['United Kingdom'].include?(address.country) ? address.country : nil
     end
 
     def secondaryClaimantIndTypeMatcher(claimant)
@@ -48,10 +48,10 @@ RSpec.describe ExportMultipleClaimsService do
     end
 
     def secondaryClaimantTypeMatcher(claimant)
-      a_hash_including 'claimant_addressUK'          => address_matcher(claimant.address, has_country: false),
-                       'claimant_phone_number'       => nil,
-                       'claimant_mobile_number'      => nil,
-                       'claimant_email_address'      => nil,
+      a_hash_including 'claimant_addressUK' => address_matcher(claimant.address, has_country: false),
+                       'claimant_phone_number' => nil,
+                       'claimant_mobile_number' => nil,
+                       'claimant_email_address' => nil,
                        'claimant_contact_preference' => nil
     end
 
@@ -62,17 +62,17 @@ RSpec.describe ExportMultipleClaimsService do
       }
       if claim.employment_details.present?
         hash_for_comparison.merge! \
-          'claimant_employed_currently'     => currently_employed?(claim) ? 'Yes' : 'No',
-          'claimant_occupation'             => claim.employment_details.job_title,
-          'claimant_employed_from'          => claim.employment_details.start_date,
-          'claimant_employed_to'            => claim.employment_details.end_date,
+          'claimant_employed_currently' => currently_employed?(claim) ? 'Yes' : 'No',
+          'claimant_occupation' => claim.employment_details.job_title,
+          'claimant_employed_from' => claim.employment_details.start_date,
+          'claimant_employed_to' => claim.employment_details.end_date,
           'claimant_employed_notice_period' => claim.employment_details.notice_period_end_date
       end
       hash_for_comparison['claimant_disabled_details'] = claimant.special_needs if claimant.special_needs.present?
       a_hash_including hash_for_comparison
     end
 
-    def primaryClaimantWorkAddressMatcher(claimant, claim)
+    def primaryClaimantWorkAddressMatcher(_claimant, claim)
       address = claim.primary_respondent.work_address.present? ? claim.primary_respondent.work_address : claim.primary_respondent.address
       a_hash_including('claimant_work_address' => address_matcher(address, has_country: false))
     end
@@ -131,6 +131,8 @@ RSpec.describe ExportMultipleClaimsService do
 
     context 'with secondary claimants from csv file' do
       let(:current_year) { Time.now.year }
+      let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
+
       include_context 'with stubbed ccd'
       include_context 'with mock workers'
 
@@ -141,30 +143,28 @@ RSpec.describe ExportMultipleClaimsService do
           to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
       end
 
-      let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
-
       it 'queues the header worker when done with the data from the header presenter' do
         # Act - Call the service
         service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the batch
-        expect(mock_header_worker).to have_received(:perform).with(match(/\d{7}\/\d{4}/), example_export.resource.primary_respondent.name, an_object_having_attributes(length: example_export.resource.secondary_claimants.length + 1), 'Manchester_Multiples', example_export.id, true, { 'test_header' => '"true"' })
+        expect(mock_header_worker).to have_received(:perform).with(match(%r{\d{7}/\d{4}}), example_export.resource.primary_respondent.name, an_object_having_attributes(length: example_export.resource.secondary_claimants.length + 1), 'Manchester_Multiples', example_export.id, true, { 'test_header' => '"true"' })
       end
 
-      it 'should inform the application events service of the references allocated' do
+      it 'informs the application events service of the references allocated' do
         # Act - Call the service
         service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service)
-          .to have_received(:send_multiples_claim_references_allocated_event)
-                .with export_id:        example_export.id,
-                      sidekiq_job_data: { jid: 'examplejid' },
-                      case_type_id:     'Manchester',
-                      start_reference:  a_string_matching(/24\d{5}\/\d{4}/),
-                      quantity:         11
+        expect(fake_events_service).
+          to have_received(:send_multiples_claim_references_allocated_event).
+          with export_id: example_export.id,
+               sidekiq_job_data: { jid: 'examplejid' },
+               case_type_id: 'Manchester',
+               start_reference: a_string_matching(%r{24\d{5}/\d{4}}),
+               quantity: 11
       end
 
       it 'queues the worker 11 times with the data from the presenter' do
@@ -217,74 +217,74 @@ RSpec.describe ExportMultipleClaimsService do
     let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login(username: 'm@m.com', password: 'Pa55word11') } }
     let(:example_ccd_data) do
       {
-        "receiptDate":                 "2019-06-12",
-        "feeGroupReference":           "222000000100",
-        "claimant_TypeOfClaimant":     "Individual",
-        "claimantIndType":             {
-          "claimant_title1":        "Mrs",
-          "claimant_first_names":   "tamara",
-          "claimant_last_name":     "swift",
+        "receiptDate": "2019-06-12",
+        "feeGroupReference": "222000000100",
+        "claimant_TypeOfClaimant": "Individual",
+        "claimantIndType": {
+          "claimant_title1": "Mrs",
+          "claimant_first_names": "tamara",
+          "claimant_last_name": "swift",
           "claimant_date_of_birth": "1957-07-06",
-          "claimant_gender":        nil
+          "claimant_gender": nil
         },
-        "claimantType":                {
-          "claimant_addressUK":          {
+        "claimantType": {
+          "claimant_addressUK": {
             "AddressLine1": "71088",
             "AddressLine2": "nova loaf",
-            "PostTown":     "keelingborough",
-            "County":       "hawaii",
-            "Country":      nil,
-            "PostCode":     "yy9a 2la"
+            "PostTown": "keelingborough",
+            "County": "hawaii",
+            "Country": nil,
+            "PostCode": "yy9a 2la"
           },
-          "claimant_phone_number":       nil,
-          "claimant_mobile_number":      nil,
-          "claimant_email_address":      nil,
+          "claimant_phone_number": nil,
+          "claimant_mobile_number": nil,
+          "claimant_email_address": nil,
           "claimant_contact_preference": nil
         },
-        "caseType":                    "Multiple",
-        "multipleReference":           "24000001/#{Time.now.year}",
-        "respondentSumType":           {
-          "respondent_name":          "dodgy_co",
+        "caseType": "Multiple",
+        "multipleReference": "24000001/#{Time.now.year}",
+        "respondentSumType": {
+          "respondent_name": "dodgy_co",
           "respondent_ACAS_question": "Yes",
-          "respondent_address":       {
+          "respondent_address": {
             "AddressLine1": "1",
             "AddressLine2": "street",
-            "PostTown":     "locality",
-            "County":       "county",
-            "PostCode":     "post code"
+            "PostTown": "locality",
+            "County": "county",
+            "PostCode": "post code"
           },
-          "respondent_phone1":        "01234 567890",
-          "respondent_ACAS":          "AC123456/78/90"
+          "respondent_phone1": "01234 567890",
+          "respondent_ACAS": "AC123456/78/90"
         },
-        "claimantWorkAddress":         {},
-        "respondentCollection":        [],
-        "claimantOtherType":           {},
+        "claimantWorkAddress": {},
+        "respondentCollection": [],
+        "claimantOtherType": {},
         "claimantRepresentedQuestion": "Yes",
-        "representativeClaimantType":  {
-          "representative_occupation":    "Solicitor",
-          "name_of_organisation":         "Org name",
-          "name_of_representative":       "Rep Name",
-          "representative_address":       {
+        "representativeClaimantType": {
+          "representative_occupation": "Solicitor",
+          "name_of_organisation": "Org name",
+          "name_of_representative": "Rep Name",
+          "representative_address": {
             "AddressLine1": "1",
             "AddressLine2": "street",
-            "PostTown":     "locality",
-            "County":       "county",
-            "PostCode":     "post code"
+            "PostTown": "locality",
+            "County": "county",
+            "PostCode": "post code"
           },
-          "representative_phone_number":  "01234 565899",
+          "representative_phone_number": "01234 565899",
           "representative_mobile_number": "07771 666555",
           "representative_email_address": "test@email.com",
-          "representative_dx":            "dx1234567890"
+          "representative_dx": "dx1234567890"
         }
       }
     end
 
     before do
-      EtCcdExport::Sidekiq::Batch.start reference:      example_ccd_data[:multipleReference],
-                                        quantity:       10,
-                                        start_ref:      "24000001/#{Time.now.year}",
-                                        export_id:      'fakeexportid',
-                                        case_type_id:   'fakecasetypeid'
+      EtCcdExport::Sidekiq::Batch.start reference: example_ccd_data[:multipleReference],
+                                        quantity: 10,
+                                        start_ref: "24000001/#{Time.now.year}",
+                                        export_id: 'fakeexportid',
+                                        case_type_id: 'fakecasetypeid'
     end
 
     it 'stores the data in fake ccd' do

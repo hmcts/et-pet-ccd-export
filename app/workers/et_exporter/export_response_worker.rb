@@ -32,6 +32,10 @@ module EtExporter
       raise e
     end
 
+    def tag_sentry(job, scope:)
+      scope.set_tags reference: JSON.parse(job['args'].first).dig('resource', 'reference')
+    end
+
     sidekiq_retries_exhausted do |msg, ex|
       json = JSON.parse(msg['args'][0])
       job_data = msg.except('args', 'class').merge(ex.try(:job_hash) || {})

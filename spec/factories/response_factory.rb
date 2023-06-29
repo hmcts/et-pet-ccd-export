@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :response, class: ::EtCcdExport::Test::Json::Node do
+  factory :response, class: '::EtCcdExport::Test::Json::Node' do
     transient do
       respondent_traits { [:full] }
       respondent_attrs { {} }

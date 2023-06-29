@@ -97,14 +97,14 @@ module EtCcdExport
       def move_child_to_in_progress(child_reference)
         sidekiq.redis do |r|
           r.smove(todo_redis_key, in_progress_redis_key, child_reference) ||
-          r.smove(error_redis_key, in_progress_redis_key, child_reference)
+            r.smove(error_redis_key, in_progress_redis_key, child_reference)
         end
       end
 
       def move_child_to_done(child_reference)
         sidekiq.redis do |r|
           r.smove(in_progress_redis_key, done_redis_key, child_reference) ||
-          r.smove(error_redis_key, done_redis_key, child_reference)
+            r.smove(error_redis_key, done_redis_key, child_reference)
         end
       end
 
@@ -196,7 +196,6 @@ module EtCcdExport
       private
 
       attr_reader :sidekiq
-
 
       def redis_key
         self.class.redis_key(reference)

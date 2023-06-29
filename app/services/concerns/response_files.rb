@@ -1,7 +1,6 @@
 module ResponseFiles
   extend ActiveSupport::Concern
 
-
   private
 
   def files_data(client, export)
@@ -30,11 +29,11 @@ module ResponseFiles
   end
 
   def response_file?(file)
-    file['filename'].match? /\Aet3_.*\.pdf\z/
+    file['filename'].match?(/\Aet3_.*\.pdf\z/)
   end
 
   def additional_info_file?(file)
-    file['filename'].match? /\Aadditional_information\.pdf\z/
+    file['filename'].match?(/\Aadditional_information\.pdf\z/)
   end
 
   def short_description_for(file, export:)
