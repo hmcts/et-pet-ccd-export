@@ -105,7 +105,7 @@ GEM
     date (3.3.3)
     debase (0.2.4.1)
       debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (3.2.0)
+    debase-ruby_core_source (3.2.1)
     diff-lcs (1.5.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
