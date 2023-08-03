@@ -21,12 +21,8 @@ FileUtils.chdir APP_ROOT do
     puts "\n== bundling for development"
     system! 'bundle config set with "development test"'
     system! 'bundle config --delete without'
-  else
-    puts "\n== bundling for production"
-    system! 'bundle config set without "development test"'
-    system! 'bundle config set with "production"'
+    system! 'bundle install'
   end
-  system! 'bundle install'
 
   puts "\n== Starting sidekiq =="
   system! './bin/sidekiq --config config/sidekiq.yml'
