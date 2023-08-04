@@ -29,7 +29,6 @@ RUN apk add --no-cache tzdata gettext shared-mime-info libc6-compat bash && \
     mkdir -p /home/app/ccd-export/tmp && \
     chown -R app:app /home/app/ccd-export/tmp
 
-
 USER app
 ENV HOME /home/app
 WORKDIR /home/app/ccd-export
