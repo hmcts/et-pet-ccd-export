@@ -2,7 +2,7 @@ require 'rails_helper'
 RSpec.describe "create claim" do
   subject(:worker) { ::EtExporter::ExportClaimWorker }
 
-  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login } }
+  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
 
   include_context 'with stubbed ccd'
 
@@ -160,8 +160,8 @@ RSpec.describe "create claim" do
   it 'populates the documents collection correctly with a dual pdf file input' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:with_claim_details_file, :default])
-    claimant = export.dig('resource', 'primary_claimant')
-    respondent = export.dig('resource', 'primary_respondent')
+    export.dig('resource', 'primary_claimant')
+    export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
@@ -205,8 +205,8 @@ RSpec.describe "create claim" do
   it 'populates the documents collection in the correct order' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:with_claim_details_file, :default])
-    claimant = export.dig('resource', 'primary_claimant')
-    respondent = export.dig('resource', 'primary_respondent')
+    export.dig('resource', 'primary_claimant')
+    export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
@@ -222,7 +222,7 @@ RSpec.describe "create claim" do
     # Arrange - Produce the input JSON
     claim = build(:claim, :default, :with_unwanted_claim_file)
     export = build(:export, :for_claim, resource: claim)
-    respondent = export.dig('resource', 'primary_respondent')
+    export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)

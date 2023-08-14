@@ -33,8 +33,6 @@ RSpec.describe ExportMultiplesWorker do
         with example_ccd_data.to_json,
              'Manchester',
              sidekiq_job_data: an_instance_of(Hash),
-             export_id: example_export.id,
-             claimant_count: 1,
              send_request_id: true,
              extra_headers: { 'test_header' => 'true' }
 

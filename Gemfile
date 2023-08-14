@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
-ruby '~> 2.7.8'
+ruby '~> 3.2.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '7.0.6'
@@ -23,7 +23,7 @@ gem 'azure_env_secrets', git: 'https://github.com/ministryofjustice/azure_env_se
 gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
-gem 'et_ccd_client', '~> 0.4'
+gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.6.0'
 gem 'dotenv-rails', '~> 2.7'
 
 group :development, :test do
@@ -35,7 +35,7 @@ group :test do
   gem 'rspec-rails', '~> 6.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
-  gem 'et_fake_ccd', '~> 2.1'
+  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '~> 0.28'
@@ -48,8 +48,6 @@ group :development do
   gem 'rubocop-rails', '~> 2.10', '>= 2.10.1'
   gem 'rubocop-rspec', '~> 2.3'
   gem 'solargraph', require: false
-  gem 'ruby-debug-ide', require: false
-  gem 'debase', require: false
 end
 
 

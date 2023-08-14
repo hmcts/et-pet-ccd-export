@@ -86,11 +86,8 @@ RSpec.describe ::EtExporter::ExportClaimUpdateWorker do
         my_error = Class.new(RuntimeError)
         allow(fake_update_case_service).to receive(:call).and_raise(my_error, "Something went wrong")
 
-        # Act - Call the worker
-        work = -> { worker.perform(example_export.as_json.to_json) }
-
         # Assert - Make sure the fake events service was called correctly
-        expect(work).to raise_error(my_error)
+        expect { worker.perform(example_export.as_json.to_json) }.to raise_error(my_error)
       end
     end
   end

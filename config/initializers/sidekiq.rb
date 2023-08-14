@@ -5,26 +5,26 @@ require 'et_ccd_export/sidekiq/middleware/sentry_middleware'
 config = Rails.application.config
 redis_url = config.redis_url
 
-Sidekiq.configure_server do |config|
+Sidekiq.configure_server do |server_config|
   redis_config = { url: redis_url }
   redis_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
-  config.redis = redis_config
-  config.error_handlers.unshift CcdClientSentryErrorMiddleware.new
-  config.server_middleware do |chain|
+  server_config.redis = redis_config
+  server_config.error_handlers.unshift CcdClientSentryErrorMiddleware.new
+  server_config.server_middleware do |chain|
     chain.add EtCcdExport::Sidekiq::Middleware::ExposeJobHashMiddleware
     chain.add EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware
     chain.add EtCcdExport::Sidekiq::Middleware::SentryMiddleware
   end
-  config.client_middleware do |chain|
+  server_config.client_middleware do |chain|
     chain.add EtCcdExport::Sidekiq::Middleware::MultiplesClientMiddleware
   end
 end
 
-Sidekiq.configure_client do |config|
+Sidekiq.configure_client do |client_config|
   redis_config = { url: redis_url }
   redis_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
-  config.redis = redis_config
-  config.client_middleware do |chain|
+  client_config.redis = redis_config
+  client_config.client_middleware do |chain|
     chain.add EtCcdExport::Sidekiq::Middleware::MultiplesClientMiddleware
   end
 end

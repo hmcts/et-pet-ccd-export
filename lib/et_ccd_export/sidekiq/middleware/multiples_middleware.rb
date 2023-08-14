@@ -11,39 +11,47 @@ module EtCcdExport
           batch.move_child_to_in_progress(msg['et_ccd_export_multiple_batch_child_reference'])
           begin
             yield.tap do |id|
-              child_ref = msg['et_ccd_export_multiple_batch_child_reference']
-              batch.move_child_to_done(child_ref)
-              events_service.send_claim_export_multiples_progress_event sidekiq_job_data: msg,
-                                                                        export_id: batch.export_id,
-                                                                        percent_complete: batch.percent_complete,
-                                                                        case_id: id,
-                                                                        case_reference: child_ref,
-                                                                        case_type_id: batch.case_type_id
-              on_done(batch)
+              done(id, msg, batch, events_service: events_service)
             end
-          rescue Exception => e
-            child_ref = msg['et_ccd_export_multiple_batch_child_reference']
-            if last_retry?(msg)
-              batch.move_child_to_failed(child_ref)
-            else
-              batch.move_child_to_error(child_ref)
-            end
-            unless e.is_a?(PreventJobRetryingException)
-              events_service.send_subclaim_erroring_event(export_id: batch.export_id, sidekiq_job_data: msg.except('class', 'args', 'queue'),
-                                                          exception: e)
-            end
-            schedule_failed_callbacks(batch) unless batch.more_work_to_be_done?
+          rescue Exception => e # rubocop:disable Lint/RescueException
+            tidy_up(batch, msg, e, events_service: events_service)
             raise e
           end
         end
 
         private
 
+        def done(id, msg, batch, events_service: ApplicationEventsService)
+          child_ref = msg['et_ccd_export_multiple_batch_child_reference']
+          batch.move_child_to_done(child_ref)
+          events_service.send_claim_export_multiples_progress_event sidekiq_job_data: msg,
+                                                                    export_id: batch.export_id,
+                                                                    percent_complete: batch.percent_complete,
+                                                                    case_id: id,
+                                                                    case_reference: child_ref,
+                                                                    case_type_id: batch.case_type_id
+          on_done(batch)
+        end
+
+        def tidy_up(batch, msg, exception, events_service: ApplicationEventsService)
+          child_ref = msg['et_ccd_export_multiple_batch_child_reference']
+          if last_retry?(msg)
+            batch.move_child_to_failed(child_ref)
+          else
+            batch.move_child_to_error(child_ref)
+          end
+          unless exception.is_a?(PreventJobRetryingException)
+            events_service.send_subclaim_erroring_event(export_id: batch.export_id, sidekiq_job_data: msg.except('class', 'args', 'queue'),
+                                                        exception: exception)
+          end
+          schedule_failed_callbacks(batch) unless batch.more_work_to_be_done?
+        end
+
         def last_retry?(msg)
           max_retries = msg.fetch('retry', false)
-          return true if max_retries === false
+          return true if max_retries == false
 
-          max_retries = max_retries_config if max_retries === true
+          max_retries = max_retries_config if max_retries == true
           msg.fetch('retry_count', 0) >= max_retries
         end
 

@@ -22,7 +22,7 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
   it 'presents the multipleSource' do
     # Act
-    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+    result = JSON.parse(presenter.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
 
     # Assert
     expect(result.dig('data', 'multipleSource')).to eql 'ET1 Online'
@@ -30,7 +30,7 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
   it 'presents the multipleReference' do
     # Act
-    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+    result = JSON.parse(presenter.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
 
     # Assert
     expect(result.dig('data', 'multipleReference')).to eql example_primary_reference
@@ -38,7 +38,7 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
   it 'presents the multipleName' do
     # Act
-    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+    result = JSON.parse(presenter.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
 
     # Assert
     expect(result.dig('data', 'multipleName')).to eql example_respondent_name
@@ -46,7 +46,7 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
   it 'presents the caseIdCollection' do
     # Act
-    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+    result = JSON.parse(presenter.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
 
     # Assert
     expected_collection = example_case_references.map do |ref|
@@ -62,7 +62,7 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
   it 'presents the event object' do
     # Act
-    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+    result = JSON.parse(presenter.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
 
     # Assert
     expect(result['event']).to include 'id' => 'createMultiple',
@@ -72,7 +72,7 @@ RSpec.describe MultipleClaimsHeaderPresenter do
 
   it 'presents the event_token' do
     # Act
-    result = JSON.parse(subject.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
+    result = JSON.parse(presenter.present(primary_reference: example_primary_reference, respondent_name: example_respondent_name, case_references: example_case_references, event_token: example_event_token))
 
     # Assert
     expect(result['event_token']).to eql example_event_token

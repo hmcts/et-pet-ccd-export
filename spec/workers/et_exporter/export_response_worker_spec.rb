@@ -68,9 +68,9 @@ RSpec.describe ::EtExporter::ExportResponseWorker do
 
     it 'informs the application events service of an error' do
       # Arrange - make the service raise an error
-      MyError = Class.new(RuntimeError)
+      stub_const('MyError', Class.new(RuntimeError))
       my_exception = MyError.new("Something went wrong")
-      expect(fake_service).to receive(:call).and_raise(my_exception)
+      allow(fake_service).to receive(:call).and_raise(my_exception)
 
       # Act - Call the worker
       begin
@@ -85,16 +85,12 @@ RSpec.describe ::EtExporter::ExportResponseWorker do
 
     it 're raises the error to mark it as failure and allow retrying' do
       # Arrange - make the service raise an error
-      MyError = Class.new(RuntimeError)
-      expect(fake_service).to receive(:call).and_raise(MyError, "Something went wrong")
-
-      # Act - Call the worker
-      work = -> { worker.perform(example_export.as_json.to_json) }
+      stub_const('MyError', Class.new(RuntimeError))
+      allow(fake_service).to receive(:call).and_raise(MyError, "Something went wrong")
 
       # Assert - Make sure the fake events service was called correctly
-      expect(work).to raise_error(MyError)
+      expect { worker.perform(example_export.as_json.to_json) }.to raise_error(MyError)
     end
-
   end
 
   describe "#sidekiq_retries_exhausted_block" do
@@ -103,7 +99,7 @@ RSpec.describe ::EtExporter::ExportResponseWorker do
     before { stub_const('ApplicationEventsService', fake_events_service) }
 
     it 'calls the send_response_failed_event on the events service' do
-      MyError = Class.new(RuntimeError)
+      stub_const('MyError', Class.new(RuntimeError))
       fake_job_hash['args'] = [example_export.as_json.to_json]
       begin
         worker.sidekiq_retries_exhausted_block.call(fake_job_hash, MyError.new('Something went wrong'))

@@ -13,8 +13,8 @@ end
 
 RSpec.configure do |c|
   c.before do
-    ::Sidekiq.configure_client do |c|
-      c.redis = ConnectionPool.new(timeout: 60, size: 1) do
+    ::Sidekiq.configure_client do |client|
+      client.redis = ConnectionPool.new(timeout: 60, size: 1) do
         MockRedis.new
       end
     end

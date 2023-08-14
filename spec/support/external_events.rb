@@ -7,7 +7,7 @@ module EtCcdExport
       end
     end
 
-    class ExternalEvents
+    class ExternalEvents # rubocop:disable Metrics/ClassLength
       include RSpec::Matchers
       def assert_claim_export_succeeded(export:, ccd_case:)
         jobs = ::Sidekiq::Worker.jobs.select do |j|
@@ -78,7 +78,7 @@ module EtCcdExport
         expect(jobs.length).to be 1
       end
 
-      def assert_all_multiples_claim_export_progress(export:, ccd_case:, sub_cases:)
+      def assert_all_multiples_claim_export_progress(export:, ccd_case:, sub_cases:) # rubocop:disable Lint/UnusedMethodArgument, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
         # If we had a claim with 9 secondary claimants, giving 10 altogether - all together we would send 12 events
         # including the header.
         # The first would be the event that queues all 10 jobs and will contain the bid (batch id)

@@ -3,22 +3,43 @@
 require 'rails_helper'
 
 describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
-  class ExampleWorker
-    include Sidekiq::Worker
 
-    def perform
-      123456 # A fake id from the worker
-    end
-  end
+  before do
+    stub_const('ExampleWorker', Class.new do
+      include Sidekiq::Worker
 
-  # This worker will fail first and second times and succeed after that
-  class ExampleFailingWorker
-    include Sidekiq::Worker
-    attr_accessor :job_hash # The middleware will populate this with the current job
+      def perform
+        123456 # A fake id from the worker
+      end
+    end)
 
-    def perform
-      retry_count = job_hash.fetch('retry_count', 0)
-      if retry_count <= 1
+    # This worker will fail first and second times and succeed after that
+    stub_const('ExampleFailingWorker', Class.new do
+      include Sidekiq::Worker
+      attr_accessor :job_hash # The middleware will populate this with the current job
+
+      def perform
+        retry_count = job_hash.fetch('retry_count', 0)
+        if retry_count <= 1
+          job_hash.merge! 'retry_count' => retry_count + 1,
+                          'error_message' => 'An error occurred in the worker',
+                          'error_class' => ExampleException,
+                          'failed_at' => Time.now.to_f,
+                          'retried_at' => Time.now.to_f
+
+          raise ExampleException, "An error occurred in the worker"
+        end
+        123456 # A fake id from the worker
+      end
+    end)
+
+    stub_const('ExampleCompletelyFailedWorker', Class.new do
+      include Sidekiq::Worker
+      sidekiq_options retry: 2
+      attr_accessor :job_hash # The middleware will populate this with the current job
+
+      def perform
+        retry_count = job_hash.fetch('retry_count', 0)
         job_hash.merge! 'retry_count' => retry_count + 1,
                         'error_message' => 'An error occurred in the worker',
                         'error_class' => ExampleException,
@@ -27,35 +48,18 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
 
         raise ExampleException, "An error occurred in the worker"
       end
-      123456 # A fake id from the worker
-    end
-  end
+    end)
 
-  class ExampleCompletelyFailedWorker
-    include Sidekiq::Worker
-    sidekiq_options retry: 2
-    attr_accessor :job_hash # The middleware will populate this with the current job
+    stub_const('ExampleException', Class.new(StandardError))
 
-    def perform
-      retry_count = job_hash.fetch('retry_count', 0)
-      job_hash.merge! 'retry_count' => retry_count + 1,
-                      'error_message' => 'An error occurred in the worker',
-                      'error_class' => ExampleException,
-                      'failed_at' => Time.now.to_f,
-                      'retried_at' => Time.now.to_f
+    stub_const('ExampleSuccessCallback', Class.new do
+      include Sidekiq::Worker
+    end)
 
-      raise ExampleException, "An error occurred in the worker"
-    end
-  end
+    stub_const('ExampleFailedCallback', Class.new do
+      include Sidekiq::Worker
+    end)
 
-  class ExampleException < ::Exception; end
-
-  class ExampleSuccessCallback
-    include Sidekiq::Worker
-  end
-
-  class ExampleFailedCallback
-    include Sidekiq::Worker
   end
 
   let(:example_multiple_reference) { '240000001/2021' }

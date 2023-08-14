@@ -294,8 +294,8 @@ RSpec.describe "create claim multiples" do
   it 'populates the documents collection correctly with 2 pdf files and a csv file input' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
-    claimant = export.dig('resource', 'primary_claimant')
-    respondent = export.dig('resource', 'primary_respondent')
+    export.dig('resource', 'primary_claimant')
+    export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)

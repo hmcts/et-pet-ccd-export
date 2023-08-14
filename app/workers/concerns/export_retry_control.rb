@@ -22,7 +22,8 @@ module ExportRetryControl
   end
 
   def before_perform
-    if job_hash['error_class'] && (job_hash['error_class'] == 'PreventJobRetryingException' || self.class.exceptions_without_retry.include?(job_hash['error_class'].safe_constantize))
+    if job_hash['error_class'] &&
+       (job_hash['error_class'] == 'PreventJobRetryingException' || self.class.exceptions_without_retry.include?(job_hash['error_class'].safe_constantize))
       raise PreventJobRetryingException.new "This is a fake exception which will deliberately prevent this job from retrying", job_hash
     end
   end
