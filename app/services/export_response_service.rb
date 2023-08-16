@@ -5,7 +5,7 @@ class ExportResponseService
     self.disallow_file_extensions = disallow_file_extensions
   end
 
-  def call(export, sidekiq_job_data:)
+  def call(export, sidekiq_job_data:) # rubocop:disable Lint/UnusedMethodArgument
     do_export(export)
   end
 

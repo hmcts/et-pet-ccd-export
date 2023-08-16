@@ -17,11 +17,17 @@ module EtCcdExport
 
           job['et_ccd_export_multiple_batch_reference'] = Thread.current[:et_ccd_export_multiple_batch].reference
           batch = EtCcdExport::Sidekiq::Batch.find(Thread.current[:et_ccd_export_multiple_batch].reference)
-          unless Thread.current[:et_ccd_export_multiple_batch_child_reference].nil?
-            job['et_ccd_export_multiple_batch_child_reference'] = Thread.current[:et_ccd_export_multiple_batch_child_reference]
-            batch.add_child_to_todo(Thread.current[:et_ccd_export_multiple_batch_child_reference])
-          end
+          add_to_todo(job, batch)
           yield
+        end
+
+        private
+
+        def add_to_todo(job, batch)
+          return if Thread.current[:et_ccd_export_multiple_batch_child_reference].nil?
+
+          job['et_ccd_export_multiple_batch_child_reference'] = Thread.current[:et_ccd_export_multiple_batch_child_reference]
+          batch.add_child_to_todo(Thread.current[:et_ccd_export_multiple_batch_child_reference])
         end
       end
     end

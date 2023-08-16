@@ -11,14 +11,12 @@ RSpec.describe ExportMultipleClaimsService do
   end
 
   let(:mock_presenter) { class_spy(MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
-  let(:mock_header_presenter) do
-    self.class::MockHeaderPresenter = class_spy(MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}')
-  end
+  let(:mock_header_presenter) { class_spy(MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}') }
   let(:mock_envelope_presenter) { class_spy(MultipleClaimsEnvelopePresenter) }
   let(:fake_events_service) { class_spy(ApplicationEventsService) }
 
   describe '#call' do
-    def primaryClaimantIndTypeMatcher(claimant, has_gender: true)
+    def primaryClaimantIndTypeMatcher(claimant, has_gender: true) # rubocop:disable Naming/MethodName
       a_hash_including 'claimant_title1' => claimant.title,
                        'claimant_first_names' => claimant.first_name,
                        'claimant_last_name' => claimant.last_name,
@@ -26,7 +24,7 @@ RSpec.describe ExportMultipleClaimsService do
                        'claimant_gender' => has_gender ? claimant.gender : nil
     end
 
-    def primaryClaimantTypeMatcher(claimant)
+    def primaryClaimantTypeMatcher(claimant) # rubocop:disable Naming/MethodName
       a_hash_including 'claimant_addressUK' => address_matcher(claimant.address),
                        'claimant_phone_number' => claimant.address_telephone_number,
                        'claimant_mobile_number' => claimant.mobile_number,
@@ -43,11 +41,11 @@ RSpec.describe ExportMultipleClaimsService do
                        'Country' => has_country && ['United Kingdom'].include?(address.country) ? address.country : nil
     end
 
-    def secondaryClaimantIndTypeMatcher(claimant)
+    def secondaryClaimantIndTypeMatcher(claimant) # rubocop:disable Naming/MethodName
       primaryClaimantIndTypeMatcher(claimant, has_gender: false)
     end
 
-    def secondaryClaimantTypeMatcher(claimant)
+    def secondaryClaimantTypeMatcher(claimant) # rubocop:disable Naming/MethodName
       a_hash_including 'claimant_addressUK' => address_matcher(claimant.address, has_country: false),
                        'claimant_phone_number' => nil,
                        'claimant_mobile_number' => nil,
@@ -55,7 +53,7 @@ RSpec.describe ExportMultipleClaimsService do
                        'claimant_contact_preference' => nil
     end
 
-    def primaryClaimantOtherTypeMatcher(claimant, claim)
+    def primaryClaimantOtherTypeMatcher(claimant, claim) # rubocop:disable Naming/MethodName
       hash_for_comparison = {
         'claimant_disabled' => claimant.special_needs.present? ? 'Yes' : 'No'
 
@@ -72,7 +70,7 @@ RSpec.describe ExportMultipleClaimsService do
       a_hash_including hash_for_comparison
     end
 
-    def primaryClaimantWorkAddressMatcher(_claimant, claim)
+    def primaryClaimantWorkAddressMatcher(_claimant, claim) # rubocop:disable Naming/MethodName
       address = claim.primary_respondent.work_address.present? ? claim.primary_respondent.work_address : claim.primary_respondent.address
       a_hash_including('claimant_work_address' => address_matcher(address, has_country: false))
     end
@@ -90,11 +88,21 @@ RSpec.describe ExportMultipleClaimsService do
       end
     end
     shared_context 'with mock workers' do
+      subject(:service) do
+        described_class.new presenter: mock_presenter,
+                            header_presenter: mock_header_presenter,
+                            envelope_presenter: mock_envelope_presenter,
+                            disallow_file_extensions: [],
+                            application_events_service: fake_events_service,
+                            worker: mock_worker_class,
+                            header_worker: mock_header_worker_class
+      end
+
       let(:mock_worker_class) do
         calls                  = mock_worker_calls
         instance               = nil
         reference              = 2400001
-        self.class::MockWorker = Class.new do
+        stub_const("#{self.class.name}::MockWorker", Class.new do
           include ::Sidekiq::Worker
           define_singleton_method(:new) { instance ||= super() }
           define_method :perform do |*args|
@@ -103,7 +111,7 @@ RSpec.describe ExportMultipleClaimsService do
             reference += 1
             'dummyid'
           end
-        end
+        end)
         self.class::MockWorker
       end
 
@@ -113,10 +121,10 @@ RSpec.describe ExportMultipleClaimsService do
 
       let(:mock_header_worker_class) do
         instance                     = mock_header_worker
-        self.class::MockHeaderWorker = Class.new do
+        stub_const("#{self.class.name}::MockHeaderWorker", Class.new do
           include ::Sidekiq::Worker
           define_singleton_method(:new) { instance }
-        end
+        end)
         self.class::MockHeaderWorker
       end
 
@@ -145,7 +153,7 @@ RSpec.describe ExportMultipleClaimsService do
 
       it 'queues the header worker when done with the data from the header presenter' do
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
+        service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the batch
@@ -154,7 +162,7 @@ RSpec.describe ExportMultipleClaimsService do
 
       it 'informs the application events service of the references allocated' do
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
+        service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Make sure the service was not called
@@ -185,19 +193,19 @@ RSpec.describe ExportMultipleClaimsService do
         allow(mock_presenter).to receive(:present).and_return(*presented_values)
 
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
+        service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the worker has been queued, first time with the primary set to true
         aggregate_failures 'validating calls' do
           expect(mock_worker_calls.first).to eql(['{"claim"=>"1"}', 'Manchester', example_export.id, 11, true, true, { 'test_header' => '"true"' }])
-          expect(mock_worker_calls[1..-1]).to eql presented_values[1..-1].map { |data| [data, 'Manchester', example_export.id, 11, false, true, { 'test_header' => '"true"' }] }
+          expect(mock_worker_calls[1..]).to eql(presented_values[1..].map { |data| [data, 'Manchester', example_export.id, 11, false, true, { 'test_header' => '"true"' }] })
         end
       end
 
       it 'calls the presenter 11 times with the correct parameters' do
         # Act - Call the service
-        service.call(example_export.as_json, worker: mock_worker_class, header_worker: mock_header_worker_class, sidekiq_job_data: { jid: 'examplejid' })
+        service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
         drain_all_our_sidekiq_jobs
 
         # Assert - Check the worker has been queued
@@ -289,7 +297,7 @@ RSpec.describe ExportMultipleClaimsService do
 
     it 'stores the data in fake ccd' do
       # Arrange - Setup the envelope presenter to do what it should do (roughly - just to keep fake ccd happy)
-      allow(mock_envelope_presenter).to receive(:present) do |data, event_token:|
+      allow(mock_envelope_presenter).to receive(:present) do |data|
         <<-JSON
           {"data": #{data},"event": {"id": "initiateCase"},"event_token": "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJ1cHY5dTBvb2o3NWUzdG1kbW43YThtaGNoZSIsInN1YiI6IjY4OGNmYjVjLTU2MTctNDE0Yi04MzY1LTdlMTY4ODRmNGZiNyIsImlhdCI6MTU2MzE4NDA2NSwiZXZlbnQtaWQiOiJpbml0aWF0ZUNhc2UiLCJjYXNlLXR5cGUtaWQiOiJFbXBUcmliX01WUF8xLjBfTWFuYyIsImp1cmlzZGljdGlvbi1pZCI6IkVNUExPWU1FTlQiLCJjYXNlLXZlcnNpb24iOiJiZjIxYTllOGZiYzVhMzg0NmZiMDViNGZhMDg1OWUwOTE3YjIyMDJmIn0.n-cR9MXeIuCIr1LSJtJW4mTaX_slK9qB4JNl3ggsda4"}
         JSON
@@ -298,7 +306,7 @@ RSpec.describe ExportMultipleClaimsService do
       begin
         old_file                                 = EtFakeCcd.config.create_case_schema_file
         EtFakeCcd.config.create_case_schema_file = nil
-        service.export(example_ccd_data.to_json, 'Manchester', sidekiq_job_data: { jid: 'examplejid' }, export_id: 1, claimant_count: 10)
+        service.export(example_ccd_data.to_json, 'Manchester', sidekiq_job_data: { jid: 'examplejid' })
       ensure
         EtFakeCcd.config.create_case_schema_file = old_file
       end

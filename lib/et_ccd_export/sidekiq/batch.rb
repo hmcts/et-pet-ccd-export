@@ -2,7 +2,7 @@ require 'et_ccd_export/sidekiq/middleware/multiples_middleware'
 require 'et_ccd_export/sidekiq/middleware/multiples_client_middleware'
 module EtCcdExport
   module Sidekiq
-    class Batch
+    class Batch # rubocop:disable Metrics/ClassLength
       attr_reader :reference, :quantity, :start_ref, :export_id, :case_type_id
 
       def initialize(reference:, quantity:, start_ref:, export_id:, case_type_id:, sidekiq: ::Sidekiq)
@@ -193,6 +193,10 @@ module EtCcdExport
         !more_work_to_be_done? && failed_count.positive?
       end
 
+      def self.redis_key(reference)
+        "et_ccd_export-multiple-#{reference}"
+      end
+
       private
 
       attr_reader :sidekiq
@@ -223,10 +227,6 @@ module EtCcdExport
 
       def callbacks_key
         "#{redis_key}-callbacks"
-      end
-
-      def self.redis_key(reference)
-        "et_ccd_export-multiple-#{reference}"
       end
     end
   end

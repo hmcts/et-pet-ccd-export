@@ -7,6 +7,32 @@ GIT
       application_insights (~> 0.5.7)
 
 GIT
+  remote: https://github.com/hmcts/et-ccd-client-ruby.git
+  revision: fce4c857e7295a12b3b1b9d439a6b301c23ea6b9
+  tag: v0.6.0
+  specs:
+    et_ccd_client (0.6.0)
+      addressable (~> 2.6)
+      connection_pool (~> 2.2, >= 2.2.2)
+      rest-client (~> 2.0, >= 2.0.2)
+      rotp (~> 6.2)
+      webmock (~> 3.6)
+
+GIT
+  remote: https://github.com/hmcts/et-fake-ccd.git
+  revision: f61d551d246654c25cb81f7195312836f248765c
+  specs:
+    et_fake_ccd (3.0.0)
+      activemodel (~> 7.0)
+      iodine (~> 0.7)
+      json-schema (~> 3.0)
+      roda (~> 3.21)
+      roda-enhanced_logger (~> 0.5.0)
+      rotp (~> 6.2)
+      thor (~> 1.0)
+      tilt (~> 2.0, >= 2.0.9)
+
+GIT
   remote: https://github.com/microsoft/ApplicationInsights-Ruby.git
   revision: 5db6b4ad65262d23f26b678143a4a1fd7939e5c2
   ref: 5db6b4
@@ -103,9 +129,6 @@ GEM
       rexml
     crass (1.0.6)
     date (3.3.3)
-    debase (0.2.4.1)
-      debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (3.2.1)
     diff-lcs (1.5.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
@@ -115,21 +138,6 @@ GEM
       railties (>= 3.2)
     e2mmap (0.1.0)
     erubi (1.12.0)
-    et_ccd_client (0.4.0)
-      addressable (~> 2.6)
-      connection_pool (~> 2.2, >= 2.2.2)
-      rest-client (~> 2.0, >= 2.0.2)
-      rotp (~> 6.2)
-      webmock (~> 3.6)
-    et_fake_ccd (2.1.0)
-      activemodel (~> 7.0)
-      iodine (~> 0.7)
-      json-schema (~> 3.0)
-      roda (~> 3.21)
-      roda-enhanced_logger (~> 0.5.0)
-      rotp (~> 6.2)
-      thor (~> 1.0)
-      tilt (~> 2.0, >= 2.0.9)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
     ffi (1.15.5)
@@ -175,7 +183,7 @@ GEM
     method_source (1.0.0)
     mime-types (3.5.0)
       mime-types-data (~> 3.2015)
-    mime-types-data (3.2023.0218.1)
+    mime-types-data (3.2023.0808)
     mini_mime (1.1.2)
     mini_portile2 (2.8.4)
     minitest (5.19.0)
@@ -299,12 +307,10 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
-    rubocop-rspec (2.23.0)
+    rubocop-rspec (2.23.1)
       rubocop (~> 1.33)
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
-    ruby-debug-ide (0.7.3)
-      rake (>= 0.8.1)
     ruby-progressbar (1.13.0)
     ruby2_keywords (0.0.5)
     sentry-rails (5.10.0)
@@ -373,11 +379,10 @@ DEPENDENCIES
   azure_env_secrets!
   bootsnap (>= 1.1.0)
   byebug
-  debase
   dotenv-rails (~> 2.7)
   et_azure_insights (= 0.3.2)!
-  et_ccd_client (~> 0.4)
-  et_fake_ccd (~> 2.1)
+  et_ccd_client!
+  et_fake_ccd!
   factory_bot (~> 6.1)
   ice_nine (~> 0.11.2)
   jbuilder (~> 2.10)
@@ -392,7 +397,6 @@ DEPENDENCIES
   rubocop (~> 1.14)
   rubocop-rails (~> 2.10, >= 2.10.1)
   rubocop-rspec (~> 2.3)
-  ruby-debug-ide
   sentry-rails (~> 5.7)
   sentry-ruby (~> 5.7)
   sentry-sidekiq (~> 5.7)
@@ -403,7 +407,7 @@ DEPENDENCIES
   tzinfo-data
 
 RUBY VERSION
-   ruby 2.7.8p225
+   ruby 3.2.2p53
 
 BUNDLED WITH
    2.1.4

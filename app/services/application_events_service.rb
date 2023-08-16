@@ -1,17 +1,12 @@
 module ApplicationEventsService
-  class << self
+  class << self # rubocop:disable Metrics/ClassLength
     def send_application_event(event, data, queue: 'events')
       serialized_job = {
-        "job_class" => 'TriggerEventJob',
-        "job_id" => SecureRandom.uuid,
-        "provider_job_id" => nil,
-        "queue_name" => queue,
-        "priority" => 5,
-        "arguments" => [event, data.to_json],
-        "executions" => 0,
-        "exception_executions" => 0,
-        "locale" => 'en',
-        "timezone" => Time.zone.try(:name),
+        "job_class" => 'TriggerEventJob', "job_id" => SecureRandom.uuid,
+        "provider_job_id" => nil, "queue_name" => queue,
+        "priority" => 5, "arguments" => [event, data.to_json],
+        "executions" => 0, "exception_executions" => 0,
+        "locale" => 'en', "timezone" => Time.zone.try(:name),
         "enqueued_at" => Time.now.utc.iso8601
       }
       Sidekiq::Client.push \

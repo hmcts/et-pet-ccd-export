@@ -1,7 +1,7 @@
-json.set! 'receiptDate', optional_date(claim.dig('date_of_receipt'))
+json.set! 'receiptDate', optional_date(claim['date_of_receipt'])
 json.set! 'caseSource', 'ET1 Online'
 json.set! 'ethosCaseReference', ethos_case_reference
-json.set! 'feeGroupReference', claim.dig('reference')
+json.set! 'feeGroupReference', claim['reference']
 json.set! 'claimant_TypeOfClaimant', 'Individual'
 json.set! 'positionType', 'Received by Auto-Import'
 json.set! 'claimantIndType' do
@@ -31,9 +31,9 @@ json.set! 'multipleReference', multiple_reference
 json.set! 'leadClaimant', 'No'
 json.set! 'claimantWorkAddress', {}
 json.set! 'respondentCollection' do
-  json.array!([claim['primary_respondent']] + claim.dig('secondary_respondents')) do |respondent|
+  json.array!([claim['primary_respondent']] + claim['secondary_respondents']) do |respondent|
     json.set! 'value' do
-      json.set! 'respondent_name', respondent.dig('name')
+      json.set! 'respondent_name', respondent['name']
       json.set! 'respondent_address' do
         json.set! 'AddressLine1', respondent.dig('address', 'building')
         json.set! 'AddressLine2', respondent.dig('address', 'street')
@@ -42,16 +42,16 @@ json.set! 'respondentCollection' do
         json.set! 'Country', nil
         json.set! 'PostCode', respondent.dig('address', 'post_code')
       end
-      json.set! 'respondent_phone1', respondent.dig('address_telephone_number')
-      json.set! 'respondent_ACAS', respondent.dig('acas_certificate_number')
-      json.set! 'respondent_ACAS_question', respondent.dig('acas_certificate_number').present? ? 'Yes' : 'No'
-      json.set! 'respondent_ACAS_no', optional_acas_exemption(respondent.dig('acas_exemption_code')) unless respondent.dig('acas_certificate_number').present?
+      json.set! 'respondent_phone1', respondent['address_telephone_number']
+      json.set! 'respondent_ACAS', respondent['acas_certificate_number']
+      json.set! 'respondent_ACAS_question', respondent['acas_certificate_number'].present? ? 'Yes' : 'No'
+      json.set! 'respondent_ACAS_no', optional_acas_exemption(respondent['acas_exemption_code']) unless respondent['acas_certificate_number'].present?
     end
   end
 end
 json.set! 'claimantOtherType', {}
 json.set! 'claimantRepresentedQuestion', claim['primary_representative'].present? ? 'Yes' : 'No'
-if claim.dig('primary_representative').present?
+if claim['primary_representative'].present?
   json.set! 'representativeClaimantType' do
     json.set! 'representative_occupation', claim.dig('primary_representative', 'representative_type')
     json.set! 'name_of_organisation', claim.dig('primary_representative', 'organisation_name')

@@ -1,12 +1,12 @@
 require 'sentry-ruby'
 require 'et_ccd_client'
 class CcdClientSentryErrorMiddleware
-  def call(ex, _context)
+  def call(exception, _context)
     return unless ex.is_a?(EtCcdClient::Exceptions::Base)
 
-    req = ex.try(:request) || {}
+    req = exception.try(:request) || {}
     Sentry.with_scope do |scope|
-      scope.set_extras(ccd_response: ex.response.to_s, ccd_request: req)
+      scope.set_extras(ccd_response: exception.response.to_s, ccd_request: req)
     end
   end
 end

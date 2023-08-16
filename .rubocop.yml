@@ -30,6 +30,7 @@ Metrics/ModuleLength:
 Metrics/AbcSize:
   Exclude:
     - 'spec/**/*'
+  Max: 18
 
 # Allow expect {}.to blocks in specs
 # but not in the code
@@ -53,6 +54,8 @@ Metrics/MethodLength:
 # No need to check for describe class param in support files.
 RSpec/DescribeClass:
   Enabled: true
+  Exclude:
+    - 'spec/integration/**/*'
 
 # private/protected/public
 Layout/AccessModifierIndentation:
@@ -141,7 +144,12 @@ IfUnlessModifier:
 # Allow safe assignment in conditions.
 Lint/AssignmentInCondition:
   AllowSafeAssignment: false
-
+Lint/SuppressedException:
+  Exclude:
+    - 'spec/**/*'
+Lint/RescueException:
+  Exclude:
+    - 'spec/**/*'
 # Just a preference to use %w[] over %w()
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
@@ -169,7 +177,9 @@ Metrics/BlockLength:
     - 'test_common/**/*'
     - 'config/**/*'
     - 'lib/tasks/**/*'
-
+    - 'app/views/**/*'
+Metrics/ParameterLists:
+  Max: 6
 Layout/EmptyLineAfterMagicComment:
   Enabled: false
 
@@ -198,7 +208,8 @@ Rails/OutputSafety:
 RSpec/Capybara/FeatureMethods:
   Exclude:
     - 'spec/features/**/*'
-
+RSpec/MultipleMemoizedHelpers:
+  Max: 10
 Naming/PredicateName:
   Exclude:
     - 'test_common/**/*'
