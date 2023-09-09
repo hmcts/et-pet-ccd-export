@@ -42,6 +42,7 @@ group :test do
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '~> 0.28'
   gem 'rspec-sidekiq', '~> 3.1'
+  gem 'simplecov', '~> 0.22.0'
 end
 
 group :development do
