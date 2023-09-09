@@ -27,12 +27,14 @@ gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag
 gem 'dotenv-rails', '~> 2.7'
 
 group :development, :test do
+  gem 'bundler-audit', '~> 0.9.1'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
 
 group :test do
   gem 'rspec-rails', '~> 6.0'
+  gem 'rspec_junit_formatter', '~> 0.6.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
   gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git'

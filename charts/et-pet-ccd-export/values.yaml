@@ -1,0 +1,10 @@
+base:
+  applicationPort: 7433
+  readinessPath: /
+  livenessPath: /
+  startupPath: /
+  image: 'hmctspublic.azurecr.io/et-pet/ccd-export:latest'
+  ingressHost: et-pet-ccd-export.{{ .Values.global.environment }}.platform.hmcts.net
+  aadIdentityName: ccd-export-pet
+  environment:
+    RAILS_ENV: 'production'
