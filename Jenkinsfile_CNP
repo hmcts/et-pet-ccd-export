@@ -11,4 +11,5 @@ def rubyBuilder = new uk.gov.hmcts.contino.RubyBuilder(this)
 
 withPipeline(type, product, component) {
     env.RAILS_ENV = 'test'
+    env.ENABLE_COVERAGE = 'true'
 }

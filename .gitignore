@@ -13,6 +13,9 @@
 !/log/.keep
 !/tmp/.keep
 
+# Ignore coverage files
+/coverage
+
 
 .byebug_history
 
