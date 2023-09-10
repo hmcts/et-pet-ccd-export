@@ -3,8 +3,59 @@ base:
   readinessPath: /
   livenessPath: /
   startupPath: /
-  image: 'hmctspublic.azurecr.io/et-pet/ccd-export:latest'
+  image: "hmctspublic.azurecr.io/et-pet/ccd-export:latest"
   ingressHost: et-pet-ccd-export.{{ .Values.global.environment }}.platform.hmcts.net
   aadIdentityName: ccd-export-pet
   environment:
-    RAILS_ENV: 'production'
+    RAILS_ENV: "production"
+    SECRETS_PATH: "/kvmnt/"
+    RAVEN_DSN:
+      secretRef: "ccd-export-raven-dsn"
+      key: "ccd-export-raven-dsn"
+      disabled: false
+    RAILS_MAX_THREADS: 10
+    RAILS_LOG_LEVEL: "debug"
+    WEB_CONCURRENCY: 3
+    DOCKER_STATE: "migrate"
+    RAILS_LOG_TO_STDOUT: true
+    RAVEN_SSL_VERIFICATION: false
+    ET_CCD_SIMULATION: false
+    CCD_ECM_BASE_URL: "http://ethos-repl-docmosis-backend-demo.service.core-compute-demo.internal"
+    CCD_MICROSERVICE_SECRET:
+      secretRef: "ccd-export-microservice-secret"
+      key: "ccd-export-microservice-secret"
+      disabled: false
+    CCD_MICROSERVICE_ID:
+      secretRef: "ccd-export-microservice-id"
+      key: "ccd-export-microservice-id"
+      disabled: false
+    CCD_SIDAM_USERNAME:
+      secretRef: "ccd-export-sidam-username"
+      key: "ccd-export-sidam-username"
+      disabled: false
+    CCD_SIDAM_PASSWORD:
+      secretRef: "ccd-export-sidam-password"
+      key: "ccd-export-sidam-password"
+      disabled: false
+    CCD_IDAM_BASE_URL: "https://idam-api-demo.service.core-compute-demo.internal"
+    CCD_AUTH_BASE_URL:
+      secretRef: "ccd-export-auth-base-url"
+      key: "ccd-export-auth-base-url"
+      disabled: false
+    CCD_DATA_STORE_BASE_URL:
+      secretRef: "ccd-export-data-store-base-url"
+      key: "ccd-export-data-store-base-url"
+      disabled: false
+    CCD_DOCUMENT_STORE_BASE_URL:
+      secretRef: "ccd-export-ccd-document-store-base-url"
+      key: "ccd-export-ccd-document-store-base-url"
+      disabled: false
+    CCD_SSL_VERIFICATION: false
+    CCD_DOCUMENT_STORE_URL_REWRITE: false
+    CCD_DOCUMENT_STORE_DISALLOW_FILE_EXTENSIONS: ".csv,.rtf"
+    CCD_GENERATE_ETHOS_CASE_REFERENCE: false
+    AZURE_APP_INSIGHTS_KEY:
+      secretRef: "ccd-export-appinsights-key"
+      key: "ccd-export-appinsights-key"
+      disabled: false
+    AZURE_APP_INSIGHTS_ROLE_NAME: "ET-CCD-EXPORT"
