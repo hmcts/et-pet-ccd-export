@@ -24,6 +24,7 @@ base:
     AZURE_APP_INSIGHTS_ROLE_NAME: "ET-CCD-EXPORT"
     REDIS_HOST: "et-pet-api-{{ .Values.global.environment }}.redis.cache.windows.net"
     REDIS_PORT: 6379
+    REDIS_USE_SSL: true
   keyVaults:
     et-pet:
       secrets:

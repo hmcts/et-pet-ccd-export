@@ -8,6 +8,7 @@ redis_url = config.redis_url
 Sidekiq.configure_server do |server_config|
   redis_config = { url: redis_url }
   redis_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
+  redis_config[:ssl_params] = { verify_mode: OpenSSL::SSL::VERIFY_NONE } if ENV.fetch('REDIS_USE_SSL', 'false') == 'true'
   server_config.redis = redis_config
   server_config.error_handlers.unshift CcdClientSentryErrorMiddleware.new
   server_config.server_middleware do |chain|
@@ -23,6 +24,7 @@ end
 Sidekiq.configure_client do |client_config|
   redis_config = { url: redis_url }
   redis_config[:password] = ENV['REDIS_PASSWORD'] if ENV['REDIS_PASSWORD'].present?
+  redis_config[:ssl_params] = { verify_mode: OpenSSL::SSL::VERIFY_NONE } if ENV.fetch('REDIS_USE_SSL', 'false') == 'true'
   client_config.redis = redis_config
   client_config.client_middleware do |chain|
     chain.add EtCcdExport::Sidekiq::Middleware::MultiplesClientMiddleware
