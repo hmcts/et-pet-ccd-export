@@ -2,7 +2,7 @@ require 'sentry-ruby'
 require 'et_ccd_client'
 class CcdClientSentryErrorMiddleware
   def call(exception, _context)
-    return unless ex.is_a?(EtCcdClient::Exceptions::Base)
+    return unless exception.is_a?(EtCcdClient::Exceptions::Base)
 
     req = exception.try(:request) || {}
     Sentry.with_scope do |scope|
