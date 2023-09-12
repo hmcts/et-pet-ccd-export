@@ -18,7 +18,7 @@ gem 'sidekiq-failures', '~> 1.0'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 # Azure deployment so we need this
-gem 'azure_env_secrets', git: 'https://github.com/ministryofjustice/azure_env_secrets.git', tag: 'v0.1.3'
+gem 'azure_env_secrets', git: 'https://github.com/hmcts/azure_env_secrets.git', tag: 'v1.0.1'
 
 gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
