@@ -26,6 +26,7 @@ RUN apk add --no-cache tzdata gettext shared-mime-info libc6-compat bash && \
     bundle install --no-cache --jobs=5 --retry=3 --without=test development --with=production --deployment && \
     apk del .build-tools && \
     chown -R app:app /usr/local/bundle && \
+    chown -R app:app /home/app/ccd-export/vendor/bundle && \
     mkdir -p /home/app/ccd-export/tmp && \
     chown -R app:app /home/app/ccd-export/tmp
 
