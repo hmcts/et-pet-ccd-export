@@ -54,6 +54,7 @@ module ApplicationEventsService
           case_id: case_id,
           case_reference: case_reference,
           case_type_id: case_type_id,
+
           office: office
         },
         state: :complete,
