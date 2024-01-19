@@ -47,9 +47,9 @@ end
 
 group :development do
   gem 'listen', '~> 3.5'
-  gem 'rubocop', '~> 1.14'
-  gem 'rubocop-rails', '~> 2.10', '>= 2.10.1'
-  gem 'rubocop-rspec', '~> 2.3'
+  gem 'rubocop', '~> 1.8', require: false
+  gem "rubocop-rails", "~> 2.17", require: false
+  gem 'rubocop-rspec', '~> 2.1', require: false
   gem 'solargraph', require: false
 end
 
