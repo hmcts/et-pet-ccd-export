@@ -13,7 +13,7 @@ RSpec.describe ::EtExporter::ExportClaimUpdateWorker do
   describe '#perform' do
     context 'with a single claim' do
       let(:example_export) do
-        build :export,
+        build(:export,
               :for_claim,
               :update,
               claim_traits: [:update_only],
@@ -22,7 +22,7 @@ RSpec.describe ::EtExporter::ExportClaimUpdateWorker do
                 case_id: 'case id',
                 case_type_id: 'Manchester',
                 case_reference: 'case reference'
-              }
+              })
       end
 
       it 'informs the application events service of the process starting' do
