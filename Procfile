@@ -1,0 +1,1 @@
+sidekiq: ./bin/sidekiq --config config/sidekiq.yml

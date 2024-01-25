@@ -22,8 +22,12 @@ RUN chown -R app:app /usr/local/bundle
 RUN apk add --no-cache tzdata gettext shared-mime-info libc6-compat bash && \
     apk add --no-cache --virtual .build-tools git build-base && \
     cd /home/app/ccd-export && \
-    gem install bundler -v 1.17.3 && \
-    bundle install --no-cache --jobs=5 --retry=3 --without=test development --with=production --deployment && \
+    BUNDLER_VERSION=$(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1 | awk '{$1=$1};1') && \
+    gem install bundler:$BUNDLER_VERSION invoker && \
+    bundle config set without "test development" && \
+    bundle config set with "production" && \
+    bundle config set deployment 'true' && \
+    bundle install --no-cache --jobs=5 --retry=3 && \
     apk del .build-tools && \
     chown -R app:app /usr/local/bundle && \
     chown -R app:app /home/app/ccd-export/vendor/bundle && \

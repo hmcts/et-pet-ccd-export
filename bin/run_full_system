@@ -19,11 +19,9 @@ FileUtils.chdir APP_ROOT do
   # end
   if ENV.fetch('RAILS_ENV', 'development') == 'development'
     puts "\n== bundling for development"
-    system! 'bundle config set with "development test"'
-    system! 'bundle config --delete without'
     system! 'bundle install'
   end
 
   puts "\n== Starting sidekiq =="
-  system! './bin/sidekiq --config config/sidekiq.yml'
+  system! "cd #{APP_ROOT} && invoker start"
 end
