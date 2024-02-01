@@ -10,7 +10,8 @@ module ClaimFiles
         'document_type' => document_type(f),
         'document_url' => json.dig('_embedded', 'documents').first.dig('_links', 'self', 'href'),
         'document_binary_url' => json.dig('_embedded', 'documents').first.dig('_links', 'binary', 'href'),
-        'document_filename' => filename_for(f)
+        'document_filename' => filename_for(f),
+        'document_date_of_correspondence' => export.dig('resource', 'date_of_receipt')
       }
     end
   end
