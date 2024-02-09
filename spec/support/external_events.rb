@@ -7,7 +7,7 @@ module EtCcdExport
       end
     end
 
-    class ExternalEvents # rubocop:disable Metrics/ClassLength
+    class ExternalEvents
       include RSpec::Matchers
       def assert_claim_export_succeeded(export:, ccd_case:)
         jobs = ::Sidekiq::Worker.jobs.select do |j|

@@ -23,12 +23,12 @@ RSpec.describe "update claim" do
 
     it 'stores the extra documents' do
       # Arrange - Produce the input JSON
-      export = build :export,
+      export = build(:export,
                      :for_claim,
                      :update,
                      claim_traits: [:update_only],
                      claim_attrs: { number_of_acas_files: 5 },
-                     external_data: existing_export_data['external_data']
+                     external_data: existing_export_data['external_data'])
 
       # Act - Call the worker in the same way the application would (minus using redis)
       worker.perform_async(export.as_json.to_json)
@@ -54,12 +54,12 @@ RSpec.describe "update claim" do
 
     it 'stores the extra documents' do
       # Arrange - Produce the input JSON
-      export = build :export,
+      export = build(:export,
                      :for_claim,
                      :update,
                      claim_traits: [:update_only],
                      claim_attrs: { number_of_acas_files: 5 },
-                     external_data: existing_export_data['external_data']
+                     external_data: existing_export_data['external_data'])
 
       # Act - Call the worker in the same way the application would (minus using redis)
       worker.perform_async(export.as_json.to_json)
