@@ -27,12 +27,12 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-fake-ccd.git
-  revision: f61d551d246654c25cb81f7195312836f248765c
+  revision: a9e8d8dc2dd0c654ff1906b2a1bfd8dec30f7f4a
   specs:
-    et_fake_ccd (3.0.0)
+    et_fake_ccd (3.0.1)
       activemodel (~> 7.0)
       iodine (~> 0.7)
-      json-schema (~> 3.0)
+      json-schema (~> 4.1.1)
       roda (~> 3.21)
       roda-enhanced_logger (~> 0.5.0)
       rotp (~> 6.2)
@@ -181,7 +181,7 @@ GEM
       concurrent-ruby (~> 1.0)
     ice_nine (0.11.2)
     io-console (0.6.0)
-    iodine (0.7.56)
+    iodine (0.7.57)
     irb (1.9.0)
       rdoc
       reline (>= 0.3.8)
@@ -190,7 +190,7 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     json (2.6.3)
-    json-schema (3.0.0)
+    json-schema (4.1.1)
       addressable (>= 2.8)
     json_matchers (0.11.1)
       json_schema
@@ -306,7 +306,7 @@ GEM
     reverse_markdown (2.1.1)
       nokogiri
     rexml (3.2.6)
-    roda (3.70.0)
+    roda (3.77.0)
       rack
     roda-enhanced_logger (0.5.0)
       roda (>= 3.19.0)
