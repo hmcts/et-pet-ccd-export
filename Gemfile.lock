@@ -15,10 +15,10 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-ccd-client-ruby.git
-  revision: fce4c857e7295a12b3b1b9d439a6b301c23ea6b9
-  tag: v0.6.0
+  revision: 1989b4d3f1ec4cf854644696378fc454df8244d8
+  tag: v0.6.1
   specs:
-    et_ccd_client (0.6.0)
+    et_ccd_client (0.6.1)
       addressable (~> 2.6)
       connection_pool (~> 2.2, >= 2.2.2)
       rest-client (~> 2.0, >= 2.0.2)
@@ -27,9 +27,10 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-fake-ccd.git
-  revision: a9e8d8dc2dd0c654ff1906b2a1bfd8dec30f7f4a
+  revision: 0ffa6cd9e1d80f1790809659929935e309d5ffeb
+  tag: v3.1.4
   specs:
-    et_fake_ccd (3.0.1)
+    et_fake_ccd (3.1.4)
       activemodel (~> 7.0)
       iodine (~> 0.7)
       json-schema (~> 4.1.1)
@@ -148,7 +149,8 @@ GEM
     byebug (11.1.3)
     concurrent-ruby (1.2.2)
     connection_pool (2.4.1)
-    crack (0.4.5)
+    crack (1.0.0)
+      bigdecimal
       rexml
     crass (1.0.6)
     date (3.3.4)
@@ -173,7 +175,7 @@ GEM
     ffi (1.15.5)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    hashdiff (1.0.1)
+    hashdiff (1.1.0)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
@@ -414,7 +416,7 @@ GEM
       unf_ext
     unf_ext (0.0.8.2)
     unicode-display_width (2.4.2)
-    webmock (3.18.1)
+    webmock (3.22.0)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)

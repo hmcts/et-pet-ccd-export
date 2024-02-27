@@ -17,12 +17,23 @@ class ExportClaimService
 
   def do_export(export, sidekiq_job_data:)
     client_class.use do |client|
-      extra_headers     = extra_headers_for(export, sidekiq_job_data['jid'])
-      case_type_id      = export.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
-      resp              = client.caseworker_start_case_creation(case_type_id: case_type_id, extra_headers: extra_headers)
-      event_token       = resp['token']
-      data              = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export))
-      client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
+      extra_headers = extra_headers_for(export, sidekiq_job_data['jid'])
+      case_type_id = export.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
+      resp = client.caseworker_start_case_creation(case_type_id: case_type_id, extra_headers: extra_headers)
+      event_token = resp['token']
+      data = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export))
+      begin
+        client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
+      rescue EtCcdClient::Exceptions::Conflict => exception
+        fetch_existing_case_as_exported(client, export, sidekiq_job_data: sidekiq_job_data).tap do |existing_case|
+          raise exception unless existing_case
+        end
+      end
     end
+  end
+
+  def fetch_existing_case_as_exported(client, export, sidekiq_job_data:)
+    case_type_id = export.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
+    client.caseworker_search_latest_by_reference(export['resource']['reference'], case_type_id: case_type_id, extra_headers: extra_headers_for(export, sidekiq_job_data['jid']))
   end
 end

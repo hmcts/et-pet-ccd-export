@@ -32,6 +32,18 @@ RSpec.describe "create claim multiples" do
     end
   end
 
+  it 'acts as created if a duplicate exists' do
+    # Arrange - Produce the input JSON and create an existing case
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants]).tap do |instance|
+      instance.resource.secondary_claimants[5] = build(:claimant, :force_error_timeout_then_conflict)
+    end
+    jid = SecureRandom.hex(12)
+    export_json = export.as_json.to_json
+    worker.client_push("args" => [export_json], "class" => "EtExporter::ExportClaimWorker", "jid" => jid)
+    drain_all_our_sidekiq_jobs(suppress_exceptions: true, move_failed_jobs_to_retry: true, exclude_queues: ['retry'])
+    drain_all_our_sidekiq_jobs
+  end
+
   it 'does not process a claim with too many claimants' do
     # Arrange - Produce the input JSON
     export = build(:export, :for_claim, :limited_multiples_count, claim_traits: [:default_multiple_claimants])
