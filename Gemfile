@@ -51,7 +51,6 @@ group :development do
   gem 'rubocop', '~> 1.14'
   gem 'rubocop-rails', '~> 2.10', '>= 2.10.1'
   gem 'rubocop-rspec', '~> 2.3'
-  gem 'solargraph', require: false
 end
 
 
