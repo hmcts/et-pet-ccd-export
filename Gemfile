@@ -3,7 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '~> 3.2.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '7.1.2'
+gem 'rails', '7.1.3.1'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use ActiveModel has_secure_password
@@ -23,7 +23,7 @@ gem 'azure_env_secrets', git: 'https://github.com/hmcts/azure_env_secrets.git', 
 gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
-gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.6.0'
+gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.6.1'
 gem 'dotenv-rails', '~> 2.7'
 
 group :development, :test do
@@ -38,7 +38,7 @@ group :test do
   gem 'rspec_junit_formatter', '~> 0.6.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
-  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git'
+  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.4'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '~> 0.28'

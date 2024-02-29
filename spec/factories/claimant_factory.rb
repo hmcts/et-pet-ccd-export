@@ -153,5 +153,18 @@ FactoryBot.define do
       date_of_birth { "1998-10-04" }
     end
 
+    trait :force_error_timeout_then_conflict do
+      first_name { 'Deliberate' }
+      last_name { 'Error' }
+      title { 'Mr' }
+      association :address,
+                  building: '123',
+                  street: 'ForceErrorSequence SuccessWithTimeout Conflict',
+                  locality: 'south carolina',
+                  county: 'Errorville',
+                  post_code: 'SW1 2AQ'
+      date_of_birth { "1982-11-21" }
+    end
+
   end
 end
