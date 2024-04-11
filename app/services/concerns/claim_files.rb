@@ -29,7 +29,7 @@ module ClaimFiles
   # "et1_attachment_#{claimant[:first_name].tr(' ', '_')}_#{claimant[:last_name]}.#{extension}"
   def files_of_interest(export)
     export.dig('resource', 'uploaded_files').select do |file|
-      file['filename'].match?(/\Aet1_.*_trimmed\.pdf\z|\Aacas_.*\.pdf\z|\Aet1_attachment_.*\.pdf\z|\.csv/) &&
+      file['filename'].match?(/\Aet1_.*_trimmed\.pdf\z|\Aacas_.*\.pdf\z|\Aet1_attachment_.*(?:\.pdf|\.rtf)\z|\.csv/) &&
         !disallow_file_extensions.include?(File.extname(file['filename']))
     end
   end
@@ -63,7 +63,7 @@ module ClaimFiles
   end
 
   def additional_info_file?(file)
-    file['filename'].match?(/\Aet1_attachment_.*\.pdf\z/)
+    file['filename'].match?(/\Aet1_attachment_.*(?:\.pdf|\.rtf)\z/)
   end
 
   def filename_for(file)
