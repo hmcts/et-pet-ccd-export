@@ -9,6 +9,9 @@ RSpec.describe "create claim" do
   before do
     stub_request(:get, "http://dummy.com/examplepdf").
       to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
+    stub_request(:get, "http://dummy.com/examplertf").
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.rtf', __dir__)), headers: { 'Content-Type' => 'application/rtf' })
+
   end
 
   it 'creates a claim in ccd' do
@@ -219,7 +222,7 @@ RSpec.describe "create claim" do
                            'uploadedDocument' => a_hash_including(
                              'document_url' => an_instance_of(String),
                              'document_binary_url' => an_instance_of(String),
-                             'document_filename' => 'et1_attachment_First_Last.pdf'
+                             'document_filename' => 'et1_attachment_First_Last.rtf'
                            )
                          )),
         a_hash_including('id' => nil,

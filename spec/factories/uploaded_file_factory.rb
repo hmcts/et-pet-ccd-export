@@ -35,9 +35,9 @@ FactoryBot.define do
     end
 
     trait :example_claim_details do
-      filename { 'et1_attachment_First_Last.pdf' }
-      url { "http://dummy.com/examplepdf" }
-      content_type { "application/pdf" }
+      filename { 'et1_attachment_First_Last.rtf' }
+      url { "http://dummy.com/examplertf" }
+      content_type { "application/rtf" }
     end
   end
 end
