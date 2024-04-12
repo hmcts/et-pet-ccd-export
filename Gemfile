@@ -42,7 +42,7 @@ group :test do
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '~> 0.28'
-  gem 'rspec-sidekiq', '~> 3.1'
+  gem 'rspec-sidekiq', '~> 4.0'
   gem 'simplecov', '~> 0.22.0'
 end
 
