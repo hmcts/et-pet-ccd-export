@@ -5,7 +5,7 @@ json.set! 'feeGroupReference', claim['reference']
 json.set! 'claimant_TypeOfClaimant', 'Individual'
 json.set! 'positionType', 'Received by Auto-Import'
 json.set! 'claimantIndType' do
-  json.set! 'claimant_title1', claimant['title']
+  json.set! 'claimant_title1', handle_other_titles(claimant['title'])
   json.set! 'claimant_first_names', claimant['first_name']
   json.set! 'claimant_last_name', claimant['last_name']
   json.set! 'claimant_date_of_birth', claimant['date_of_birth']
