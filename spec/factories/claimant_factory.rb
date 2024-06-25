@@ -166,5 +166,8 @@ FactoryBot.define do
       date_of_birth { "1982-11-21" }
     end
 
+    trait :other_title do
+      title { 'Doctor' }
+    end
   end
 end
