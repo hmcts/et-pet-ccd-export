@@ -63,6 +63,23 @@
             "Mr", "Mrs", "Miss", "Ms", "Dr", "Prof", "Sir", "Lord", "Lady", "Dame", "Capt", "Rev", "Other"
           ]
         },
+        "claimant_title_other": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantIndType/properties/claimant_title_other",
+              "type": "string",
+              "title": "The Claimant_title_other Schema",
+              "default": "",
+              "examples": [
+                "Reverend"
+              ]
+            },
+            {
+              "$id": "#/properties/data/properties/claimantIndType/properties/claimant_title_other",
+              "type": "null"
+            }
+          ]
+        },
         "claimant_first_names": {
           "$id": "#/properties/data/properties/claimantIndType/properties/claimant_first_names",
           "type": "string",
