@@ -140,6 +140,38 @@ RSpec.describe "create claim" do
                                     }
   end
 
+  it 'populates the title of the claimant correctly with a title of Mr' do
+    # Arrange - Produce the input JSON
+    claimant = build(:claimant, :default)
+    export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
+    ccd_claimant = ccd_case.dig('case_fields', 'claimantIndType')
+    expect(ccd_claimant).to include 'claimant_title1' => 'Mr',
+                                'claimant_title_other' => nil
+  end
+
+  it 'populates the title of the claimant correctly with a title of Reverend' do
+    # Arrange - Produce the input JSON
+    claimant = build(:claimant, :default, title: 'Reverend')
+    export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    worker.drain
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
+    ccd_claimant = ccd_case.dig('case_fields', 'claimantIndType')
+    expect(ccd_claimant).to include 'claimant_title1' => 'Other',
+                                    'claimant_title_other' => 'Reverend'
+  end
+
   it 'populates the claimant data correctly with an address specifying Non UK country (country should be nil)' do
     # Arrange - Produce the input JSON
     claimant = build(:claimant, :default, address: build(:address, :with_other_country))

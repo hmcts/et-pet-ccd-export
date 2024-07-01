@@ -5,4 +5,10 @@ module TitleHelper
 
     'Other'
   end
+
+  def other_title(title)
+    return nil if title.nil? || title.in?(VALID_TITLES)
+
+    title
+  end
 end
