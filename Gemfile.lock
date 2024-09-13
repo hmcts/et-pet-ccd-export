@@ -15,10 +15,10 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-ccd-client-ruby.git
-  revision: 1989b4d3f1ec4cf854644696378fc454df8244d8
-  tag: v0.6.1
+  revision: 9efa74c88115c25d1c94a6635a91a548e4a7a3c7
+  tag: v0.6.2
   specs:
-    et_ccd_client (0.6.1)
+    et_ccd_client (0.6.2)
       addressable (~> 2.6)
       connection_pool (~> 2.2, >= 2.2.2)
       rest-client (~> 2.0, >= 2.0.2)
@@ -171,7 +171,7 @@ GEM
     ffi (1.15.5)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    hashdiff (1.1.0)
+    hashdiff (1.1.1)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
@@ -391,7 +391,7 @@ GEM
       unf_ext
     unf_ext (0.0.8.2)
     unicode-display_width (2.5.0)
-    webmock (3.22.0)
+    webmock (3.23.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
