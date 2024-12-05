@@ -12,4 +12,13 @@ def rubyBuilder = new uk.gov.hmcts.contino.RubyBuilder(this)
 withPipeline(type, product, component) {
     env.RAILS_ENV = 'test'
     env.ENABLE_COVERAGE = 'true'
+    before('build') {
+            yarnBuilder.runYarn("--mutex network install --frozen-lockfile")
+            sh script:"""#!/bin/bash -l
+                set +x
+                source /usr/local/rvm/scripts/rvm
+                rvm install ruby-3.3.5
+                rvm use ruby-3.3.5 --default
+            """, label: 'Ruby version install'
+        }
 }
