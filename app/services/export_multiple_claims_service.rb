@@ -3,14 +3,14 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
   include CcdExtraHeaders
 
   def initialize(client_class: EtCcdClient::Client, # rubocop:disable Metrics/ParameterLists
-                 presenter: MultipleClaimsPresenter,
-                 header_presenter: MultipleClaimsHeaderPresenter,
-                 envelope_presenter: MultipleClaimsEnvelopePresenter,
-                 reference_generator: EthosReferenceGeneratorService,
-                 application_events_service: ApplicationEventsService,
-                 disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions,
-                 worker: ExportMultiplesWorker,
-                 header_worker: ExportMultiplesHeaderWorker)
+    presenter: MultipleClaimsPresenter,
+    header_presenter: MultipleClaimsHeaderPresenter,
+    envelope_presenter: MultipleClaimsEnvelopePresenter,
+    reference_generator: EthosReferenceGeneratorService,
+    application_events_service: ApplicationEventsService,
+    disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions,
+    worker: ExportMultiplesWorker,
+    header_worker: ExportMultiplesHeaderWorker)
     self.presenter = presenter
     self.header_presenter = header_presenter
     self.envelope_presenter = envelope_presenter
@@ -44,13 +44,13 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
       event_token = resp['token']
       data = envelope_presenter.present(data, event_token: event_token)
       created_case = begin
-                       client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
-                     rescue EtCcdClient::Exceptions::Conflict => exception
-                       ethos_case_reference = JSON.parse(data)&.dig('data', 'ethosCaseReference')
-                       fetch_existing_case_as_exported(client, ethos_case_reference, case_type_id: case_type_id, extra_headers: extra_headers).tap do |existing_case|
-                         raise exception unless existing_case
-                       end
-                     end
+        client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
+      rescue EtCcdClient::Exceptions::Conflict => e
+        ethos_case_reference = JSON.parse(data)&.dig('data', 'ethosCaseReference')
+        fetch_existing_case_as_exported(client, ethos_case_reference, case_type_id: case_type_id, extra_headers: extra_headers).tap do |existing_case|
+          raise e unless existing_case
+        end
+      end
       created_case['id']
     end
   end
@@ -66,8 +66,7 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
   # @param [String] case_type_id
   # @param [String] export_id
   # @param [Hash] sidekiq_job_data
-  def export_header(primary_reference, respondent_name, case_references, case_type_id, _export_id, sidekiq_job_data:, send_request_id: false, extra_headers: {})
-    # rubocop:disable Metrics/ParameterLists
+  def export_header(primary_reference, respondent_name, case_references, case_type_id, _export_id, sidekiq_job_data:, send_request_id: false, extra_headers: {}) # rubocop:disable Metrics/ParameterLists
     extra_headers = extra_headers.merge('request_id' => sidekiq_job_data['jid']) if send_request_id
     client_class.use do |client|
       resp = client.caseworker_start_bulk_creation(case_type_id: case_type_id, extra_headers: extra_headers)
@@ -128,20 +127,18 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
              resource_type: export['resource_type']
   end
 
-  def perform_lead_case(export, next_ref, batch, multiple_ref, client, case_type_id, claimant_count)
-    # rubocop:disable Metrics/ParameterLists
+  def perform_lead_case(export, next_ref, batch, multiple_ref, client, case_type_id, claimant_count) # rubocop:disable Metrics/ParameterLists
     extra_headers = extra_headers_for(export)
     batch.child_job(next_ref) do
       worker.perform_async presenter.present(export['resource'], lead_claimant: true, multiple_reference: multiple_ref,
-                                             claimant: export.dig('resource', 'primary_claimant'),
-                                             files: files_data(client, export),
-                                             ethos_case_reference: next_ref),
+                                                                 claimant: export.dig('resource', 'primary_claimant'),
+                                                                 files: files_data(client, export),
+                                                                 ethos_case_reference: next_ref),
                            case_type_id, export['id'], claimant_count, true, send_request_id?(export), extra_headers
     end
   end
 
-  def perform_child_cases(export, next_ref, batch, multiple_ref, case_type_id, claimant_count, extra_headers)
-    # rubocop:disable Metrics/ParameterLists
+  def perform_child_cases(export, next_ref, batch, multiple_ref, case_type_id, claimant_count, extra_headers) # rubocop:disable Metrics/ParameterLists
     export.dig('resource', 'secondary_claimants').each do |claimant|
       next_ref = reference_generator.call(next_ref)
       batch.child_job(next_ref) do
@@ -184,7 +181,7 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
     def perform(_done_references, _failed_references, options)
       ApplicationEventsService.send_subclaim_failed_event(export_id: options['export_id'], sidekiq_job_data: job_data)
       exception = ClaimNotExportedException.
-        new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
+                  new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
       Sentry.capture_exception(exception)
     end
   end

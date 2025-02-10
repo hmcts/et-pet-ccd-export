@@ -63,8 +63,8 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
   end
 
   let(:example_multiple_reference) { '240000001/2021' }
-  let(:example_child_reference1) { "24001001/#{Time.now.year}" }
-  let(:example_child_reference2) { "24001002/#{Time.now.year}" }
+  let(:example_child_reference1) { "24001001/#{Time.now.year}" } # rubocop:disable RSpec/IndexedLet
+  let(:example_child_reference2) { "24001002/#{Time.now.year}" } # rubocop:disable RSpec/IndexedLet
   let(:batch) do
     EtCcdExport::Sidekiq::Batch.start reference: example_multiple_reference,
                                       quantity: 10,

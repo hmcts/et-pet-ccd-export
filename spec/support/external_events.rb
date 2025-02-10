@@ -131,5 +131,5 @@ module EtCcdExport
 end
 
 RSpec.configure do |c|
-  c.include ::EtCcdExport::Test::ExternalEventsMethods
+  c.include EtCcdExport::Test::ExternalEventsMethods
 end
