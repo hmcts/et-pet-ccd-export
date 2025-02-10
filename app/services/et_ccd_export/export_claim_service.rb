@@ -16,7 +16,7 @@ module EtCcdExport
 
     attr_accessor :client_class, :disallow_file_extensions
 
-    def do_export(export, sidekiq_job_data:)
+    def do_export(export, sidekiq_job_data:) # rubocop:disable Metrics/AbcSize
       client_class.use do |client|
         extra_headers = extra_headers_for(export, sidekiq_job_data['jid'])
         case_type_id = export.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
