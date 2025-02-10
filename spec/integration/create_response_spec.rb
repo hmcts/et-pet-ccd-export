@@ -64,7 +64,11 @@ RSpec.describe "create response", type: :request do
           claimant_disabled: 'No'
         },
         claimantRepresentedQuestion: 'No',
-        documentCollection: []
+        documentCollection: [],
+        claimantHearingPreference: {
+          claimant_hearing_panel_preference: nil,
+          claimant_hearing_panel_preference_why: ''
+        }
       },
       event: {
         id: 'initiateCase',

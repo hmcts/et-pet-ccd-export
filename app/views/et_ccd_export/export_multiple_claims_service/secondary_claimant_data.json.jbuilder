@@ -71,3 +71,7 @@ if claim['primary_representative'].present?
   end
 end
 json.set! 'documentCollection', []
+json.set!('claimantHearingPreference') do
+  json.set!('claimant_hearing_panel_preference', nil)
+  json.set!('claimant_hearing_panel_preference_why', '')
+end
