@@ -15,7 +15,7 @@ class ExportClaimService
 
   attr_accessor :client_class, :disallow_file_extensions
 
-  def do_export(export, sidekiq_job_data:)
+  def do_export(export, sidekiq_job_data:) # rubocop:disable Metrics/AbcSize
     client_class.use do |client|
       extra_headers = extra_headers_for(export, sidekiq_job_data['jid'])
       case_type_id = export.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
@@ -24,9 +24,9 @@ class ExportClaimService
       data = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export))
       begin
         client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
-      rescue EtCcdClient::Exceptions::Conflict => exception
+      rescue EtCcdClient::Exceptions::Conflict => e
         fetch_existing_case_as_exported(client, export, sidekiq_job_data: sidekiq_job_data).tap do |existing_case|
-          raise exception unless existing_case
+          raise e unless existing_case
         end
       end
     end

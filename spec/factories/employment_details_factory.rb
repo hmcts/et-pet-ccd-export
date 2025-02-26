@@ -30,7 +30,7 @@ FactoryBot.define do
       end_date { (Date.today + 10).strftime('%Y-%m-%d') }
     end
 
-    trait :blank do
+    trait :blank do # rubocop:disable Lint/EmptyBlock
 
     end
   end

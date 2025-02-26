@@ -19,18 +19,18 @@ RSpec.describe UpdateLeadCaseService do
 
     context 'with a single case already created' do
       let!(:existing_export_data) do
-        ::EtExporter::ExportClaimWorker.perform_async(build(:export, :for_claim).as_json.to_json)
-        ::EtExporter::ExportClaimWorker.drain
+        EtExporter::ExportClaimWorker.perform_async(build(:export, :for_claim).as_json.to_json)
+        EtExporter::ExportClaimWorker.drain
         application_first_export_completed_event
       end
 
       it 'stores any extra documents' do
-        export = build :export,
+        export = build(:export,
                        :for_claim,
                        :update,
                        claim_traits: [:update_only],
                        claim_attrs: { number_of_acas_files: 5 },
-                       external_data: existing_export_data['external_data']
+                       external_data: existing_export_data['external_data'])
         service.call(export.as_json.deep_stringify_keys, sidekiq_job_data: sidekiq_data)
         ccd_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(existing_export_data.dig('external_data', 'case_reference'), case_type_id: 'Manchester')
         expect(ccd_case.dig('case_fields', 'documentCollection').length).to be 7
@@ -39,7 +39,7 @@ RSpec.describe UpdateLeadCaseService do
 
     context 'with a multiple case already created' do
       let!(:existing_export_data) do
-        ::EtExporter::ExportClaimWorker.perform_async build(
+        EtExporter::ExportClaimWorker.perform_async build(
           :export,
           :for_claim,
           claim_traits: [:default_multiple_claimants]
@@ -49,12 +49,12 @@ RSpec.describe UpdateLeadCaseService do
       end
 
       it 'stores any extra documents' do
-        export = build :export,
+        export = build(:export,
                        :for_claim,
                        :update,
                        claim_traits: [:update_only],
                        claim_attrs: { number_of_acas_files: 5 },
-                       external_data: existing_export_data['external_data']
+                       external_data: existing_export_data['external_data'])
         service.call(export.as_json.deep_stringify_keys, sidekiq_job_data: sidekiq_data)
 
         case_data      = test_ccd_client.caseworker_search_latest_by_multiple_reference \

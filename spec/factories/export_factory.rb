@@ -24,7 +24,7 @@ FactoryBot.define do
       external_system { build(:system, :limited_multiples_count) }
     end
 
-    trait :update do
+    trait :update do # rubocop:disable Lint/EmptyBlock
 
     end
   end

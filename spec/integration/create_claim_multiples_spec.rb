@@ -1,8 +1,8 @@
 require 'rails_helper'
 RSpec.describe "create claim multiples" do
-  subject(:multiples_worker) { ::ExportMultiplesWorker }
+  subject(:multiples_worker) { ExportMultiplesWorker }
 
-  let(:worker) { ::EtExporter::ExportClaimWorker }
+  let(:worker) { EtExporter::ExportClaimWorker }
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login(username: 'm@m.com', password: 'Pa55word11') } }
 
   include_context 'with stubbed ccd'
@@ -147,7 +147,7 @@ RSpec.describe "create claim multiples" do
     # Act - Call the worker in the same way the application would (minus using redis)
     worker.perform_async(export.as_json.to_json)
 
-    ::EtExporter::ExportClaimWorker.drain
+    EtExporter::ExportClaimWorker.drain
     ExportMultiplesWorker.jobs.reverse!
     drain_all_our_sidekiq_jobs
 

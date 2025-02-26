@@ -15,10 +15,6 @@ RSpec.describe ExportClaimService do
         to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
     end
 
-    it 'requests a token as it doesnt have one' do
-      # service.call(export.as_json)
-    end
-
     it 'only requests a token the first time'
     it 're requests another token if a request fails with a 401' do
       url = 'http://localhost:8080/data_store/caseworkers/650692bb-cefe-466a-ba8d-687377173064/jurisdictions/EMPLOYMENT/case-types/Manchester/event-triggers/initiateCase/token'
