@@ -136,7 +136,7 @@ GEM
     base64 (0.3.0)
     benchmark (0.4.1)
     bigdecimal (3.2.3)
-    bootsnap (1.16.0)
+    bootsnap (1.19.0)
       msgpack (~> 1.2)
     builder (3.3.0)
     bundler-audit (0.9.1)
@@ -215,7 +215,7 @@ GEM
     minitest (5.25.5)
     mock_redis (0.36.0)
       ruby2_keywords
-    msgpack (1.7.2)
+    msgpack (1.8.0)
     multi_json (1.15.0)
     net-imap (0.5.10)
       date
