@@ -24,9 +24,9 @@ class ExportClaimService
       data = ClaimPresenter.present(export['resource'], event_token: event_token, files: files_data(client, export))
       begin
         client.caseworker_case_create(data, case_type_id: case_type_id, extra_headers: extra_headers)
-      rescue EtCcdClient::Exceptions::Conflict => exception
+      rescue EtCcdClient::Exceptions::Conflict => e
         fetch_existing_case_as_exported(client, export, sidekiq_job_data: sidekiq_job_data).tap do |existing_case|
-          raise exception unless existing_case
+          raise e unless existing_case
         end
       end
     end

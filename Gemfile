@@ -13,6 +13,7 @@ gem 'rails', '8.0.2.1'
 gem 'sidekiq', '< 7'
 gem 'sidekiq_alive', '~> 2.0'
 gem 'sidekiq-failures', '~> 1.0'
+gem 'redis', '<5'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
@@ -34,15 +35,15 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails', '~> 6.0'
+  gem 'rspec-rails', '~> 8.0'
   gem 'rspec_junit_formatter', '~> 0.6.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
   gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.7'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
-  gem 'mock_redis', '~> 0.28'
-  gem 'rspec-sidekiq', '~> 3.1'
+  gem 'mock_redis', '0.46.0'
+  gem 'rspec-sidekiq', '~> 5.2'
   gem 'simplecov', '~> 0.22.0'
 end
 
@@ -50,7 +51,7 @@ group :development do
   gem 'listen', '~> 3.5'
   gem 'rubocop', '~> 1.14'
   gem 'rubocop-rails', '~> 2.10', '>= 2.10.1'
-  gem 'rubocop-rspec', '~> 2.3'
+  gem 'rubocop-rspec', '~> 3.8'
 end
 
 

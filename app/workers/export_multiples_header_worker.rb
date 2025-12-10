@@ -1,6 +1,7 @@
 class ExportMultiplesHeaderWorker
   include Sidekiq::Worker
   include ExportRetryControl
+
   sidekiq_options queue: 'external_system_ccd'
 
   self.exceptions_without_retry = [PreventJobRetryingException].freeze

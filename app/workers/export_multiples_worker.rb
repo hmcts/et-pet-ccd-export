@@ -2,6 +2,7 @@
 class ExportMultiplesWorker
   include Sidekiq::Worker
   include ExportRetryControl
+
   self.exceptions_without_retry = [].freeze
 
   attr_accessor :job_hash

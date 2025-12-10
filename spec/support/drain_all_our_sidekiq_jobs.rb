@@ -7,14 +7,15 @@ module EtCcdExport
 
           worker_classes.each do |worker_class|
             ::Sidekiq::Testing.constantize(worker_class).tap do |worker|
-              while worker.jobs.any? { |job| !exclude_queues.include?(job["queue"])}
-                next_job = worker.jobs.find { |job| !exclude_queues.include?(job['queue'])}
+              while worker.jobs.any? { |job| !exclude_queues.include?(job["queue"]) }
+                next_job = worker.jobs.find { |job| !exclude_queues.include?(job['queue']) }
 
                 ::Sidekiq::Queues.delete_for(next_job["jid"], next_job["queue"], worker.to_s)
                 begin
                   worker.process_job(next_job)
                 rescue Exception => e
                   raise e unless suppress_exceptions
+
                   if move_failed_jobs_to_retry
                     next_job['queue'] = 'retry'
                     next_job['error_message'] = e.message
@@ -38,5 +39,5 @@ module EtCcdExport
   end
 end
 RSpec.configure do |config|
-  config.include ::EtCcdExport::Test::DrainAllOurSidekiqJobs
+  config.include EtCcdExport::Test::DrainAllOurSidekiqJobs
 end

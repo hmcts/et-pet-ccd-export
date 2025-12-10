@@ -2,6 +2,7 @@ require 'csv'
 module EtExporter
   class ExportMultiplesWorkaroundWorker
     include Sidekiq::Worker
+
     def perform(uploaded_file_url, case_type_id)
       ::EtCcdClient::Client.use do |client|
         cases(uploaded_file_url).each_pair do |_multiple_ref, case_data|

@@ -1,10 +1,10 @@
 require 'rails_helper'
 RSpec.describe "create response", type: :request do
-  let(:response_worker) { ::EtExporter::ExportResponseWorker }
+  let(:response_worker) { EtExporter::ExportResponseWorker }
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
   let(:default_headers) do
     {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json'
     }
   end
