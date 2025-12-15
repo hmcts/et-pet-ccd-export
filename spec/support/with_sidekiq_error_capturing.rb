@@ -1,7 +1,7 @@
 module EtExporter
   module Test
     class SidekiqErrorCapturing
-      def call(worker, msg, queue)
+      def call(_worker, msg, _queue)
         yield
       rescue StandardError => e
         msg['queue'] = 'retry'
@@ -19,15 +19,5 @@ module EtExporter
   end
 end
 RSpec.configure do |config|
-  config.around(:each, :with_sidekiq_error_capturing) do |example|
-    # Sidekiq::Testing.server_middleware do |chain|
-    #   chain.add EtExporter::Test::SidekiqErrorCapturing
-    # end
 
-    example.run
-
-    # Sidekiq::Testing.server_middleware do |chain|
-    #   chain.remove EtExporter::Test::SidekiqErrorCapturing
-    # end
-  end
 end

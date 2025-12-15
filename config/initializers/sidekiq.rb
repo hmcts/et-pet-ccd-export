@@ -29,4 +29,4 @@ Sidekiq.configure_client do |client_config|
   end
 end
 
-Sidekiq.logger.level = ::Logger.const_get(ENV.fetch('RAILS_LOG_LEVEL', 'debug').upcase)
+Sidekiq.logger.level = Logger.const_get(ENV.fetch('RAILS_LOG_LEVEL', 'debug').upcase)

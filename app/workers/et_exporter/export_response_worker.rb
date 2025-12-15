@@ -2,6 +2,7 @@ module EtExporter
   class ExportResponseWorker
     include Sidekiq::Worker
     include ExportRetryControl
+
     self.exceptions_without_retry = [PreventJobRetryingException].freeze
 
     attr_accessor :job_hash

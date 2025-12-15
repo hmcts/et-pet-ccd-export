@@ -1,5 +1,6 @@
 class ExportResponseService
   include ResponseFiles
+
   def initialize(client_class: EtCcdClient::Client, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.client_class = client_class
     self.disallow_file_extensions = disallow_file_extensions

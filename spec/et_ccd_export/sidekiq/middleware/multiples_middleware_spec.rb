@@ -16,6 +16,7 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
     # This worker will fail first and second times and succeed after that
     stub_const('ExampleFailingWorker', Class.new do
       include Sidekiq::Worker
+
       attr_accessor :job_hash # The middleware will populate this with the current job
 
       def perform
@@ -35,6 +36,7 @@ describe EtCcdExport::Sidekiq::Middleware::MultiplesMiddleware do
 
     stub_const('ExampleCompletelyFailedWorker', Class.new do
       include Sidekiq::Worker
+
       sidekiq_options retry: 2
       attr_accessor :job_hash # The middleware will populate this with the current job
 

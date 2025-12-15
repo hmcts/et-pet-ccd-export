@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe "update claim" do
-  subject(:worker) { ::EtExporter::ExportClaimUpdateWorker }
+  subject(:worker) { EtExporter::ExportClaimUpdateWorker }
 
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
 
@@ -16,8 +16,8 @@ RSpec.describe "update claim" do
 
   context 'with single claim having been previously exported' do
     let!(:existing_export_data) do
-      ::EtExporter::ExportClaimWorker.perform_async(build(:export, :for_claim).as_json.to_json)
-      ::EtExporter::ExportClaimWorker.drain
+      EtExporter::ExportClaimWorker.perform_async(build(:export, :for_claim).as_json.to_json)
+      EtExporter::ExportClaimWorker.drain
       application_first_export_completed_event
     end
 
@@ -43,7 +43,7 @@ RSpec.describe "update claim" do
 
   context 'with multiple claim having been previously exported' do
     let!(:existing_export_data) do
-      ::EtExporter::ExportClaimWorker.perform_async build(
+      EtExporter::ExportClaimWorker.perform_async build(
         :export,
         :for_claim,
         claim_traits: [:default_multiple_claimants]

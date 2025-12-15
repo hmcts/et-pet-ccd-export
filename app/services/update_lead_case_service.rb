@@ -63,7 +63,7 @@ class UpdateLeadCaseService
           uploadedDocument: {
             document_url: file['document_url'],
             document_binary_url: file['document_binary_url'],
-            document_filename: file['document_filename'],
+            document_filename: file['document_filename']
           },
           dateOfCorrespondence: file['dateOfCorrespondence']
         }

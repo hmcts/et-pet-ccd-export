@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe "create claim" do
-  subject(:worker) { ::EtExporter::ExportClaimWorker }
+  subject(:worker) { EtExporter::ExportClaimWorker }
 
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
 
@@ -46,7 +46,7 @@ RSpec.describe "create claim" do
     # Arrange - Produce the input JSON to containt the special first and last names to produce an error
 
     export = build(:export, :for_claim).tap do |export|
-      export.external_system.configurations.find { |c| c.key == 'extra_headers'}.value = {
+      export.external_system.configurations.find { |c| c.key == 'extra_headers' }.value = {
         force_failures: {
           data_stage: [409, 0, 0, 0]
         }
@@ -153,7 +153,7 @@ RSpec.describe "create claim" do
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
     ccd_claimant = ccd_case.dig('case_fields', 'claimantIndType')
     expect(ccd_claimant).to include 'claimant_title1' => 'Mr',
-                                'claimant_title_other' => nil
+                                    'claimant_title_other' => nil
   end
 
   it 'populates the title of the claimant correctly with a title of Reverend' do

@@ -13,8 +13,8 @@ RSpec.describe ExportMultiplesWorker do
   let(:fake_events_service) { class_spy(ApplicationEventsService) }
 
   describe '#perform' do
-    let(:example_ccd_data) { { "ethosCaseReference": "exampleEthosCaseReference" } }
-    let(:example_ccd_data_primary) { { "ethosCaseReference": "exampleEthosCaseReferencePrimary" } }
+    let(:example_ccd_data) { { ethosCaseReference: "exampleEthosCaseReference" } }
+    let(:example_ccd_data_primary) { { ethosCaseReference: "exampleEthosCaseReferencePrimary" } }
     let(:batch) do
       EtCcdExport::Sidekiq::Batch.start reference: example_ccd_data[:multipleReference],
                                         quantity: 10,

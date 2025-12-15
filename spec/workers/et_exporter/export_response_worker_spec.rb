@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe ::EtExporter::ExportResponseWorker do
+RSpec.describe EtExporter::ExportResponseWorker do
   subject(:worker) do
     described_class.new(application_events_service: fake_events_service, service: fake_service).tap do |w|
       w.job_hash = fake_job_hash
