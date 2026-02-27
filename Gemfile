@@ -25,7 +25,7 @@ gem 'addressable', '~> 2.6'
 gem 'rest-client', '~> 2.1'
 gem 'jbuilder', '~> 2.10'
 gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.6.2'
-gem 'dotenv-rails', '~> 2.7'
+gem 'dotenv-rails', '~> 3.0'
 
 group :development, :test do
   gem 'bundler-audit', '~> 0.9.1'
