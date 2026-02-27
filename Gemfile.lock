@@ -373,7 +373,7 @@ GEM
       connection_pool (>= 2.2.5, < 3)
       rack (~> 2.0)
       redis (>= 4.5.0, < 5)
-    sidekiq-failures (1.0.4)
+    sidekiq-failures (1.1.0)
       sidekiq (>= 4.0.0)
     sidekiq_alive (2.3.0)
       rack (< 3)
