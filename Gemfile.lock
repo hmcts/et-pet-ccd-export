@@ -189,7 +189,7 @@ GEM
     jbuilder (2.13.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
-    json (2.18.0)
+    json (2.19.5)
     json-schema (4.1.1)
       addressable (>= 2.8)
     json_matchers (0.11.1)
