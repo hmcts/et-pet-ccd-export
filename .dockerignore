@@ -15,3 +15,15 @@ tmp/**/*
 /Dockerfile*
 /Vagrantfile
 /docker
+coverage
+bundle
+.git
+.env.*
+.rspec*
+.rubocop*
+.ruby-version
+azure-pipelines.yml
+vendor/bundle
+/vendor/bundle
+vendor/bundle/**/*
+/vendor/bundle/**/*
