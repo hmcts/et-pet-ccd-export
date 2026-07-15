@@ -1,5 +1,5 @@
 # Generates a new reference number from a previous reference number
-module EthosReferenceGeneratorService
+module EtCcdExport::EthosReferenceGeneratorService
   # @param [String] previous_reference A reference number in the format oo00000/yyyy where oo is the office number, yyyy is the year and 00000 is the sequence number
   # @return [String] The new reference number.  Note that wrap around can happen only once and to signify that it has happened, the century is set to 00 in the year
   def self.call(previous_reference)

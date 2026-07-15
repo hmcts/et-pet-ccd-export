@@ -10,8 +10,8 @@ RSpec.describe ExportMultiplesHeaderWorker do
   let(:fake_job_hash) { { 'jid' => 'fakejid', 'args' => fake_job_args } }
   let(:fake_job_args) { ['primary_reference', 'respondent_name', ['case_ref1'], 'fake_case_type_id', example_export.id, true, { 'test_header' => 'true' }] }
   let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
-  let(:fake_service) { instance_spy(ExportMultipleClaimsService, export_header: { 'id' => 'fake_id', 'case_type_id' => 'fake_case_type_id', 'case_data' => { 'multipleReference' => 'fake_reference' } }) }
-  let(:fake_events_service) { class_spy(ApplicationEventsService) }
+  let(:fake_service) { instance_spy(EtCcdExport::ExportMultipleClaimsService, export_header: { 'id' => 'fake_id', 'case_type_id' => 'fake_case_type_id', 'case_data' => { 'multipleReference' => 'fake_reference' } }) }
+  let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
 
   it 'informs the application events service of the process finishing if the service did not raise exception' do
     # Act - Call the worker expecting the special error

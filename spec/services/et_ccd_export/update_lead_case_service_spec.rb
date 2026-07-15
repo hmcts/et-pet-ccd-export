@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe UpdateLeadCaseService do
+RSpec.describe EtCcdExport::UpdateLeadCaseService do
   subject(:service) { described_class }
 
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
@@ -12,9 +12,9 @@ RSpec.describe UpdateLeadCaseService do
 
     before do
       stub_request(:get, "http://dummy.com/examplepdf").
-        to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
+        to_return(status: 200, body: File.new(File.absolute_path('../../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
       stub_request(:get, "http://dummy.com/examplecsv").
-        to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
+        to_return(status: 200, body: File.new(File.absolute_path('../../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
     end
 
     context 'with a single case already created' do

@@ -7,7 +7,7 @@ module EtExporter
 
     attr_accessor :job_hash
 
-    def initialize(application_events_service: ApplicationEventsService, service: ExportResponseService.new)
+    def initialize(application_events_service: EtCcdExport::ApplicationEventsService, service: EtCcdExport::ExportResponseService.new)
       self.events_service = application_events_service
       self.service = service
     end

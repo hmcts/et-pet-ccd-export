@@ -1,4 +1,4 @@
-module ClaimFiles
+module EtCcdExport::ClaimFiles
   extend ActiveSupport::Concern
 
   private

@@ -1,4 +1,4 @@
-module CcdExtraHeaders
+module EtCcdExport::CcdExtraHeaders
   extend ActiveSupport::Concern
 
   # Calculates any extra header that are to be sent to ccd

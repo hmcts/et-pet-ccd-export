@@ -8,7 +8,7 @@ module EtExporter
 
     attr_accessor :job_hash
 
-    def initialize(application_events_service: ApplicationEventsService, update_case_service: UpdateLeadCaseService)
+    def initialize(application_events_service: EtCcdExport::ApplicationEventsService, update_case_service: EtCcdExport::UpdateLeadCaseService)
       self.events_service = application_events_service
       self.update_case_service = update_case_service
     end

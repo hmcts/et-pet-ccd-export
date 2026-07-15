@@ -6,9 +6,9 @@
 # Also note that the data given are the changes, but when we are specifying a collection,
 #   we are asking the service to ADD those to the existing collection.  It can never delete or modify
 #   inside the collection.
-class UpdateLeadCaseService
-  include ClaimFiles
-  include CcdExtraHeaders
+class EtCcdExport::UpdateLeadCaseService
+  include EtCcdExport::ClaimFiles
+  include EtCcdExport::CcdExtraHeaders
 
   def self.call(export, sidekiq_job_data:, client_class: EtCcdClient::Client, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     client_class.use do |client|

@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe EthosReferenceGeneratorService do
+RSpec.describe EtCcdExport::EthosReferenceGeneratorService do
   subject(:service) { described_class }
 
   it 'increments by 1 given a low starting point' do

@@ -1,4 +1,4 @@
-module ResponseFiles
+module EtCcdExport::ResponseFiles
   extend ActiveSupport::Concern
 
   private

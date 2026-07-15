@@ -9,7 +9,7 @@ class ExportMultiplesWorker
 
   sidekiq_options queue: 'external_system_ccd_multiples'
 
-  def initialize(application_events_service: ApplicationEventsService, multiples_service: ExportMultipleClaimsService.new)
+  def initialize(application_events_service: EtCcdExport::ApplicationEventsService, multiples_service: EtCcdExport::ExportMultipleClaimsService.new)
     self.events_service    = application_events_service
     self.multiples_service = multiples_service
   end

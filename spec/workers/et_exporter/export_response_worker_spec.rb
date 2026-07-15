@@ -7,9 +7,9 @@ RSpec.describe EtExporter::ExportResponseWorker do
   end
 
   let(:fake_job_hash) { { jid: 'fakejid' } }
-  let(:fake_service) { instance_spy(ExportResponseService, call: fake_case_data) }
+  let(:fake_service) { instance_spy(EtCcdExport::ExportResponseService, call: fake_case_data) }
   let(:fake_case_data) { { 'case_type_id' => 'fake_case_type_id', 'id' => 'fake_id', 'case_data' => { 'ethosCaseReference' => 'fake_reference', 'managingOffice' => 'Bristol' } } }
-  let(:fake_events_service) { class_spy(ApplicationEventsService) }
+  let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
 
   describe '#perform' do
     let(:example_export) { build(:export, :for_response) }

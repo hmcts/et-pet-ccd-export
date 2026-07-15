@@ -7,10 +7,10 @@ RSpec.describe EtExporter::ExportClaimWorker do
   end
 
   let(:fake_job_hash) { { jid: 'fakejid' } }
-  let(:fake_singles_service) { instance_spy(ExportClaimService, call: fake_singles_service_response) }
+  let(:fake_singles_service) { instance_spy(EtCcdExport::ExportClaimService, call: fake_singles_service_response) }
   let(:fake_singles_service_response) { { 'id' => 'fake_id', 'case_type_id' => 'fake_case_type_id', 'case_data' => { 'ethosCaseReference' => 'fake_reference' } } }
-  let(:fake_multiples_service) { instance_spy(ExportMultipleClaimsService, call: 'fake_bid') }
-  let(:fake_events_service) { class_spy(ApplicationEventsService) }
+  let(:fake_multiples_service) { instance_spy(EtCcdExport::ExportMultipleClaimsService, call: 'fake_bid') }
+  let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
 
   describe '#perform' do
     context 'with single claim' do

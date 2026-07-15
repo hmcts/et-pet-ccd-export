@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'ice_nine'
 require 'securerandom'
-RSpec.describe ExportMultipleClaimsService do
+RSpec.describe EtCcdExport::ExportMultipleClaimsService do
   subject(:service) do
     described_class.new presenter: mock_presenter,
                         header_presenter: mock_header_presenter,
@@ -13,7 +13,7 @@ RSpec.describe ExportMultipleClaimsService do
   let(:mock_presenter) { class_spy(EtCcdExport::MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
   let(:mock_header_presenter) { class_spy(EtCcdExport::MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}') }
   let(:mock_envelope_presenter) { class_spy(EtCcdExport::MultipleClaimsEnvelopePresenter) }
-  let(:fake_events_service) { class_spy(ApplicationEventsService) }
+  let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
 
   describe '#call' do
     def primaryClaimantIndTypeMatcher(claimant, has_gender: true) # rubocop:disable Naming/MethodName
@@ -149,9 +149,9 @@ RSpec.describe ExportMultipleClaimsService do
 
       before do
         stub_request(:get, "http://dummy.com/examplepdf").
-          to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
+          to_return(status: 200, body: File.new(File.absolute_path('../../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
         stub_request(:get, "http://dummy.com/examplecsv").
-          to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
+          to_return(status: 200, body: File.new(File.absolute_path('../../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
       end
 
       it 'queues the header worker when done with the data from the header presenter' do

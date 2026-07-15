@@ -1,6 +1,6 @@
-class ExportClaimService
-  include ClaimFiles
-  include CcdExtraHeaders
+class EtCcdExport::ExportClaimService
+  include EtCcdExport::ClaimFiles
+  include EtCcdExport::CcdExtraHeaders
 
   def initialize(client_class: EtCcdClient::Client, disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions)
     self.client_class = client_class

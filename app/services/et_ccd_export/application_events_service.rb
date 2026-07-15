@@ -1,4 +1,4 @@
-module ApplicationEventsService
+module EtCcdExport::ApplicationEventsService
   class << self # rubocop:disable Metrics/ClassLength
     def send_application_event(event, data, queue: 'events')
       serialized_job = {

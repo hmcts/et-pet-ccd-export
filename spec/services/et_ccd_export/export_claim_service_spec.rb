@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe ExportClaimService do
+RSpec.describe EtCcdExport::ExportClaimService do
   subject(:service) { described_class.new(disallow_file_extensions: []) }
 
   describe '#call' do
@@ -10,9 +10,9 @@ RSpec.describe ExportClaimService do
 
     before do
       stub_request(:get, "http://dummy.com/examplepdf").
-        to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
+        to_return(status: 200, body: File.new(File.absolute_path('../../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
       stub_request(:get, "http://dummy.com/examplecsv").
-        to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
+        to_return(status: 200, body: File.new(File.absolute_path('../../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
     end
 
     it 'requests a token as it doesnt have one' do

@@ -9,8 +9,8 @@ RSpec.describe ExportMultiplesWorker do
 
   let(:fake_job_hash) { { jid: 'fakejid' } }
   let(:example_export) { build(:export, :for_claim, claim_traits: [:default_multiple_claimants]) }
-  let(:fake_service) { instance_spy(ExportMultipleClaimsService, export: [{ 'case_data' => { 'ethosCaseReference' => 'exampleEthosCaseReference' } }, 1]) }
-  let(:fake_events_service) { class_spy(ApplicationEventsService) }
+  let(:fake_service) { instance_spy(EtCcdExport::ExportMultipleClaimsService, export: [{ 'case_data' => { 'ethosCaseReference' => 'exampleEthosCaseReference' } }, 1]) }
+  let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
 
   describe '#perform' do
     let(:example_ccd_data) { { ethosCaseReference: "exampleEthosCaseReference" } }
