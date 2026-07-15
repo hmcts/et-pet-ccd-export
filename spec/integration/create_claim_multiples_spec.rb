@@ -148,7 +148,7 @@ RSpec.describe "create claim multiples" do
     worker.perform_async(export.as_json.to_json)
 
     EtExporter::ExportClaimWorker.drain
-    ExportMultiplesWorker.jobs.reverse!
+    EtCcdExport::ExportMultiplesWorker.jobs.reverse!
     drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent

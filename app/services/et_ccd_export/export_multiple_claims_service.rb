@@ -9,8 +9,8 @@ class EtCcdExport::ExportMultipleClaimsService # rubocop:disable Metrics/ClassLe
     reference_generator: EtCcdExport::EthosReferenceGeneratorService,
     application_events_service: EtCcdExport::ApplicationEventsService,
     disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions,
-    worker: ExportMultiplesWorker,
-    header_worker: ExportMultiplesHeaderWorker)
+    worker: EtCcdExport::ExportMultiplesWorker,
+    header_worker: EtCcdExport::ExportMultiplesHeaderWorker)
     self.presenter = presenter
     self.header_presenter = header_presenter
     self.envelope_presenter = envelope_presenter

@@ -1,7 +1,7 @@
 # This worker sends a child case for a multiple
-class ExportMultiplesWorker
+class EtCcdExport::ExportMultiplesWorker
   include Sidekiq::Worker
-  include ExportRetryControl
+  include EtCcdExport::ExportRetryControl
 
   self.exceptions_without_retry = [].freeze
 

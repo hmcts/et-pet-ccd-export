@@ -1,7 +1,7 @@
 module EtExporter
   class ExportClaimWorker
     include Sidekiq::Worker
-    include ExportRetryControl
+    include EtCcdExport::ExportRetryControl
 
     self.exceptions_without_retry = [EtCcdExport::PreventJobRetryingException].freeze
 

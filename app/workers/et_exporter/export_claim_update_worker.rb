@@ -2,7 +2,7 @@ module EtExporter
   # A worker to perform an update of an existing claim once exported
   class ExportClaimUpdateWorker
     include Sidekiq::Worker
-    include ExportRetryControl
+    include EtCcdExport::ExportRetryControl
 
     self.exceptions_without_retry = [EtCcdExport::PreventJobRetryingException].freeze
 

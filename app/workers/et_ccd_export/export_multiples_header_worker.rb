@@ -1,6 +1,6 @@
-class ExportMultiplesHeaderWorker
+class EtCcdExport::ExportMultiplesHeaderWorker
   include Sidekiq::Worker
-  include ExportRetryControl
+  include EtCcdExport::ExportRetryControl
 
   sidekiq_options queue: 'external_system_ccd'
 

@@ -1,4 +1,4 @@
-module ExportRetryControl
+module EtCcdExport::ExportRetryControl
   extend ActiveSupport::Concern
 
   included do

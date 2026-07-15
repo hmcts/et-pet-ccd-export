@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe ExportMultiplesHeaderWorker do
+RSpec.describe EtCcdExport::ExportMultiplesHeaderWorker do
   subject(:worker) do
     described_class.new(application_events_service: fake_events_service, service: fake_service).tap do |w|
       # The job_hash is normally populated by ExposeJobHashMiddleware
