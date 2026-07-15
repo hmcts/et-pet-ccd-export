@@ -1,4 +1,4 @@
-module OptionalGenderHelper
+module EtCcdExport::OptionalGenderHelper
 
   # Formats the gender correctly.  Valid values are Male, Female, N/K and nil - anything else will return nil
   # @param [String, Nil] gender The gender input - can either be a string or nil

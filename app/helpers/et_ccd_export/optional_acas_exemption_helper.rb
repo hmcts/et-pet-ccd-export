@@ -1,4 +1,4 @@
-module OptionalAcasExemptionHelper
+module EtCcdExport::OptionalAcasExemptionHelper
   LOOKUP = {
     'joint_claimant_has_acas_number' => 'Another person',
     'acas_has_no_jurisdiction' => 'No Power',

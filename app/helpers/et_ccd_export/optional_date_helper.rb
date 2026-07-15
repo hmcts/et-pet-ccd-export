@@ -1,4 +1,4 @@
-module OptionalDateHelper
+module EtCcdExport::OptionalDateHelper
   def optional_date(date, config: Rails.application.config)
     return nil if date.nil?
 
