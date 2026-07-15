@@ -10,9 +10,9 @@ RSpec.describe ExportMultipleClaimsService do
                         application_events_service: fake_events_service
   end
 
-  let(:mock_presenter) { class_spy(MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
-  let(:mock_header_presenter) { class_spy(MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}') }
-  let(:mock_envelope_presenter) { class_spy(MultipleClaimsEnvelopePresenter) }
+  let(:mock_presenter) { class_spy(EtCcdExport::MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
+  let(:mock_header_presenter) { class_spy(EtCcdExport::MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}') }
+  let(:mock_envelope_presenter) { class_spy(EtCcdExport::MultipleClaimsEnvelopePresenter) }
   let(:fake_events_service) { class_spy(ApplicationEventsService) }
 
   describe '#call' do

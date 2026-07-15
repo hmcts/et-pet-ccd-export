@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe MultipleClaimsHeaderPresenter do
+RSpec.describe EtCcdExport::MultipleClaimsHeaderPresenter do
   subject(:presenter) { described_class }
 
   let(:example_primary_reference) { "1234567/2020" }

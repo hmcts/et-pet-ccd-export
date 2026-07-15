@@ -1,4 +1,4 @@
-class MultipleClaimsEnvelopePresenter
+class EtCcdExport::MultipleClaimsEnvelopePresenter
   def self.present(data, event_token:)
     <<-JSON
       {

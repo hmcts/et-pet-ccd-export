@@ -3,9 +3,9 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
   include CcdExtraHeaders
 
   def initialize(client_class: EtCcdClient::Client, # rubocop:disable Metrics/ParameterLists
-    presenter: MultipleClaimsPresenter,
-    header_presenter: MultipleClaimsHeaderPresenter,
-    envelope_presenter: MultipleClaimsEnvelopePresenter,
+    presenter: EtCcdExport::MultipleClaimsPresenter,
+    header_presenter: EtCcdExport::MultipleClaimsHeaderPresenter,
+    envelope_presenter: EtCcdExport::MultipleClaimsEnvelopePresenter,
     reference_generator: EthosReferenceGeneratorService,
     application_events_service: ApplicationEventsService,
     disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions,

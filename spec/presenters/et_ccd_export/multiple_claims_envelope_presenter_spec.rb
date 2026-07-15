@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe MultipleClaimsEnvelopePresenter do
+RSpec.describe EtCcdExport::MultipleClaimsEnvelopePresenter do
   subject(:presenter) { described_class }
 
   describe '.present' do

@@ -1,6 +1,6 @@
 require 'rails_helper'
 require 'jsonpath'
-RSpec.describe ClaimPresenter do
+RSpec.describe EtCcdExport::ClaimPresenter do
   subject(:presenter) { described_class }
 
   def ccd_field(result, path)

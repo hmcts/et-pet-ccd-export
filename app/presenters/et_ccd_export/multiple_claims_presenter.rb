@@ -1,4 +1,4 @@
-module MultipleClaimsPresenter
+module EtCcdExport::MultipleClaimsPresenter
   def self.present(claim, claimant:, multiple_reference:, ethos_case_reference:, files: [], lead_claimant: false)
     if lead_claimant
       ::EtCcdExport::ApplicationController.render(template: 'export_multiple_claims_service/lead_claimant_data', formats: [:json],
