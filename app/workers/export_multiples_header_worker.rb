@@ -4,7 +4,7 @@ class ExportMultiplesHeaderWorker
 
   sidekiq_options queue: 'external_system_ccd'
 
-  self.exceptions_without_retry = [PreventJobRetryingException].freeze
+  self.exceptions_without_retry = [EtCcdExport::PreventJobRetryingException].freeze
 
   attr_accessor :job_hash
 
@@ -36,7 +36,7 @@ class ExportMultiplesHeaderWorker
     _primary_reference, _respondent_name, _case_references, _case_type_id, export_id = msg['args']
     job_data = msg.except('args', 'class').merge(ex.try(:job_hash) || {})
     application_events_service.send_claim_failed_event(export_id: export_id, sidekiq_job_data: job_data)
-    raise ClaimNotExportedException
+    raise EtCcdExport::ClaimNotExportedException
   end
 
   private

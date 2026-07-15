@@ -8,7 +8,7 @@ module ExportRetryControl
     # should not retry then lets just set the delay to 1 second so it blasts through all
     # the retries until they are exhausted - without calling the underlying service
     sidekiq_retry_in do |count, ex|
-      next 1 if ex.is_a?(PreventJobRetryingException) || exceptions_without_retry.include?(ex.class)
+      next 1 if ex.is_a?(EtCcdExport::PreventJobRetryingException) || exceptions_without_retry.include?(ex.class)
 
       (count**6) + 15 + (rand(30) * (count + 1))
     end

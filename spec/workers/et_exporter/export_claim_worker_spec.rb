@@ -141,7 +141,7 @@ RSpec.describe EtExporter::ExportClaimWorker do
         begin
           worker.sidekiq_retries_exhausted_block.call(fake_job_hash, MyError.new('Something went wrong'))
         rescue StandardError
-          ClaimNotExportedException
+          EtCcdExport::ClaimNotExportedException
         end
 
         expect(fake_events_service).to have_received(:send_claim_failed_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash.except('args'))
@@ -152,7 +152,7 @@ RSpec.describe EtExporter::ExportClaimWorker do
   describe '#sidekiq_retry_in_block' do
     context 'with single claim' do
       it 'returns 1 if the exception is the special PreventJobRetrying exception' do
-        ex = PreventJobRetryingException.new "Irrelevant message", {}
+        ex = EtCcdExport::PreventJobRetryingException.new "Irrelevant message", {}
         result = worker.sidekiq_retry_in_block.call(3, ex)
         expect(result).to be 1
       end

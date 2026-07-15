@@ -1,3 +1,0 @@
-class ClaimNotFoundByCaseNumberException < ApplicationException
-
-end

@@ -44,7 +44,7 @@ RSpec.describe ExportMultiplesHeaderWorker do
     begin
       block&.call(fake_job_hash, exception, application_events_service: fake_events_service)
     rescue StandardError
-      ClaimNotExportedException
+      EtCcdExport::ClaimNotExportedException
     end
 
     # Assert - Make sure the service was called
@@ -56,6 +56,6 @@ RSpec.describe ExportMultiplesHeaderWorker do
     block = worker&.sidekiq_retries_exhausted_block
 
     # Assert - ensure the exception is raised
-    expect { block&.call(fake_job_hash, exception, application_events_service: fake_events_service) }.to raise_exception ClaimNotExportedException
+    expect { block&.call(fake_job_hash, exception, application_events_service: fake_events_service) }.to raise_exception EtCcdExport::ClaimNotExportedException
   end
 end

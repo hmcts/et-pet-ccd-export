@@ -1,3 +1,0 @@
-class ApplicationException < StandardError
-
-end

@@ -155,7 +155,7 @@ class ExportMultipleClaimsService # rubocop:disable Metrics/ClassLength
   def validate_max_count(claimant_count, export:)
     multiples_max_count = export.dig('external_system', 'configurations').detect { |config| config['key'] == 'multiples_max_claimant_count' }&.fetch('value')
     if multiples_max_count.present? && multiples_max_count =~ /\A\d+\z/ && claimant_count > multiples_max_count.to_i
-      raise ClaimMultipleClaimantCountExceededException, "Maximum claimant count of #{multiples_max_count} exceeded.  This must be dealt with manually"
+      raise EtCcdExport::ClaimMultipleClaimantCountExceededException, "Maximum claimant count of #{multiples_max_count} exceeded.  This must be dealt with manually"
     end
   end
 
