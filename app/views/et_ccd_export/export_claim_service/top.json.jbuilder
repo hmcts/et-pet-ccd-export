@@ -103,7 +103,7 @@ json.set! 'data' do
     end
   end
   json.set! "documentCollection" do
-    json.array! files, partial: 'shared/file', as: :file
+    json.array! files, partial: 'et_ccd_export/shared/file', as: :file
   end
 end
 json.set! 'event' do
