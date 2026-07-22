@@ -133,7 +133,7 @@ RSpec.describe EtExporter::ExportClaimWorker do
     context 'with single claim' do
       let(:example_export) { build(:export, :for_claim) }
 
-      before { stub_const('ApplicationEventsService', fake_events_service) }
+      before { stub_const('EtCcdExport::ApplicationEventsService', fake_events_service) }
 
       it 'calls the send_claim_failed_event on the events service' do
         stub_const('MyError', Class.new(RuntimeError))

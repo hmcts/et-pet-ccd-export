@@ -25,7 +25,7 @@ FactoryBot.define do
     end
 
     trait :update do
-
+      # Empty block - deliberate - to define an interface
     end
   end
 end

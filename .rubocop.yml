@@ -18,6 +18,18 @@ AllCops:
 Rails:
   Enabled: false
 
+Style/OpenStructUse:
+  Exclude:
+    - 'spec/**/*'
+Metrics/BlockNesting:
+  Exclude:
+    - 'spec/**/*'
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'spec/**/*'
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'spec/**/*'
 # Allow long lines in specs, as it's almost impossible to fit RSpec's
 # expectations into 80 characters.
 Layout/LineLength:

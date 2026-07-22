@@ -18,7 +18,6 @@ RSpec.describe EtCcdExport::ExportMultiplesHeaderJob do
     stub_const 'EtCcdExport::ApplicationEventsService', fake_events_service
   end
 
-
   it 'informs the application events service of the process finishing if the service did not raise exception' do
     # Act - Call the worker expecting the special error
     job.perform_now
@@ -80,7 +79,7 @@ RSpec.describe EtCcdExport::ExportMultiplesHeaderJob do
     }.stringify_keys
     aggregate_failures 'validate event and exception raised' do
       expect(fake_events_service).to have_received(:send_claim_failed_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash)
-      expect(exception_raised).to eq true
+      expect(exception_raised).to be true
     end
   end
 end

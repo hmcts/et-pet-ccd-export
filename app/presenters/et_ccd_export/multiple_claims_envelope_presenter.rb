@@ -1,6 +1,7 @@
-class EtCcdExport::MultipleClaimsEnvelopePresenter
-  def self.present(data, event_token:)
-    <<-JSON
+module EtCcdExport
+  class MultipleClaimsEnvelopePresenter
+    def self.present(data, event_token:)
+      <<-JSON
       {
           "data": #{data},
           "event": {
@@ -13,6 +14,7 @@ class EtCcdExport::MultipleClaimsEnvelopePresenter
           "draft_id": null
       }
 
-    JSON
+      JSON
+    end
   end
 end

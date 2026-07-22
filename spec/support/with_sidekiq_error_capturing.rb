@@ -18,6 +18,3 @@ module EtExporter
     end
   end
 end
-RSpec.configure do |config|
-
-end

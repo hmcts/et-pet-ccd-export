@@ -76,7 +76,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
     end
 
     def currently_employed?(claim)
-      return nil unless claim.employment_details.present?
+      return false unless claim.employment_details.present?
 
       claim.employment_details.start_date.present? && (claim.employment_details.end_date.nil? || Date.parse(claim.employment_details.end_date) > Date.today)
     end
@@ -134,7 +134,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
         fake_class_to_spy_on = Class.new do
           include Sidekiq::Worker
 
-          define_method(:perform) { |*| }
+          define_method(:perform) { |*| } # rubocop:disable Lint/EmptyBlock
         end
         instance_spy(fake_class_to_spy_on)
       end

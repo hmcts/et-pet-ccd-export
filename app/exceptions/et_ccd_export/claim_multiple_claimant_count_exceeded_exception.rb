@@ -1,3 +1,5 @@
-class EtCcdExport::ClaimMultipleClaimantCountExceededException < EtCcdExport::ApplicationException
+module EtCcdExport
+  class ClaimMultipleClaimantCountExceededException < EtCcdExport::ApplicationException
 
+  end
 end

@@ -1,3 +1,5 @@
-class EtCcdExport::ApplicationException < StandardError
+module EtCcdExport
+  class ApplicationException < StandardError
 
+  end
 end
