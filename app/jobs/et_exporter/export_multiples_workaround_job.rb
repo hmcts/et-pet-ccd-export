@@ -1,7 +1,6 @@
 require 'csv'
 module EtExporter
-  class ExportMultiplesWorkaroundWorker
-    include Sidekiq::Worker
+  class ExportMultiplesWorkaroundJob < EtCcdExport::ApplicationJob
 
     def perform(uploaded_file_url, case_type_id)
       ::EtCcdClient::Client.use do |client|
