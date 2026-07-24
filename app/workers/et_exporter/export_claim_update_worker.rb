@@ -2,13 +2,13 @@ module EtExporter
   # A worker to perform an update of an existing claim once exported
   class ExportClaimUpdateWorker
     include Sidekiq::Worker
-    include ExportRetryControl
+    include EtCcdExport::ExportRetryControl
 
-    self.exceptions_without_retry = [PreventJobRetryingException].freeze
+    self.exceptions_without_retry = [EtCcdExport::PreventJobRetryingException].freeze
 
     attr_accessor :job_hash
 
-    def initialize(application_events_service: ApplicationEventsService, update_case_service: UpdateLeadCaseService)
+    def initialize(application_events_service: EtCcdExport::ApplicationEventsService, update_case_service: EtCcdExport::UpdateLeadCaseService)
       self.events_service = application_events_service
       self.update_case_service = update_case_service
     end

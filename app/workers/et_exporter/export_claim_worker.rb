@@ -1,13 +1,13 @@
 module EtExporter
   class ExportClaimWorker
     include Sidekiq::Worker
-    include ExportRetryControl
+    include EtCcdExport::ExportRetryControl
 
-    self.exceptions_without_retry = [PreventJobRetryingException].freeze
+    self.exceptions_without_retry = [EtCcdExport::PreventJobRetryingException].freeze
 
     attr_accessor :job_hash
 
-    def initialize(application_events_service: ApplicationEventsService, singles_service: ExportClaimService.new, multiples_service: ExportMultipleClaimsService.new)
+    def initialize(application_events_service: EtCcdExport::ApplicationEventsService, singles_service: EtCcdExport::ExportClaimService.new, multiples_service: EtCcdExport::ExportMultipleClaimsService.new)
       self.events_service = application_events_service
       self.singles_service = singles_service
       self.multiples_service = multiples_service
@@ -42,7 +42,7 @@ module EtExporter
       send_multiples_claim_export_started_event(parsed_json)
       bid = multiples_service.call(parsed_json, sidekiq_job_data: job_hash)
       send_claim_export_multiples_queued_event parsed_json, bid
-    rescue ClaimMultipleClaimantCountExceededException => e
+    rescue EtCcdExport::ClaimMultipleClaimantCountExceededException => e
       events_service.send_multiples_claim_size_exceeded_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
     rescue Exception => e # rubocop:disable Lint/RescueException
       events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)

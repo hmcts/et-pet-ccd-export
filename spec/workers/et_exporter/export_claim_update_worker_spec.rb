@@ -7,8 +7,8 @@ RSpec.describe EtExporter::ExportClaimUpdateWorker do
   end
 
   let(:fake_job_hash) { { jid: 'fakejid' } }
-  let(:fake_events_service) { class_spy(ApplicationEventsService) }
-  let(:fake_update_case_service) { class_spy(UpdateLeadCaseService) }
+  let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
+  let(:fake_update_case_service) { class_spy(EtCcdExport::UpdateLeadCaseService) }
 
   describe '#perform' do
     context 'with a single claim' do

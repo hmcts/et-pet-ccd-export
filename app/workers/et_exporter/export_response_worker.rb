@@ -1,13 +1,13 @@
 module EtExporter
   class ExportResponseWorker
     include Sidekiq::Worker
-    include ExportRetryControl
+    include EtCcdExport::ExportRetryControl
 
-    self.exceptions_without_retry = [PreventJobRetryingException].freeze
+    self.exceptions_without_retry = [EtCcdExport::PreventJobRetryingException].freeze
 
     attr_accessor :job_hash
 
-    def initialize(application_events_service: ApplicationEventsService, service: ExportResponseService.new)
+    def initialize(application_events_service: EtCcdExport::ApplicationEventsService, service: EtCcdExport::ExportResponseService.new)
       self.events_service = application_events_service
       self.service = service
     end
