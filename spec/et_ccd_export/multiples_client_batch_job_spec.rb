@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe EtCcdExport::MultiplesBatchJob do
+RSpec.describe EtCcdExport::MultiplesClientBatchJob do
   let(:example_worker_class) do
     Class.new(ActiveJob::Base) do
       include EtCcdExport::JobMetadata
-      include EtCcdExport::MultiplesBatchJob
+      include EtCcdExport::MultiplesClientBatchJob
 
       def perform
         # Do nothing

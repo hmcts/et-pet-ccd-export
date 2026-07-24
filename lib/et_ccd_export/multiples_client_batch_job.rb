@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module EtCcdExport
-  module MultiplesBatchJob
+  module MultiplesClientBatchJob
     extend ActiveSupport::Concern
 
     included do
