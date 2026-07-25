@@ -1,4 +1,4 @@
 module EtCcdExport
-  class ApplicationJob < ActiveJob::Base
+  class ApplicationJob < ::ActiveJob::Base
   end
 end
