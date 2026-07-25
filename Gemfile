@@ -27,6 +27,9 @@ gem 'jbuilder', '~> 2.10'
 gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.6.2'
 gem 'dotenv-rails', '~> 2.7'
 
+gem 'csv'
+gem 'ostruct'
+
 group :development, :test do
   gem 'bundler-audit', '~> 0.9.1'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
