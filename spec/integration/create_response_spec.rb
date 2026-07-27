@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe "create response", type: :request do
+RSpec.describe "create response" do
   let(:response_worker) { EtExporter::ExportResponseWorker }
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
   let(:default_headers) do
@@ -64,7 +64,11 @@ RSpec.describe "create response", type: :request do
           claimant_disabled: 'No'
         },
         claimantRepresentedQuestion: 'No',
-        documentCollection: []
+        documentCollection: [],
+        claimantHearingPreference: {
+          claimant_hearing_panel_preference: nil,
+          claimant_hearing_panel_preference_why: ''
+        }
       },
       event: {
         id: 'initiateCase',
