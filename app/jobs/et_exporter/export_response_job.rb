@@ -44,13 +44,14 @@ module EtExporter
     end
 
     def send_started_event(parsed_json)
-      events_service.send_response_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
+      events_service.send_response_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, use_sidekiq: false)
     end
 
     def send_exported_event(parsed_json, claim)
       case_type_id = parsed_json.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
       events_service.send_response_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: claim&.fetch('id'), case_type_id: case_type_id,
-                                                  case_reference: parsed_json.dig('resource', 'case_number'), office: claim&.dig('case_data', 'managingOffice'))
+                                                  case_reference: parsed_json.dig('resource', 'case_number'), office: claim&.dig('case_data', 'managingOffice'),
+                                                  use_sidekiq: false)
     end
   end
 end

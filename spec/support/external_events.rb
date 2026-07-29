@@ -255,7 +255,6 @@ module EtCcdExport
           false
         end
         expect(EtCcdExport::TriggerEventJobProxyJob).to have_been_enqueued.with(event, satisfy_condition).on_queue('events').at_least(:once)
-        true
       end
 
       def published_event_data(event)
