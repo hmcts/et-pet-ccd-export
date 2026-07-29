@@ -9,16 +9,45 @@ def component = "ccd-export"
 def yarnBuilder = new uk.gov.hmcts.contino.YarnBuilder(this)
 def rubyBuilder = new uk.gov.hmcts.contino.RubyBuilder(this)
 
+def installRuby = {
+    sh script:"""#!/bin/bash -l
+        set +x
+        source /usr/local/rvm/scripts/rvm
+        rvm install ruby-3.3.5
+        rvm use ruby-3.3.5 --default
+    """, label: 'Ruby version install'
+}
+
+def useBundlePathOutsideWorkspace = {
+    def bundlePath = "${pwd(tmp: true)}/bundle"
+
+    sh script:"""#!/bin/bash -l
+        set +x
+        source /usr/local/rvm/scripts/rvm
+        rvm use
+        set -x
+
+        bundle config set path "${bundlePath}"
+        bundle install --jobs=4 --retry=3
+        rm -rf vendor/bundle
+    """, label: 'Use bundle path outside workspace'
+}
+
 withPipeline(type, product, component) {
     env.RAILS_ENV = 'test'
     env.ENABLE_COVERAGE = 'true'
     before('build') {
-            yarnBuilder.runYarn("--mutex network install --frozen-lockfile")
-            sh script:"""#!/bin/bash -l
-                set +x
-                source /usr/local/rvm/scripts/rvm
-                rvm install ruby-3.3.5
-                rvm use ruby-3.3.5 --default
-            """, label: 'Ruby version install'
-        }
+        yarnBuilder.runYarn("--mutex network install --frozen-lockfile")
+        installRuby()
+    }
+    before('functionalTest:preview') {
+        installRuby()
+
+        useBundlePathOutsideWorkspace()
+    }
+    before('smoketest:preview') {
+        installRuby()
+
+        useBundlePathOutsideWorkspace()
+    }
 }
