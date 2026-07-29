@@ -42,6 +42,9 @@ withPipeline(type, product, component) {
         yarnBuilder.runYarn("--mutex network install --frozen-lockfile")
         installRuby()
     }
+    afterSuccess('build') {
+        useBundlePathOutsideWorkspace()
+    }
     before('functionalTest:preview') {
         installRuby()
 
