@@ -1,6 +1,6 @@
 #!groovy
 
-@Library("Infrastructure@2.4.0")
+@Library("Infrastructure@2.4.4")
 
 def type = "ruby"
 def product = "et-pet"
@@ -13,7 +13,9 @@ def installRuby = {
     sh script:"""#!/bin/bash -l
         set +x
         source /usr/local/rvm/scripts/rvm
-        rvm install ruby-3.3.5
+        echo "Installing Ruby on \$(lsb_release -ds)"
+        rvm --version
+        rvm install ruby-3.3.5 --autolibs=read-only
         rvm use ruby-3.3.5 --default
     """, label: 'Ruby version install'
 }
