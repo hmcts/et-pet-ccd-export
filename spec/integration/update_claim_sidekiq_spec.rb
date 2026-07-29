@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe "update claim" do
-  subject(:job) { EtExporter::ExportClaimUpdateJob }
+  subject(:worker) { EtExporter::ExportClaimUpdateWorker }
 
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
 
@@ -16,9 +16,9 @@ RSpec.describe "update claim" do
 
   context 'with single claim having been previously exported' do
     let!(:existing_export_data) do
-      EtExporter::ExportClaimJob.perform_later(build(:export, :for_claim).as_json.to_json)
-      drain_all_our_jobs
-      application_first_export_completed_event(use_sidekiq: false)
+      EtExporter::ExportClaimWorker.perform_async(build(:export, :for_claim).as_json.to_json)
+      EtExporter::ExportClaimWorker.drain
+      application_first_export_completed_event
     end
 
     it 'stores the extra documents' do
@@ -31,8 +31,8 @@ RSpec.describe "update claim" do
                      external_data: existing_export_data['external_data']
 
       # Act - Call the worker in the same way the application would (minus using redis)
-      job.perform_later(export.as_json.to_json)
-      drain_all_our_jobs
+      worker.perform_async(export.as_json.to_json)
+      worker.drain
 
       # Assert - Check with CCD (or fake CCD) to see what we sent - then download the file and compare size
       ccd_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(existing_export_data.dig('external_data', 'case_reference'), case_type_id: 'Manchester')
@@ -43,13 +43,13 @@ RSpec.describe "update claim" do
 
   context 'with multiple claim having been previously exported' do
     let!(:existing_export_data) do
-      EtExporter::ExportClaimJob.perform_later build(
+      EtExporter::ExportClaimWorker.perform_async build(
         :export,
         :for_claim,
         claim_traits: [:default_multiple_claimants]
       ).as_json.to_json
-      drain_all_our_jobs
-      application_first_export_completed_event(use_sidekiq: false)
+      drain_all_our_sidekiq_jobs
+      application_first_export_completed_event
     end
 
     it 'stores the extra documents' do
@@ -62,8 +62,8 @@ RSpec.describe "update claim" do
                      external_data: existing_export_data['external_data']
 
       # Act - Call the worker in the same way the application would (minus using redis)
-      job.perform_later(export.as_json.to_json)
-      drain_all_our_jobs
+      worker.perform_async(export.as_json.to_json)
+      worker.drain
 
       # Assert - Check with CCD (or fake CCD) to see what we sent - then download the file and compare size
       case_data      = test_ccd_client.caseworker_search_latest_by_multiple_reference \
