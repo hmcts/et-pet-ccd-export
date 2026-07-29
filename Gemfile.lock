@@ -27,17 +27,16 @@ GIT
 
 GIT
   remote: https://github.com/hmcts/et-fake-ccd.git
-  revision: f1198a38abc7d9e448cdd92baccf4ebfad005240
-  tag: v3.1.7
+  revision: cc79ceac98fd001bc3fe664819564d8c772a5e6a
+  tag: v3.1.8
   specs:
-    et_fake_ccd (3.1.7)
+    et_fake_ccd (3.1.8)
       activemodel (>= 7.0)
       json-schema (~> 4.1.1)
       puma (>= 6.4)
       roda (~> 3.21)
-      roda-enhanced_logger (~> 0.5.0)
       rotp (~> 6.2)
-      thor (~> 1.0)
+      thor (~> 1.5)
       tilt (~> 2.0, >= 2.0.9)
 
 GIT
@@ -231,8 +230,6 @@ GEM
     parser (3.3.10.1)
       ast (~> 2.4.1)
       racc
-    pastel (0.8.0)
-      tty-color (~> 0.5)
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
@@ -303,9 +300,6 @@ GEM
     rexml (3.4.4)
     roda (3.90.0)
       rack
-    roda-enhanced_logger (0.5.0)
-      roda (>= 3.19.0)
-      tty-logger (>= 0.3, < 1.0)
     rotp (6.3.0)
     rspec-core (3.13.6)
       rspec-support (~> 3.13.0)
@@ -385,9 +379,6 @@ GEM
     tilt (2.6.1)
     timeout (0.6.1)
     tsort (0.2.0)
-    tty-color (0.6.0)
-    tty-logger (0.6.0)
-      pastel (~> 0.8)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unf (0.1.4)

@@ -41,7 +41,7 @@ group :test do
   gem 'rspec_junit_formatter', '~> 0.6.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
-  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.7'
+  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.8'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '0.46.0'
