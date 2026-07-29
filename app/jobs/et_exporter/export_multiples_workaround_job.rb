@@ -14,8 +14,7 @@ module EtExporter
             ignore_warning: false,
             draft_id: nil
           }
-          result = client.caseworker_case_create(data.to_json, case_type_id: case_type_id)
-          puts result
+          client.caseworker_case_create(data.to_json, case_type_id: case_type_id)
         end
       end
     end

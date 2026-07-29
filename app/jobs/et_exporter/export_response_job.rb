@@ -10,7 +10,7 @@ module EtExporter
 
       send_exported_event(parsed_json, claim)
     rescue StandardError => e
-      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
       raise e
     end
 
@@ -20,7 +20,7 @@ module EtExporter
 
     def retries_exhausted(exception)
       export = JSON.parse(arguments.first)
-      EtCcdExport::ApplicationEventsService.send_response_failed_event(export_id: export['id'], sidekiq_job_data: active_job_data(exception))
+      EtCcdExport::ApplicationEventsService.send_response_failed_event(export_id: export['id'], sidekiq_job_data: active_job_data(exception), use_sidekiq: false)
       raise EtCcdExport::ClaimNotExportedException
     end
 

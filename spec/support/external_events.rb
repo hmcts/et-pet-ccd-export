@@ -250,8 +250,7 @@ module EtCcdExport
           expect(parsed).to include(data)
           expect(parsed.fetch('external_data')).to include(external_data) if external_data
           true
-        rescue JSON::ParserError, RSpec::Expectations::ExpectationNotMetError => e
-          puts e.message
+        rescue JSON::ParserError, RSpec::Expectations::ExpectationNotMetError
           false
         end
         expect(EtCcdExport::TriggerEventJobProxyJob).to have_been_enqueued.with(event, satisfy_condition).on_queue('events').at_least(:once)

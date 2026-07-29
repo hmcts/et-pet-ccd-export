@@ -46,7 +46,7 @@ RSpec.describe EtExporter::ExportResponseJob do
 
       # Assert - Make sure the service was not called
       expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-      expect(fake_events_service).to have_received(:send_response_export_started_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash)
+      expect(fake_events_service).to have_received(:send_response_export_started_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, use_sidekiq: false)
     end
 
     it 'informs the application events service of the process finishing and the found office if the service did not raise exception' do
@@ -57,7 +57,7 @@ RSpec.describe EtExporter::ExportResponseJob do
       # Assert - Make sure the service not called
       expected_case_type_id = example_json.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
       expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-      expect(fake_events_service).to have_received(:send_response_exported_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, case_id: 'fake_id', case_reference: example_json.dig('resource', 'case_number'), case_type_id: expected_case_type_id, office: 'Bristol')
+      expect(fake_events_service).to have_received(:send_response_exported_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, case_id: 'fake_id', case_reference: example_json.dig('resource', 'case_number'), case_type_id: expected_case_type_id, office: 'Bristol', use_sidekiq: false)
     end
 
     it 'informs the application events service of the process finishing and nil office if not found' do
@@ -69,7 +69,7 @@ RSpec.describe EtExporter::ExportResponseJob do
       # Assert - Make sure the service was called
       expected_case_type_id = example_json.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
       expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-      expect(fake_events_service).to have_received(:send_response_exported_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, case_id: 'fake_id', case_reference: example_json.dig('resource', 'case_number'), case_type_id: expected_case_type_id, office: nil)
+      expect(fake_events_service).to have_received(:send_response_exported_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, case_id: 'fake_id', case_reference: example_json.dig('resource', 'case_number'), case_type_id: expected_case_type_id, office: nil, use_sidekiq: false)
     end
 
     it 'informs the application events service of an error' do
@@ -83,7 +83,7 @@ RSpec.describe EtExporter::ExportResponseJob do
 
       # Assert - Make sure the fake events service was called correctly
       expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-      expect(fake_events_service).to have_received(:send_response_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception)
+      expect(fake_events_service).to have_received(:send_response_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception, use_sidekiq: false)
     end
 
     it 're raises the error to mark it as failure and allow retrying' do
@@ -120,7 +120,7 @@ RSpec.describe EtExporter::ExportResponseJob do
         error_message: 'Something went wrong'
       }.stringify_keys
       aggregate_failures 'verify event and exception' do
-        expect(fake_events_service).to have_received(:send_response_failed_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash)
+        expect(fake_events_service).to have_received(:send_response_failed_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, use_sidekiq: false)
         expect(exception_raised).to be true
       end
     end
@@ -146,7 +146,8 @@ RSpec.describe EtExporter::ExportResponseJob do
         expect(fake_events_service).to have_received(:send_response_failed_event).once
         expect(fake_events_service).to have_received(:send_response_failed_event).with(
           export_id: example_export.id,
-          sidekiq_job_data: hash_including('executions' => 1, 'error_class' => 'EtCcdExport::PreventJobRetryingException')
+          sidekiq_job_data: hash_including('executions' => 1, 'error_class' => 'EtCcdExport::PreventJobRetryingException'),
+          use_sidekiq: false
         )
         expect(exception_raised).to be true
       end
