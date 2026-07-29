@@ -1,8 +1,8 @@
 require 'rails_helper'
 RSpec.describe "create claim multiples" do
-  subject(:multiples_job) { ExportMultiplesJob }
+  subject(:multiples_worker) { ExportMultiplesWorker }
 
-  let(:job) { EtExporter::ExportClaimJob }
+  let(:worker) { EtExporter::ExportClaimWorker }
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login(username: 'm@m.com', password: 'Pa55word11') } }
 
   include_context 'with stubbed ccd'
@@ -19,8 +19,8 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
@@ -37,8 +37,11 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants]).tap do |instance|
       instance.resource.secondary_claimants[5] = build(:claimant, :force_error_timeout_then_conflict)
     end
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    jid = SecureRandom.hex(12)
+    export_json = export.as_json.to_json
+    worker.client_push("args" => [export_json], "class" => "EtExporter::ExportClaimWorker", "jid" => jid)
+    drain_all_our_sidekiq_jobs(suppress_exceptions: true, move_failed_jobs_to_retry: true, exclude_queues: ['retry'])
+    drain_all_our_sidekiq_jobs
   end
 
   it 'does not process a claim with too many claimants' do
@@ -46,11 +49,11 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, :limited_multiples_count, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check that the event has been sent to the api
-    expect(external_events).to have_published_multiples_claim_size_exceeded(export: export)
+    external_events.assert_multiples_claim_size_exceeded(export: export)
   end
 
   it 'raises an API event to inform of start of case creation' do
@@ -58,12 +61,12 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
-    expect(external_events).to have_published_multiples_claim_export_started(export:)
+    external_events.assert_multiples_claim_export_started(export: export)
   end
 
   it 'raises an API event to inform of case creation complete' do
@@ -71,12 +74,12 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     multiples_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
-    expect(external_events).to have_published_multiples_claim_export_succeeded(export: export, ccd_case: multiples_case)
+    external_events.assert_multiples_claim_export_succeeded(export: export, ccd_case: multiples_case)
   end
 
   it 'raises an API event for every sub case showing progress' do
@@ -84,8 +87,8 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     multiples_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
@@ -93,7 +96,7 @@ RSpec.describe "create claim multiples" do
     sub_cases = case_references.map do |ref|
       test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'Manchester')
     end
-    expect(external_events).to have_published_all_multiples_claim_export_progress(export: export, ccd_case: multiples_case, sub_cases: sub_cases)
+    external_events.assert_all_multiples_claim_export_progress(export: export, ccd_case: multiples_case, sub_cases: sub_cases)
   end
 
   it 'raises an API event to inform of an error in one of the sub cases' do
@@ -104,14 +107,14 @@ RSpec.describe "create claim multiples" do
     erroring_claimant.last_name = 'Error502'
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
+    worker.perform_async(export.as_json.to_json)
     begin
-      drain_all_our_jobs
+      drain_all_our_sidekiq_jobs
     rescue EtCcdClient::Exceptions::Base
       nil
     end
     # Assert - Check for API event being received
-    expect(external_events).to have_published_sub_claim_erroring(export: export)
+    external_events.assert_sub_claim_erroring(export: export)
   end
 
   it 'has the primary claimant first when the jobs are processed in order' do
@@ -119,8 +122,8 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     primary_claimant = export.resource.primary_claimant
@@ -142,9 +145,11 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
+    worker.perform_async(export.as_json.to_json)
 
-    drain_all_our_jobs
+    EtExporter::ExportClaimWorker.drain
+    EtCcdExport::ExportMultiplesWorker.jobs.reverse!
+    drain_all_our_sidekiq_jobs
 
     # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
     primary_claimant = export.resource.primary_claimant
@@ -166,8 +171,8 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
@@ -184,8 +189,8 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
@@ -202,8 +207,8 @@ RSpec.describe "create claim multiples" do
     export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
@@ -305,8 +310,8 @@ RSpec.describe "create claim multiples" do
     export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    job.perform_later(export.as_json.to_json)
-    drain_all_our_jobs
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     header_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')

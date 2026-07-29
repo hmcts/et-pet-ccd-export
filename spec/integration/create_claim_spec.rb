@@ -73,7 +73,7 @@ RSpec.describe "create claim" do
 
     # Assert - Check for API event being received
     test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
-    external_events.assert_claim_export_started(export: export)
+    expect(external_events).to have_published_claim_export_started(export: export)
   end
 
   it 'raises an API event to inform of case creation complete' do
@@ -86,7 +86,7 @@ RSpec.describe "create claim" do
 
     # Assert - Check for API event being received
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
-    external_events.assert_claim_export_succeeded(export: export, ccd_case: ccd_case)
+    expect(external_events).to have_published_claim_export_succeeded(export: export, ccd_case: ccd_case)
   end
 
   it 'raises an API event to inform of an error whilst still re raising the error' do

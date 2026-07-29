@@ -2,6 +2,9 @@
 module EtCcdExport
   class ExportMultiplesJob < ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include JobMetadata
+    include MultiplesClientBatchJob
+    include MultiplesWorkerBatchJob
 
     queue_as 'external_system_ccd_multiples'
 
@@ -27,7 +30,7 @@ module EtCcdExport
     end
 
     def multiples_service
-      @multiples_service ||= EtCcdExport::ExportMultipleClaimsService.new
+      @multiples_service ||= EtCcdExport::ExportMultipleClaimsService.new(use_sidekiq: false)
     end
   end
 end

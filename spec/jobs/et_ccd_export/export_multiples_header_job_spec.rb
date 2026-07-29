@@ -30,7 +30,7 @@ RSpec.describe EtCcdExport::ExportMultiplesHeaderJob do
       queue_name: 'external_system_ccd',
       args: fake_job_args
     }.stringify_keys
-    expect(fake_events_service).to have_received(:send_multiples_claim_exported_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, case_id: 'fake_id', case_reference: 'fake_reference', case_type_id: 'fake_case_type_id')
+    expect(fake_events_service).to have_received(:send_multiples_claim_exported_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, case_id: 'fake_id', case_reference: 'fake_reference', case_type_id: 'fake_case_type_id', use_sidekiq: false)
   end
 
   it 'calls the service with the correct args' do
@@ -78,7 +78,7 @@ RSpec.describe EtCcdExport::ExportMultiplesHeaderJob do
       error_message: 'It is broken'
     }.stringify_keys
     aggregate_failures 'validate event and exception raised' do
-      expect(fake_events_service).to have_received(:send_claim_failed_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash)
+      expect(fake_events_service).to have_received(:send_claim_failed_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, use_sidekiq: false)
       expect(exception_raised).to be true
     end
   end

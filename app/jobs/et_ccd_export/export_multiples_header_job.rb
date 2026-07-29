@@ -13,7 +13,8 @@ module EtCcdExport
                                                          sidekiq_job_data: job_hash,
                                                          case_id: created_case['id'],
                                                          case_reference: created_case.dig('case_data', 'multipleReference'),
-                                                         case_type_id: case_type_id
+                                                         case_type_id: case_type_id,
+                                                         use_sidekiq: false
       logger.
         debug("Multiple header exported for export id #{export_id} with case reference #{created_case.dig('case_data',
                                                                                                           'multipleReference')} containing #{case_references.length} child cases")
@@ -25,7 +26,7 @@ module EtCcdExport
 
     def retries_exhausted(exception)
       _primary_reference, _respondent_name, _case_references, _case_type_id, export_id = arguments
-      events_service.send_claim_failed_event(export_id: export_id, sidekiq_job_data: active_job_data(exception))
+      events_service.send_claim_failed_event(export_id: export_id, sidekiq_job_data: active_job_data(exception), use_sidekiq: false)
       raise EtCcdExport::ClaimNotExportedException
     end
 

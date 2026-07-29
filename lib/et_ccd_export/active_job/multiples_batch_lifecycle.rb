@@ -40,7 +40,8 @@ module EtCcdExport
                                                                   percent_complete: batch.percent_complete,
                                                                   case_id: id,
                                                                   case_reference: child_ref,
-                                                                  case_type_id: batch.case_type_id
+                                                                  case_type_id: batch.case_type_id,
+                                                                  use_sidekiq: false
         on_done(batch)
       end
 
@@ -49,7 +50,7 @@ module EtCcdExport
         batch.move_child_to_error(child_ref)
         unless exception.is_a?(PreventJobRetryingException)
           events_service.send_subclaim_erroring_event(export_id: batch.export_id, sidekiq_job_data: job.serialize.except('class', 'args', 'queue'),
-                                                      exception: exception)
+                                                      exception: exception, use_sidekiq: false)
         end
         schedule_failed_callbacks(batch) unless batch.more_work_to_be_done?
       end

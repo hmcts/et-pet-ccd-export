@@ -1,23 +1,27 @@
 module EtCcdExport
   module ApplicationEventsService # rubocop:disable Metrics/ModuleLength
     class << self # rubocop:disable Metrics/ClassLength
-      def send_application_event(event, data, queue: 'events')
-        serialized_job = {
-          "job_class" => 'TriggerEventJob', "job_id" => SecureRandom.uuid,
-          "provider_job_id" => nil, "queue_name" => queue,
-          "priority" => 5, "arguments" => [event, data.to_json],
-          "executions" => 0, "exception_executions" => 0,
-          "locale" => 'en', "timezone" => Time.zone.try(:name),
-          "enqueued_at" => Time.now.utc.iso8601
-        }
-        ::Sidekiq::Client.push \
-          "class" => 'ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper',
-          "wrapped" => 'TriggerEventJob',
-          "queue" => queue,
-          "args" => [serialized_job.as_json]
+      def send_application_event(event, data, queue: 'events', use_sidekiq: true)
+        if use_sidekiq
+          serialized_job = {
+            "job_class" => 'TriggerEventJob', "job_id" => SecureRandom.uuid,
+            "provider_job_id" => nil, "queue_name" => queue,
+            "priority" => 5, "arguments" => [event, data.to_json],
+            "executions" => 0, "exception_executions" => 0,
+            "locale" => 'en', "timezone" => Time.zone.try(:name),
+            "enqueued_at" => Time.now.utc.iso8601
+          }
+          ::Sidekiq::Client.push \
+            "class" => 'ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper',
+            "wrapped" => 'TriggerEventJob',
+            "queue" => queue,
+            "args" => [serialized_job.as_json]
+        else
+          TriggerEventJobProxyJob.set(queue:, priority: 5).perform_later(event, data.to_json)
+        end
       end
 
-      def send_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
+      def send_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -29,10 +33,10 @@ module EtCcdExport
           state: :complete,
           message: 'Claim exported'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_update_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
+      def send_claim_update_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -44,10 +48,10 @@ module EtCcdExport
           state: nil,
           message: 'Claim update exported'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_response_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:, office:)
+      def send_response_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:, office:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -61,10 +65,10 @@ module EtCcdExport
           state: :complete,
           message: 'Response exported'
         }
-        send_application_event('ResponseExportFeedbackReceived', event_data)
+        send_application_event('ResponseExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_multiples_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:)
+      def send_multiples_claim_exported_event(export_id:, sidekiq_job_data:, case_id:, case_reference:, case_type_id:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -77,10 +81,10 @@ module EtCcdExport
           message: 'Multiples claim exported',
           percent_complete: 100
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_erroring_event(export_id:, sidekiq_job_data:, exception:)
+      def send_claim_erroring_event(export_id:, sidekiq_job_data:, exception:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -93,10 +97,10 @@ module EtCcdExport
           state: 'erroring',
           percent_complete: nil
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_response_erroring_event(export_id:, sidekiq_job_data:, exception:)
+      def send_response_erroring_event(export_id:, sidekiq_job_data:, exception:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -109,10 +113,10 @@ module EtCcdExport
           state: 'erroring',
           percent_complete: nil
         }
-        send_application_event('ResponseExportFeedbackReceived', event_data)
+        send_application_event('ResponseExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_multiples_claim_erroring_event(export_id:, sidekiq_job_data:, exception:)
+      def send_multiples_claim_erroring_event(export_id:, sidekiq_job_data:, exception:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -125,10 +129,10 @@ module EtCcdExport
           state: 'erroring',
           percent_complete: nil
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_multiples_claim_size_exceeded_event(export_id:, sidekiq_job_data:, exception:)
+      def send_multiples_claim_size_exceeded_event(export_id:, sidekiq_job_data:, exception:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -141,10 +145,10 @@ module EtCcdExport
           state: 'failed',
           percent_complete: 0
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_failed_event(export_id:, sidekiq_job_data:)
+      def send_claim_failed_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -153,10 +157,10 @@ module EtCcdExport
           state: 'failed',
           percent_complete: 0
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_response_failed_event(export_id:, sidekiq_job_data:)
+      def send_response_failed_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -165,10 +169,10 @@ module EtCcdExport
           state: 'failed',
           percent_complete: 0
         }
-        send_application_event('ResponseExportFeedbackReceived', event_data)
+        send_application_event('ResponseExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_subclaim_failed_event(export_id:, sidekiq_job_data:)
+      def send_subclaim_failed_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -177,10 +181,10 @@ module EtCcdExport
           state: 'failed',
           percent_complete: 0
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_subclaim_erroring_event(export_id:, sidekiq_job_data:, exception:)
+      def send_subclaim_erroring_event(export_id:, sidekiq_job_data:, exception:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.merge('error_message' => exception.message, 'error_class' => exception.class.to_s),
           export_id: export_id,
@@ -193,10 +197,10 @@ module EtCcdExport
           state: 'erroring',
           percent_complete: nil
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_export_started_event(export_id:, sidekiq_job_data:)
+      def send_claim_export_started_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -205,10 +209,10 @@ module EtCcdExport
           percent_complete: 0,
           message: 'Claim export started'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_update_export_started_event(export_id:, sidekiq_job_data:)
+      def send_claim_update_export_started_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -217,10 +221,10 @@ module EtCcdExport
           percent_complete: nil,
           message: 'Claim update export started'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_response_export_started_event(export_id:, sidekiq_job_data:)
+      def send_response_export_started_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -229,10 +233,10 @@ module EtCcdExport
           percent_complete: 0,
           message: 'Response export started'
         }
-        send_application_event('ResponseExportFeedbackReceived', event_data)
+        send_application_event('ResponseExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_multiples_claim_export_started_event(export_id:, sidekiq_job_data:)
+      def send_multiples_claim_export_started_event(export_id:, sidekiq_job_data:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -241,10 +245,10 @@ module EtCcdExport
           percent_complete: 0,
           message: 'Multiples claim export started'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_multiples_claim_references_allocated_event(export_id:, sidekiq_job_data:, start_reference:, quantity:, case_type_id:)
+      def send_multiples_claim_references_allocated_event(export_id:, sidekiq_job_data:, start_reference:, quantity:, case_type_id:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -257,10 +261,10 @@ module EtCcdExport
           percent_complete: 0,
           message: 'Multiples claim references allocated'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_export_multiples_queued_event(queued_bid:, export_id:, sidekiq_job_data:, percent_complete:)
+      def send_claim_export_multiples_queued_event(queued_bid:, export_id:, sidekiq_job_data:, percent_complete:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue').merge(queued_bid: queued_bid),
           export_id: export_id,
@@ -269,10 +273,10 @@ module EtCcdExport
           percent_complete: percent_complete,
           message: 'Sub cases queued for export'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
 
-      def send_claim_export_multiples_progress_event(export_id:, sidekiq_job_data:, percent_complete:, case_id:, case_reference:, case_type_id:)
+      def send_claim_export_multiples_progress_event(export_id:, sidekiq_job_data:, percent_complete:, case_id:, case_reference:, case_type_id:, use_sidekiq: true)
         event_data = {
           sidekiq: sidekiq_job_data.except('class', 'args', 'queue'),
           export_id: export_id,
@@ -285,7 +289,7 @@ module EtCcdExport
           percent_complete: percent_complete,
           message: 'Sub case exported'
         }
-        send_application_event('ClaimExportFeedbackReceived', event_data)
+        send_application_event('ClaimExportFeedbackReceived', event_data, use_sidekiq:)
       end
     end
   end
