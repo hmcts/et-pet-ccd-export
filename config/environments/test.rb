@@ -39,6 +39,14 @@ Rails.application.configure do
   # Tell Active Support which deprecation messages to disallow.
   config.active_support.disallowed_deprecation_warnings = []
 
+  config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info').to_sym
+  Sidekiq.logger = Sidekiq::Logger.new($stdout, level: Logger.const_get(config.log_level.to_s.upcase))
+  config.after_initialize do
+    ActiveJob::Base.logger = Rails.logger.clone
+    ActiveJob::Base.logger.level = ENV.fetch('RAILS_LOG_LEVEL', 'warn').to_sym
+  end
+  config.active_job.queue_adapter = :test
+
   config.multiples_supervisor_adapter = { type: :memory }
 
   config.ccd_disallowed_file_extensions = []

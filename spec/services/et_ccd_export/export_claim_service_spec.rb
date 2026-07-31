@@ -28,6 +28,17 @@ RSpec.describe EtCcdExport::ExportClaimService do
       service.call(export.as_json, sidekiq_job_data: sidekiq_data)
     end
 
+    it 're-raises a conflict if the case does not already exist' do
+      export.external_system.configurations.find { |configuration| configuration.key == 'extra_headers' }.value = {
+        force_failures: {
+          data_stage: [409]
+        }
+      }.to_json
+
+      expect { service.call(export.as_json, sidekiq_job_data: { 'jid' => 'xyz' }) }.
+        to raise_error(EtCcdClient::Exceptions::Conflict)
+    end
+
     it 'performs a request to create a case with a valid token'
     it 'performs a request to create a case with valid primary claim data'
     it 'performs a request to create a case with valid primary claimant data'

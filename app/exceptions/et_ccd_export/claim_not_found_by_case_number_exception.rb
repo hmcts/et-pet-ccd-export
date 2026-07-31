@@ -1,3 +1,5 @@
-class EtCcdExport::ClaimNotFoundByCaseNumberException < EtCcdExport::ApplicationException
+module EtCcdExport
+  class ClaimNotFoundByCaseNumberException < EtCcdExport::ApplicationException
 
+  end
 end

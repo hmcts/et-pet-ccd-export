@@ -27,6 +27,9 @@ gem 'jbuilder', '~> 2.10'
 gem 'et_ccd_client', git: 'https://github.com/hmcts/et-ccd-client-ruby.git', tag: 'v0.6.2'
 gem 'dotenv-rails', '~> 2.7'
 
+gem 'csv'
+gem 'ostruct'
+
 group :development, :test do
   gem 'bundler-audit', '~> 0.9.1'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -38,7 +41,7 @@ group :test do
   gem 'rspec_junit_formatter', '~> 0.6.0'
   gem 'factory_bot', '~> 6.1'
   gem 'jsonpath', '~> 1.1'
-  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.7'
+  gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.8'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '0.46.0'

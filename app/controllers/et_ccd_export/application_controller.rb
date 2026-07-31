@@ -1,3 +1,5 @@
-class EtCcdExport::ApplicationController < ActionController::API
-  helper :all
+module EtCcdExport
+  class ApplicationController < ActionController::API
+    helper :all
+  end
 end

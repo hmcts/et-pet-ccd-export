@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe "create response", type: :request do
-  let(:response_worker) { EtExporter::ExportResponseWorker }
+  let(:response_job) { EtExporter::ExportResponseJob }
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
   let(:default_headers) do
     {
@@ -85,21 +85,21 @@ RSpec.describe "create response", type: :request do
     export = build(:export, :for_response, response_attrs: { case_number: ccd_claim_case.dig('case_fields', 'ethosCaseReference') })
 
     # Act - Call the response worker as the application would
-    response_worker.perform_async(export.as_json.to_json)
-    response_worker.drain
+    response_job.perform_later(export.as_json.to_json)
+    drain_all_our_jobs
 
     # Assert - Check to ensure the data has been sent back to the application
-    external_events.assert_response_export_succeeded(export: export, ccd_case: ccd_claim_case, case_reference: export.resource.case_number)
+    expect(external_events).to have_published_response_export_succeeded(export: export, ccd_case: ccd_claim_case, case_reference: export.resource.case_number)
   end
 
   it 'informs the application that it is complete with no office if the case is not found' do
     export = build(:export, :for_response)
 
     # Act - Call the response worker as the application would
-    response_worker.perform_async(export.as_json.to_json)
-    response_worker.drain
+    response_job.perform_later(export.as_json.to_json)
+    drain_all_our_jobs
 
     # Assert - Check to ensure the data has been sent back to the application
-    external_events.assert_response_export_succeeded_without_claim(export: export, case_reference: export.resource.case_number)
+    expect(external_events).to have_published_response_export_succeeded_without_claim(export: export, case_reference: export.resource.case_number)
   end
 end

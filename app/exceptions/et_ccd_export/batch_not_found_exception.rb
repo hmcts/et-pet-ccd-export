@@ -1,3 +1,5 @@
-class EtCcdExport::BatchNotFoundException < EtCcdExport::ApplicationException
+module EtCcdExport
+  class BatchNotFoundException < EtCcdExport::ApplicationException
 
+  end
 end

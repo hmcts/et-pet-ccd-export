@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe "create claim" do
-  subject(:worker) { EtExporter::ExportClaimWorker }
+  subject(:job) { EtExporter::ExportClaimJob }
 
   let(:test_ccd_client) { EtCcdClient::UiClient.new.tap(&:login) }
 
@@ -19,8 +19,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim)
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -28,35 +28,26 @@ RSpec.describe "create claim" do
   end
 
   it 'acts as created if a duplicate exists' do
-    # Arrange - Produce the input JSON and create an existing case
-    export = build(:export, :for_claim, claim_attrs: { primary_claimant_traits: [:force_error_timeout_then_conflict] })
-    jid = SecureRandom.hex(12)
+    export = build(
+      :export,
+      :for_claim,
+      claim_attrs: {
+        primary_claimant_traits: [:force_error_timeout_then_conflict]
+      }
+    )
 
-    # Act - Call the worker with special args to force a timeout then a conflict
-    worker.client_push("args" => [export.as_json.to_json], "class" => "EtExporter::ExportClaimWorker", "jid" => jid)
-    drain_all_our_sidekiq_jobs(suppress_exceptions: true, move_failed_jobs_to_retry: true, exclude_queues: ['retry'])
-    drain_all_our_sidekiq_jobs
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
+    perform_enqueued_jobs only: job, at: 1.minute.from_now
 
-    # Assert - Check with CCD (or fake CCD) to see what we sent
-    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
-    expect(ccd_case['case_fields']).to include 'feeGroupReference' => export.resource.reference
-  end
+    ccd_case = test_ccd_client.caseworker_search_latest_by_reference(
+      export.resource.reference,
+      case_type_id: 'Manchester'
+    )
 
-  it 're raises a 409 error if the case does not already exist' do
-    # Arrange - Produce the input JSON to containt the special first and last names to produce an error
-
-    export = build(:export, :for_claim).tap do |export|
-      export.external_system.configurations.find { |c| c.key == 'extra_headers' }.value = {
-        force_failures: {
-          data_stage: [409, 0, 0, 0]
-        }
-      }.to_json
-    end
-
-    # Act - Call the worker in the same way the application would (minus using redis)
-    jid = SecureRandom.hex(12)
-    worker.client_push("args" => [export.as_json.to_json], "class" => "EtExporter::ExportClaimWorker", "jid" => jid)
-    expect { worker.drain }.to raise_error(EtCcdClient::Exceptions::Conflict)
+    expect(ccd_case['case_fields']).to include(
+      'feeGroupReference' => export.resource.reference
+    )
   end
 
   it 'creates a claim in ccd that matches the schema' do
@@ -64,8 +55,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim)
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -77,12 +68,12 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim)
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check for API event being received
     test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
-    external_events.assert_claim_export_started(export: export)
+    expect(external_events).to have_published_claim_export_started(export: export)
   end
 
   it 'raises an API event to inform of case creation complete' do
@@ -90,12 +81,12 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim)
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check for API event being received
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
-    external_events.assert_claim_export_succeeded(export: export, ccd_case: ccd_case)
+    expect(external_events).to have_published_claim_export_succeeded(export: export, ccd_case: ccd_case)
   end
 
   it 'raises an API event to inform of an error whilst still re raising the error' do
@@ -103,9 +94,9 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, claim_attrs: { primary_claimant_attrs: { first_name: 'Force', last_name: 'Error502' } })
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
+    job.perform_later(export.as_json.to_json)
     begin
-      worker.drain
+      perform_enqueued_jobs only: job
     rescue EtCcdClient::Exceptions::Base
       nil
     end
@@ -120,8 +111,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -146,8 +137,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -162,8 +153,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -178,8 +169,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -204,8 +195,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -231,8 +222,8 @@ RSpec.describe "create claim" do
     export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -276,8 +267,8 @@ RSpec.describe "create claim" do
     export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -292,8 +283,8 @@ RSpec.describe "create claim" do
     export.dig('resource', 'primary_respondent')
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
@@ -325,8 +316,8 @@ RSpec.describe "create claim" do
     export = build(:export, :for_claim, resource: claim)
 
     # Act - Call the worker in the same way the application would (minus using redis)
-    worker.perform_async(export.as_json.to_json)
-    worker.drain
+    job.perform_later(export.as_json.to_json)
+    perform_enqueued_jobs only: job
 
     # Assert - Check with CCD (or fake CCD) to see what we sent - then download the file and compare size
     ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')

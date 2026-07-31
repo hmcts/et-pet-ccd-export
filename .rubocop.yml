@@ -2,7 +2,7 @@ inherit_from:
   - .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.3
   NewCops: enable
   # Exclude anything that isn't really part of our code.
   # rails_helper is excluded because it's full of solecisms, but it's mostly
@@ -18,6 +18,18 @@ AllCops:
 Rails:
   Enabled: false
 
+Style/OpenStructUse:
+  Exclude:
+    - 'spec/**/*'
+Metrics/BlockNesting:
+  Exclude:
+    - 'spec/**/*'
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'spec/**/*'
+Metrics/PerceivedComplexity:
+  Exclude:
+    - 'spec/**/*'
 # Allow long lines in specs, as it's almost impossible to fit RSpec's
 # expectations into 80 characters.
 Layout/LineLength:

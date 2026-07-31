@@ -1,9 +1,11 @@
-class EtCcdExport::PreventJobRetryingException < EtCcdExport::ApplicationException
-  def initialize(msg, job_hash)
-    super(msg)
-    self.job_hash = job_hash.slice('error_class', 'error_message', 'retried_at')
+module EtCcdExport
+  class PreventJobRetryingException < EtCcdExport::ApplicationException
+    def initialize(msg, job_hash)
+      super(msg)
+      self.job_hash = job_hash.slice('error_class', 'error_message', 'retried_at')
+    end
+
+    attr_accessor :job_hash
+
   end
-
-  attr_accessor :job_hash
-
 end

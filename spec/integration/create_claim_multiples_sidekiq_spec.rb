@@ -1,0 +1,353 @@
+require 'rails_helper'
+RSpec.describe "create claim multiples" do
+  subject(:multiples_worker) { ExportMultiplesWorker }
+
+  let(:worker) { EtExporter::ExportClaimWorker }
+  let(:test_ccd_client) { EtCcdClient::UiClient.new.tap { |c| c.login(username: 'm@m.com', password: 'Pa55word11') } }
+
+  include_context 'with stubbed ccd'
+
+  before do
+    stub_request(:get, "http://dummy.com/examplepdf").
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/chloe_goodwin.pdf', __dir__)), headers: { 'Content-Type' => 'application/pdf' })
+    stub_request(:get, "http://dummy.com/examplecsv").
+      to_return(status: 200, body: File.new(File.absolute_path('../fixtures/example.csv', __dir__)), headers: { 'Content-Type' => 'text/csv' })
+  end
+
+  it 'creates a multiples claim referencing many single claims in ccd' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    aggregate_failures 'validating key fields' do
+      expect(ccd_case['case_fields']).to include 'multipleName' => export.resource.primary_respondent.name
+      case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+      expect(case_references.length).to eql(export.resource.secondary_claimants.length + 1)
+      expect(case_references).to all be_an_instance_of(String)
+    end
+  end
+
+  it 'acts as created if a duplicate exists' do
+    # Arrange - Produce the input JSON and create an existing case
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants]).tap do |instance|
+      instance.resource.secondary_claimants[5] = build(:claimant, :force_error_timeout_then_conflict)
+    end
+    jid = SecureRandom.hex(12)
+    export_json = export.as_json.to_json
+    worker.client_push("args" => [export_json], "class" => "EtExporter::ExportClaimWorker", "jid" => jid)
+    drain_all_our_sidekiq_jobs(suppress_exceptions: true, move_failed_jobs_to_retry: true, exclude_queues: ['retry'])
+    drain_all_our_sidekiq_jobs
+  end
+
+  it 'does not process a claim with too many claimants' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, :limited_multiples_count, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check that the event has been sent to the api
+    external_events.assert_multiples_claim_size_exceeded(export: export)
+  end
+
+  it 'raises an API event to inform of start of case creation' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    external_events.assert_multiples_claim_export_started(export: export)
+  end
+
+  it 'raises an API event to inform of case creation complete' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    multiples_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    external_events.assert_multiples_claim_export_succeeded(export: export, ccd_case: multiples_case)
+  end
+
+  it 'raises an API event for every sub case showing progress' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    multiples_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_references = multiples_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+    sub_cases = case_references.map do |ref|
+      test_ccd_client.caseworker_search_latest_by_ethos_case_reference(ref, case_type_id: 'Manchester')
+    end
+    external_events.assert_all_multiples_claim_export_progress(export: export, ccd_case: multiples_case, sub_cases: sub_cases)
+  end
+
+  it 'raises an API event to inform of an error in one of the sub cases' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+    erroring_claimant = export.dig('resource', 'secondary_claimants')[2]
+    erroring_claimant.first_name = 'Force'
+    erroring_claimant.last_name = 'Error502'
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    begin
+      drain_all_our_sidekiq_jobs
+    rescue EtCcdClient::Exceptions::Base
+      nil
+    end
+    # Assert - Check for API event being received
+    external_events.assert_sub_claim_erroring(export: export)
+  end
+
+  it 'has the primary claimant first when the jobs are processed in order' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    primary_claimant = export.resource.primary_claimant
+    ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+    aggregate_failures 'validating key fields' do
+      created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester')
+      expect(created_case['case_fields']).to include \
+        'claimantIndType' => a_hash_including(
+          'claimant_title1' => primary_claimant.title,
+          'claimant_first_names' => primary_claimant.first_name,
+          'claimant_last_name' => primary_claimant.last_name
+        )
+    end
+  end
+
+  it 'has the primary claimant first when the jobs are processed in reverse order' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+
+    EtExporter::ExportClaimWorker.drain
+    EtCcdExport::ExportMultiplesWorker.jobs.reverse!
+    drain_all_our_sidekiq_jobs
+
+    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    primary_claimant = export.resource.primary_claimant
+    ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+    aggregate_failures 'validating key fields' do
+      created_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester')
+      expect(created_case['case_fields']).to include \
+        'claimantIndType' => a_hash_including(
+          'claimant_title1' => primary_claimant.title,
+          'claimant_first_names' => primary_claimant.first_name,
+          'claimant_last_name' => primary_claimant.last_name
+        )
+    end
+  end
+
+  it 'creates a lead claim in ccd that matches the schema and is marked as the lead' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_reference = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }.first
+    aggregate_failures 'validating against schema' do
+      lead_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_reference, case_type_id: 'Manchester')
+      expect(lead_case['case_fields']).to match_json_schema('case_create')
+      expect(lead_case.dig('case_fields', 'leadClaimant')).to eql 'Yes'
+    end
+  end
+
+  it 'creates a non lead claim in ccd that matches the schema and is not marked as the lead' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_reference = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }[1]
+    aggregate_failures 'validating against schema' do
+      lead_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_reference, case_type_id: 'Manchester')
+      expect(lead_case['case_fields']).to match_json_schema('case_create')
+      expect(lead_case.dig('case_fields', 'leadClaimant')).to eql 'No'
+    end
+  end
+
+  it 'populates the multipleReference in every case' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+    cases = test_ccd_client.caseworker_search_by_multiple_reference(ccd_case.dig('case_fields', 'multipleReference'), case_type_id: 'Manchester')
+    expect(cases.length).to eql case_references.length
+  end
+
+  it 'fires the correct event before any jobs are started'
+  it 'fires the correct event on completion'
+  it 'fires the correct events for each sub case'
+  it 'fires the correct event on error for a sub case'
+  #
+  # it 'populates the claimant data correctly with an address specifying UK country' do
+  #   boom!
+  #   # Arrange - Produce the input JSON
+  #   claimant = build(:claimant, :default, address: build(:address, :with_uk_country))
+  #   export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
+  #
+  #   # Act - Call the worker in the same way the application would (minus using redis)
+  #   worker.perform_async(export.as_json.to_json)
+  #   worker.drain
+  #
+  #   # Assert - Check with CCD (or fake CCD) to see what we sent
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
+  #   ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
+  #   expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
+  #                                   "claimant_mobile_number" => claimant.mobile_number,
+  #                                   "claimant_email_address" => claimant.email_address,
+  #                                   "claimant_contact_preference" => claimant.contact_preference.titleize,
+  #                                   "claimant_addressUK" => {
+  #                                       "AddressLine1" => claimant.address.building,
+  #                                       "AddressLine2" => claimant.address.street,
+  #                                       "PostTown" => claimant.address.locality,
+  #                                       "County" => claimant.address.county,
+  #                                       "PostCode" => claimant.address.post_code,
+  #                                       "Country" => claimant.address.country
+  #                                   }
+  # end
+  #
+  # it 'populates the claimant data correctly with an address specifying Non UK country (country should be nil)' do
+  #   boom!
+  #
+  #   # Arrange - Produce the input JSON
+  #   claimant = build(:claimant, :default, address: build(:address, :with_other_country))
+  #   export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
+  #
+  #   # Act - Call the worker in the same way the application would (minus using redis)
+  #   worker.perform_async(export.as_json.to_json)
+  #   worker.drain
+  #
+  #   # Assert - Check with CCD (or fake CCD) to see what we sent
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
+  #   ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
+  #   expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
+  #                                   "claimant_mobile_number" => claimant.mobile_number,
+  #                                   "claimant_email_address" => claimant.email_address,
+  #                                   "claimant_contact_preference" => claimant.contact_preference.titleize,
+  #                                   "claimant_addressUK" => {
+  #                                       "AddressLine1" => claimant.address.building,
+  #                                       "AddressLine2" => claimant.address.street,
+  #                                       "PostTown" => claimant.address.locality,
+  #                                       "County" => claimant.address.county,
+  #                                       "PostCode" => claimant.address.post_code,
+  #                                       "Country" => nil
+  #                                   }
+  # end
+  #
+  # it 'populates the claimant data correctly with an address without any country in the input data (backward compatibility)' do
+  #   # Arrange - Produce the input JSON
+  #   boom!
+  #   claimant = build(:claimant, :default, address: build(:address))
+  #   export = build(:export, :for_claim, resource: build(:claim, :default, primary_claimant: claimant))
+  #
+  #   # Act - Call the worker in the same way the application would (minus using redis)
+  #   worker.perform_async(export.as_json.to_json)
+  #   worker.drain
+  #
+  #   # Assert - Check with CCD (or fake CCD) to see what we sent
+  #   ccd_case = test_ccd_client.caseworker_search_latest_by_reference(export.resource.reference, case_type_id: 'Manchester')
+  #   ccd_claimant = ccd_case.dig('case_fields', 'claimantType')
+  #   expect(ccd_claimant).to include "claimant_phone_number" => claimant.address_telephone_number,
+  #                                   "claimant_mobile_number" => claimant.mobile_number,
+  #                                   "claimant_email_address" => claimant.email_address,
+  #                                   "claimant_contact_preference" => claimant.contact_preference.titleize,
+  #                                   "claimant_addressUK" => {
+  #                                       "AddressLine1" => claimant.address.building,
+  #                                       "AddressLine2" => claimant.address.street,
+  #                                       "PostTown" => claimant.address.locality,
+  #                                       "County" => claimant.address.county,
+  #                                       "PostCode" => claimant.address.post_code,
+  #                                       "Country" => nil
+  #                                   }
+  # end
+  it 'populates the documents collection correctly with 2 pdf files and a csv file input' do
+    # Arrange - Produce the input JSON
+    export = build(:export, :for_claim, claim_traits: [:default_multiple_claimants])
+    export.dig('resource', 'primary_claimant')
+    export.dig('resource', 'primary_respondent')
+
+    # Act - Call the worker in the same way the application would (minus using redis)
+    worker.perform_async(export.as_json.to_json)
+    drain_all_our_sidekiq_jobs
+
+    # Assert - Check with CCD (or fake CCD) to see what we sent
+    header_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
+    case_references = header_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
+    ccd_case = test_ccd_client.caseworker_search_latest_by_ethos_case_reference(case_references.first, case_type_id: 'Manchester')
+
+    ccd_documents = ccd_case.dig('case_fields', 'documentCollection')
+    expect(ccd_documents).to \
+      contain_exactly \
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'ET1',
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'et1_chloe_goodwin.pdf'
+                           )
+                         )),
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'ET1 Attachment',
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'et1a_first_last.csv'
+                           )
+                         )),
+        a_hash_including('id' => nil,
+                         'value' => a_hash_including(
+                           'typeOfDocument' => 'ACAS Certificate',
+                           'uploadedDocument' => a_hash_including(
+                             'document_url' => an_instance_of(String),
+                             'document_binary_url' => an_instance_of(String),
+                             'document_filename' => 'acas_naughty_boy.pdf'
+                           )
+                         ))
+  end
+
+end
