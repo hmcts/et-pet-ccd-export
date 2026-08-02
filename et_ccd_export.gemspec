@@ -5,7 +5,7 @@ require "et_ccd_export/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "et_ccd_export"
-  spec.version       = EtCcdExport::VERSION
+  spec.version       = EtCcdExport::Version
   spec.authors       = ["Gary Taylor"]
   spec.email         = ["gary.taylor@hmcts.net"]
 
