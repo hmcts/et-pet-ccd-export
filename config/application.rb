@@ -18,6 +18,16 @@ require "action_view/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# The temporary standalone production application uses Redis, so allow Active
+# Record models to eager load without connecting to a database. Development and
+# test still initialise their databases. The API loads the engine, not this
+# file, and keeps the normal Active Record initializer.
+if ENV.fetch('RAILS_ENV', 'development') == 'production'
+  ActiveRecord::Railtie.initializers.reject! do |initializer|
+    initializer.name == 'active_record.initialize_database'
+  end
+end
+
 module EtCcdExport
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
