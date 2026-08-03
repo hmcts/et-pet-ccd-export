@@ -14,6 +14,15 @@ module EtCcdExport
         @case_type_id = case_type_id
       end
 
+      def ==(other)
+        other.is_a?(self.class) &&
+          other.reference == reference &&
+          other.quantity == quantity &&
+          other.start_ref == start_ref &&
+          other.export_id == export_id &&
+          other.case_type_id == case_type_id
+      end
+
       def save
         sidekiq.redis do |r|
           r.hset(redis_key, *as_json(except: 'sidekiq').flatten)
@@ -121,36 +130,6 @@ module EtCcdExport
         end
       end
 
-      def done_count
-        sidekiq.redis do |r|
-          r.scard(done_redis_key)
-        end
-      end
-
-      def todo_count
-        sidekiq.redis do |r|
-          r.scard(todo_redis_key)
-        end
-      end
-
-      def in_progress_count
-        sidekiq.redis do |r|
-          r.scard(in_progress_redis_key)
-        end
-      end
-
-      def error_count
-        sidekiq.redis do |r|
-          r.scard(error_redis_key)
-        end
-      end
-
-      def failed_count
-        sidekiq.redis do |r|
-          r.scard(failed_redis_key)
-        end
-      end
-
       def done_references
         sidekiq.redis do |r|
           r.smembers(done_redis_key).sort do |a, b|
@@ -176,6 +155,12 @@ module EtCcdExport
       def todo_references
         sidekiq.redis do |r|
           r.smembers(todo_redis_key)
+        end
+      end
+
+      def in_progress_references
+        sidekiq.redis do |r|
+          r.smembers(in_progress_redis_key)
         end
       end
 
@@ -227,6 +212,36 @@ module EtCcdExport
 
       def callbacks_key
         "#{redis_key}-callbacks"
+      end
+
+      def done_count
+        sidekiq.redis do |r|
+          r.scard(done_redis_key)
+        end
+      end
+
+      def todo_count
+        sidekiq.redis do |r|
+          r.scard(todo_redis_key)
+        end
+      end
+
+      def in_progress_count
+        sidekiq.redis do |r|
+          r.scard(in_progress_redis_key)
+        end
+      end
+
+      def error_count
+        sidekiq.redis do |r|
+          r.scard(error_redis_key)
+        end
+      end
+
+      def failed_count
+        sidekiq.redis do |r|
+          r.scard(failed_redis_key)
+        end
       end
     end
   end

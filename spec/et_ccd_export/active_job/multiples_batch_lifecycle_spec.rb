@@ -17,11 +17,11 @@ RSpec.describe EtCcdExport::ActiveJob::MultiplesBatchLifecycle do
   let(:other_child_reference) { "24001002/#{Time.current.year}" }
   let(:exported_case_id) { 123_456 }
   let(:batch) do
-    EtCcdExport::Sidekiq::Batch.start reference: example_multiple_reference,
-                                      quantity: 10,
-                                      start_ref: example_child_reference,
-                                      export_id: 'fakeexportid',
-                                      case_type_id: 'fakecasetypeid'
+    EtCcdExport::Batch.start reference: example_multiple_reference,
+                             quantity: 10,
+                             start_ref: example_child_reference,
+                             export_id: 'fakeexportid',
+                             case_type_id: 'fakecasetypeid'
   end
 
   def lifecycle_for(child_reference)

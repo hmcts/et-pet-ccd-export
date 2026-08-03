@@ -22,7 +22,7 @@ module EtCcdExport
       lifecycle.call(&)
     end
 
-    def multiples_worker_batch_job_find_batch(batch: EtCcdExport::Sidekiq::Batch)
+    def multiples_worker_batch_job_find_batch(batch: EtCcdExport::Batch)
       return nil unless job_metadata['et_ccd_export_multiple_batch_reference'].present?
 
       batch.find(job_metadata['et_ccd_export_multiple_batch_reference'])
