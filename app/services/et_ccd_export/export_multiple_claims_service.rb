@@ -97,8 +97,9 @@ module EtCcdExport
         next_ref = start_multiple_result.dig('data', 'startCaseRefNumber')
         send_multiples_claim_references_allocated_event(export, case_type_id, claimant_count, next_ref, sidekiq_job_data)
 
-        batch = EtCcdExport::Sidekiq::Batch.start reference: multiple_ref, quantity: claimant_count, start_ref: next_ref,
-                                                  export_id: export['id'], case_type_id: case_type_id
+        batch_class = use_sidekiq ? EtCcdExport::Sidekiq::Batch : EtCcdExport::Batch
+        batch = batch_class.start reference: multiple_ref, quantity: claimant_count, start_ref: next_ref,
+                                  export_id: export['id'], case_type_id: case_type_id
         setup_callbacks(batch, export, multiple_ref, multiples_case_type_id, extra_headers)
         batch.jobs do
           perform_lead_case(export, next_ref, batch, multiple_ref, client, case_type_id, claimant_count)

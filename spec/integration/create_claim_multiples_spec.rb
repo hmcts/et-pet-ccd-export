@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe "create claim multiples" do
+RSpec.describe "create claim multiples (active job)" do
   subject(:multiples_job) { ExportMultiplesJob }
 
   let(:job) { EtExporter::ExportClaimJob }

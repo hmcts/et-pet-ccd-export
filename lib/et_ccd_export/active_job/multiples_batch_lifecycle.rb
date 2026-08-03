@@ -75,7 +75,7 @@ module EtCcdExport
         job.job_metadata.key?('et_ccd_export_multiple_batch_reference') && job.job_metadata.key?('et_ccd_export_multiple_batch_child_reference')
       end
 
-      def find_batch(job, batch: EtCcdExport::Sidekiq::Batch)
+      def find_batch(job, batch: EtCcdExport::Batch)
         batch.find(job.job_metadata['et_ccd_export_multiple_batch_reference'])
       end
 
