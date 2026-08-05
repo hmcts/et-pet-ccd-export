@@ -2,9 +2,9 @@
 module EtCcdExport
   class ExportMultiplesJob < ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
-    include JobMetadata
-    include MultiplesClientBatchJob
-    include MultiplesWorkerBatchJob
+    include EtCcdExport::JobMetadata
+    include EtCcdExport::MultiplesClientBatchJob
+    include EtCcdExport::MultiplesWorkerBatchJob
 
     queue_as 'external_system_ccd_multiples'
 
