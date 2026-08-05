@@ -44,7 +44,7 @@ group :test do
   gem 'et_fake_ccd', git: 'https://github.com/hmcts/et-fake-ccd.git', tag: 'v3.1.8'
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
-  gem 'mock_redis', '0.46.0'
+  gem 'mock_redis', '0.55.0'
   gem 'rspec-sidekiq', '~> 5.2'
   gem 'simplecov', '~> 0.22.0'
 end
