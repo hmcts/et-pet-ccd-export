@@ -19,11 +19,11 @@ RSpec.describe EtCcdExport::ExportMultiplesJob do
     let(:example_ccd_data) { { ethosCaseReference: "exampleEthosCaseReference" } }
     let(:example_ccd_data_primary) { { ethosCaseReference: "exampleEthosCaseReferencePrimary" } }
     let(:batch) do
-      EtCcdExport::Sidekiq::Batch.start reference: example_ccd_data[:multipleReference],
-                                        quantity: 10,
-                                        start_ref: "24000001/#{Time.now.year}",
-                                        export_id: example_export.id,
-                                        case_type_id: 'fakecasetypeid'
+      EtCcdExport::Batch.start reference: example_ccd_data[:multipleReference],
+                               quantity: 10,
+                               start_ref: "24000001/#{Time.now.year}",
+                               export_id: example_export.id,
+                               case_type_id: 'fakecasetypeid'
     end
 
     it 'calls export with the correct args' do

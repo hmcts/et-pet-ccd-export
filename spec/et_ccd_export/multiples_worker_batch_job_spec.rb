@@ -29,11 +29,11 @@ RSpec.describe EtCcdExport::MultiplesWorkerBatchJob do
   let(:example_child_reference) { "24001001/#{Time.current.year}" }
   let(:exported_case_id) { 123_456 }
   let(:batch) do
-    EtCcdExport::Sidekiq::Batch.start reference: example_multiple_reference,
-                                      quantity: 10,
-                                      start_ref: example_child_reference,
-                                      export_id: 'fakeexportid',
-                                      case_type_id: 'fakecasetypeid'
+    EtCcdExport::Batch.start reference: example_multiple_reference,
+                             quantity: 10,
+                             start_ref: example_child_reference,
+                             export_id: 'fakeexportid',
+                             case_type_id: 'fakecasetypeid'
   end
 
   it 'runs the batch lifecycle around a successful job' do
@@ -45,7 +45,7 @@ RSpec.describe EtCcdExport::MultiplesWorkerBatchJob do
 
     perform_enqueued_jobs only: ExampleSuccessfulJob
 
-    expect(batch.persisted?).to be false
+    expect(EtCcdExport::Batch.exists?(batch.id)).to be false
   end
 
   it 'runs the discarded lifecycle after a job exhausts its attempts' do
