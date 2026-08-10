@@ -18,11 +18,11 @@ RSpec.describe EtCcdExport::MultiplesClientBatchJob do
 
   describe 'before_enqueue' do
     it 'adds child job to todo in batch' do
-      batch = EtCcdExport::Sidekiq::Batch.start reference: 'parent-reference',
-                                                quantity: 100,
-                                                start_ref: '100000001',
-                                                export_id: 1,
-                                                case_type_id: 'fakecasetypeid'
+      batch = EtCcdExport::Batch.start reference: 'parent-reference',
+                                       quantity: 100,
+                                       start_ref: '100000001',
+                                       export_id: 1,
+                                       case_type_id: 'fakecasetypeid'
       batch.jobs do
         batch.child_job('100000001') do
           ExampleWorker.perform_later

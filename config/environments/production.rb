@@ -3,6 +3,10 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # This app is moving into the API service but needs to boot as a standalone app for now so this is required but not used
+  # Active Record requires a message-verifier secret during application startup.
+  config.secret_key_base = 'doesnt-matter-as-its-not-used'
+
   # Code is not reloaded between requests.
   config.enable_reloading = false
 

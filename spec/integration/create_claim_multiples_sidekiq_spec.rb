@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe "create claim multiples" do
+RSpec.describe "create claim multiples (sidekiq)" do
   subject(:multiples_worker) { ExportMultiplesWorker }
 
   let(:worker) { EtExporter::ExportClaimWorker }
