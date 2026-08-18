@@ -45,6 +45,7 @@ FactoryBot.define do
       is_unfair_dismissal { false }
       case_heard_by_preference { 'judge' }
       case_heard_by_preference_reason { 'I feel intimidated by a group of people' }
+      last_event_date { '2022-12-31' }
     end
 
     trait :update_only do

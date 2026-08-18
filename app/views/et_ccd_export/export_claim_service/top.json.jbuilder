@@ -72,6 +72,7 @@ json.set! 'data' do
   json.set! 'claimantOtherType' do
     json.set! 'claimant_disabled', claim.dig('primary_claimant', 'special_needs').present? ? 'Yes' : 'No'
     json.set! 'claimant_disabled_details', claim.dig('primary_claimant', 'special_needs') if claim.dig('primary_claimant', 'special_needs').present?
+    json.set! 'dateOfLastEvent', claim['last_event_date']
     if claim['employment_details'].present?
       json.set! 'claimant_employed_currently', 'Yes' if claim.dig('employment_details', 'start_date').present? && claim.dig('employment_details', 'end_date').nil?
       json.set! 'claimant_employed_currently', 'No' if claim.dig('employment_details', 'end_date').present? && Date.parse(claim.dig('employment_details', 'end_date')) < Date.today
