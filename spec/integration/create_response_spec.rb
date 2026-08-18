@@ -61,7 +61,8 @@ RSpec.describe "create response", type: :request do
         },
         respondentCollection: [],
         claimantOtherType: {
-          claimant_disabled: 'No'
+          claimant_disabled: 'No',
+          dateOfLastEvent: '2022-12-31'
         },
         claimantRepresentedQuestion: 'No',
         documentCollection: [],
