@@ -52,7 +52,7 @@ module EtExporter
       created_case = singles_service.call(parsed_json, sidekiq_job_data: job_hash)
       send_claim_exported_event(parsed_json, created_case)
     rescue Exception => e # rubocop:disable Lint/RescueException
-      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
       raise e
     end
 
