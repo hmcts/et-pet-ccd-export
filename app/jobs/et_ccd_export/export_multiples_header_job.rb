@@ -20,8 +20,8 @@ module EtCcdExport
                                                                                                           'multipleReference')} containing #{case_references.length} child cases")
     end
 
-    def tag_sentry(job, scope:)
-      scope.set_tags primary_reference: job['args'].first
+    def tag_sentry(scope:)
+      scope.set_tags primary_reference: self['args'].first
     end
 
     def retries_exhausted(exception)
