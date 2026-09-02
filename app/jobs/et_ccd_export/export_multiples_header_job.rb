@@ -22,7 +22,7 @@ module EtCcdExport
     end
 
     def tag_sentry(scope:)
-      scope.set_tags primary_reference: self['args'].first
+      scope.set_tags primary_reference: arguments.first
     end
 
     def retries_exhausted(exception)

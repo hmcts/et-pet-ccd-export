@@ -21,7 +21,7 @@ module EtCcdExport
     end
 
     def tag_sentry(scope:)
-      scope.set_tags reference: JSON.parse(self['args'].first)['feeGroupReference']
+      scope.set_tags reference: JSON.parse(arguments.first)['feeGroupReference']
     end
 
     private

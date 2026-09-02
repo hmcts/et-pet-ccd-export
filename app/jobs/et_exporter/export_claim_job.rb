@@ -20,7 +20,7 @@ module EtExporter
     end
 
     def tag_sentry(scope:)
-      scope.set_tags reference: JSON.parse(self['args'].first).dig('resource', 'reference')
+      scope.set_tags reference: JSON.parse(arguments.first).dig('resource', 'reference')
     end
 
     private
