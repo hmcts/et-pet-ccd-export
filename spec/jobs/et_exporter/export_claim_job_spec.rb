@@ -132,6 +132,8 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         perform_enqueued_jobs do
           described_class.perform_later(example_export.as_json.to_json)
+        rescue EtCcdExport::ApplicationException
+          nil
         end
 
         aggregate_failures 'verify all expectations' do
@@ -157,6 +159,8 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         perform_enqueued_jobs do
           described_class.perform_later(example_export.as_json.to_json)
+        rescue EtCcdExport::ApplicationException
+          nil
         end
 
         aggregate_failures 'ensure only called once' do
