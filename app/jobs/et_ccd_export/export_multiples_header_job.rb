@@ -21,8 +21,8 @@ module EtCcdExport
                                                                                                           'multipleReference')} containing #{case_references.length} child cases")
     end
 
-    def tag_sentry(scope:)
-      scope.set_tags primary_reference: arguments.first
+    def tag_sentry
+      Sentry.set_tags primary_reference: arguments.first
     end
 
     def retries_exhausted(exception)

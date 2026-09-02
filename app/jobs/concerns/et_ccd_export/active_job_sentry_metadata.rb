@@ -3,19 +3,10 @@ module EtCcdExport
     extend ActiveSupport::Concern
 
     included do
-      around_perform do |job, block|
-        return block.call unless Sentry.initialized?
+      before_perform do |job|
+        next unless Sentry.initialized? && job.respond_to?(:tag_sentry)
 
-        Sentry.clone_hub_to_current_thread
-        scope = Sentry.get_current_scope
-        if job.respond_to?(:tag_sentry)
-          job.tag_sentry(scope: scope)
-        end
-        block.call
-
-        # don't need to use ensure here
-        # if the job failed, we need to keep the scope for error handler. and the scope will be cleared there
-        scope.clear
+        job.tag_sentry
       end
     end
   end
