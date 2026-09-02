@@ -1,6 +1,7 @@
 module EtCcdExport
   class ExportMultiplesHeaderJob < ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     queue_as 'external_system_ccd'
 

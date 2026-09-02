@@ -1,6 +1,7 @@
 module EtExporter
   class ExportResponseJob < EtCcdExport::ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     def perform(json)
       parsed_json = JSON.parse(json)

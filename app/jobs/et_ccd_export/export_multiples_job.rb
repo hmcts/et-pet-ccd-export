@@ -5,6 +5,7 @@ module EtCcdExport
     include EtCcdExport::JobMetadata
     include EtCcdExport::MultiplesClientBatchJob
     include EtCcdExport::MultiplesWorkerBatchJob
+    include EtCcdExport::ActiveJobSentryMetadata
 
     queue_as 'external_system_ccd_multiples'
 
