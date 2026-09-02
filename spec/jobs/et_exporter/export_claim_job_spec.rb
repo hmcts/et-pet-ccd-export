@@ -77,6 +77,20 @@ RSpec.describe EtExporter::ExportClaimJob do
         expect { job.perform(example_export.as_json.to_json) }.to raise_error(MyError)
       end
 
+      context 'with sentry configured', :sentry do
+        it 'adds sentry tags for the claim reference' do
+          allow(fake_singles_service).to receive(:call).and_raise(RuntimeError, "Something went wrong")
+          perform_enqueued_jobs only: described_class do
+            described_class.perform_later(example_export.as_json.to_json)
+          rescue EtCcdExport::ClaimNotExportedException
+            nil
+          end
+          aggregate_failures 'verify sentry events' do
+            expect(sentry_events).not_to be_empty
+            expect(sentry_events).to all(have_attributes(tags: hash_including(reference: instance_of(String))))
+          end
+        end
+      end
     end
 
     context 'with multiple claims' do

@@ -15,10 +15,6 @@ module EtExporter
       perform_update(parsed_json)
     end
 
-    def tag_sentry
-      Sentry.set_tags reference: JSON.parse(arguments.first).dig('resource', 'external_data', 'case_reference')
-    end
-
     private
 
     def events_service
