@@ -6,5 +6,6 @@ module EtCcdExport
 
     config.autoload_paths << root.join('lib')
     config.eager_load_paths << root.join('lib')
+    config.et_ccd_export = ActiveSupport::OrderedOptions.new
   end
 end

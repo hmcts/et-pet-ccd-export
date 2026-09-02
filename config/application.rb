@@ -70,5 +70,7 @@ module EtCcdExport
     else
       config.azure_insights.enable = false
     end
+    config.et_ccd_export = ActiveSupport::OrderedOptions.new
+    config.et_ccd_export.retry_wait_strategy = ENV.fetch('CCD_EXPORT_RETRY_WAIT_STRATEGY', 'polynomially_longer')
   end
 end
