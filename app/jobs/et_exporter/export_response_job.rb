@@ -15,8 +15,8 @@ module EtExporter
       raise e
     end
 
-    def tag_sentry(scope:)
-      scope.set_tags reference: JSON.parse(arguments.first).dig('resource', 'reference')
+    def tag_sentry
+      Sentry.set_tags reference: JSON.parse(arguments.first).dig('resource', 'reference')
     end
 
     def retries_exhausted(exception)

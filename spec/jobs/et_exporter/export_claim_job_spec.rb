@@ -65,7 +65,7 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         # Assert - Make sure the fake events service was called correctly
         expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception)
+        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception, use_sidekiq: false)
       end
 
       it 're raises the error to mark it as failure and allow retrying' do

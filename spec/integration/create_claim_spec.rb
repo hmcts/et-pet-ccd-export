@@ -102,7 +102,7 @@ RSpec.describe "create claim" do
     end
 
     # Assert - Check for API event being received
-    external_events.assert_claim_erroring(export: export)
+    expect(external_events).to have_published_claim_erroring(export: export)
   end
 
   it 'populates the claimant data correctly with an address specifying UK country' do
