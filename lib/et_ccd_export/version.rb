@@ -1,3 +1,3 @@
 module EtCcdExport
-  Version = "1.0.4"
+  Version = "1.0.5"
 end

@@ -2,6 +2,7 @@ module EtExporter
   # A worker to perform an update of an existing claim once exported
   class ExportClaimUpdateJob < EtCcdExport::ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     def perform(json)
       logger.debug "---------------------------------------------------------------------------------------------------------"

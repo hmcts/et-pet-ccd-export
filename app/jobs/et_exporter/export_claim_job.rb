@@ -1,6 +1,7 @@
 module EtExporter
   class ExportClaimJob < EtCcdExport::ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     def perform(json)
       logger.debug "---------------------------------------------------------------------------------------------------------"
