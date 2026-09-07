@@ -34,6 +34,9 @@ group :development, :test do
   gem 'bundler-audit', '~> 0.9.1'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  # Used by the standalone application's development and test databases.
+  # When loaded as an engine, models use the host application's adapter.
+  gem 'pg', '>= 0.18', '< 2.0'
 end
 
 group :test do

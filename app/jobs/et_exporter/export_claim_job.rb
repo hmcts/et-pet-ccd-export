@@ -1,6 +1,7 @@
 module EtExporter
   class ExportClaimJob < EtCcdExport::ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     def perform(json)
       logger.debug "---------------------------------------------------------------------------------------------------------"
@@ -18,8 +19,8 @@ module EtExporter
       end
     end
 
-    def tag_sentry(job, scope:)
-      scope.set_tags reference: JSON.parse(job['args'].first).dig('resource', 'reference')
+    def tag_sentry
+      Sentry.set_tags reference: JSON.parse(arguments.first).dig('resource', 'reference')
     end
 
     private
@@ -52,7 +53,7 @@ module EtExporter
       created_case = singles_service.call(parsed_json, sidekiq_job_data: job_hash)
       send_claim_exported_event(parsed_json, created_case)
     rescue Exception => e # rubocop:disable Lint/RescueException
-      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
+      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
       raise e
     end
 

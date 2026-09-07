@@ -1,6 +1,7 @@
 module EtCcdExport
   class ExportMultiplesHeaderJob < ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     queue_as 'external_system_ccd'
 
@@ -20,8 +21,8 @@ module EtCcdExport
                                                                                                           'multipleReference')} containing #{case_references.length} child cases")
     end
 
-    def tag_sentry(job, scope:)
-      scope.set_tags primary_reference: job['args'].first
+    def tag_sentry
+      Sentry.set_tags primary_reference: arguments.first
     end
 
     def retries_exhausted(exception)

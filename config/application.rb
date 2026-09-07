@@ -4,7 +4,7 @@ require "rails"
 # Pick the frameworks you want:
 # require "active_model/railtie"
 require "active_job/railtie"
-# require "active_record/railtie"
+require "active_record/railtie"
 # require "active_storage/engine"
 require "action_controller/railtie"
 # require "action_mailer/railtie"
@@ -17,6 +17,17 @@ require "action_view/railtie"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+
+# The temporary standalone production application uses Redis, so allow Active
+# Record models to eager load without connecting to a database. Development and
+# test still initialise their databases. The API loads the engine, not this
+# file, and keeps the normal Active Record initializer.  Wont be needed as soon as this
+# code makes it over to the API.
+if ENV.fetch('RAILS_ENV', 'development') == 'production'
+  ActiveRecord::Railtie.initializers.reject! do |initializer|
+    initializer.name == 'active_record.initialize_database'
+  end
+end
 
 module EtCcdExport
   class Application < Rails::Application
@@ -59,5 +70,7 @@ module EtCcdExport
     else
       config.azure_insights.enable = false
     end
+    config.et_ccd_export = ActiveSupport::OrderedOptions.new
+    config.et_ccd_export.retry_wait_strategy = ENV.fetch('CCD_EXPORT_RETRY_WAIT_STRATEGY', 'polynomially_longer')
   end
 end

@@ -16,7 +16,7 @@ module EtCcdExport
       return if Thread.current[:et_ccd_export_multiple_batch].nil?
 
       job_metadata['et_ccd_export_multiple_batch_reference'] = Thread.current[:et_ccd_export_multiple_batch].reference
-      batch = EtCcdExport::Sidekiq::Batch.find(Thread.current[:et_ccd_export_multiple_batch].reference)
+      batch = EtCcdExport::Batch.find(Thread.current[:et_ccd_export_multiple_batch].reference)
       multiples_batch_job_add_to_todo(batch)
     end
 

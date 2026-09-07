@@ -1,6 +1,7 @@
 module EtExporter
   class ExportResponseJob < EtCcdExport::ApplicationJob
     include EtCcdExport::ActiveJobExportRetryControl
+    include EtCcdExport::ActiveJobSentryMetadata
 
     def perform(json)
       parsed_json = JSON.parse(json)
@@ -14,8 +15,8 @@ module EtExporter
       raise e
     end
 
-    def tag_sentry(job, scope:)
-      scope.set_tags reference: JSON.parse(job['args'].first).dig('resource', 'reference')
+    def tag_sentry
+      Sentry.set_tags reference: JSON.parse(arguments.first).dig('resource', 'reference')
     end
 
     def retries_exhausted(exception)

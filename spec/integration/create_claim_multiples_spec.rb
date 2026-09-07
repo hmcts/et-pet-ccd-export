@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe "create claim multiples" do
+RSpec.describe "create claim multiples (active job)" do
   subject(:multiples_job) { ExportMultiplesJob }
 
   let(:job) { EtExporter::ExportClaimJob }
@@ -107,7 +107,7 @@ RSpec.describe "create claim multiples" do
     job.perform_later(export.as_json.to_json)
     begin
       drain_all_our_jobs
-    rescue EtCcdClient::Exceptions::Base
+    rescue EtCcdClient::Exceptions::Base, EtCcdExport::ApplicationException
       nil
     end
     # Assert - Check for API event being received

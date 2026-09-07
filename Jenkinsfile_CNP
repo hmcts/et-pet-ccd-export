@@ -37,6 +37,10 @@ def useBundlePathOutsideWorkspace = {
 
 withPipeline(type, product, component) {
     env.RAILS_ENV = 'test'
+    env.DB_HOST = 'localhost'
+    env.DB_USER = 'postgres'
+    env.DB_PORT = '5421'
+    env.DB_PASSWORD = 'postgres'
     env.ENABLE_COVERAGE = 'true'
     before('build') {
         yarnBuilder.runYarn("--mutex network install --frozen-lockfile")
@@ -54,5 +58,13 @@ withPipeline(type, product, component) {
         installRuby()
 
         useBundlePathOutsideWorkspace()
+    }
+    before('test') {
+        sh script:"""
+            docker stop pet-et-ccd-export-test-postgres && docker rm pet-et-ccd-export-test-postgres || echo 'Ignoring failure in stopping old postgres'
+            docker run --rm --name pet-et-ccd-export-test-postgres --publish 5421:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+        """, label: 'Start test postgres'
+
+        rubyBuilder.bundle("exec rails db:create db:migrate")
     }
 }

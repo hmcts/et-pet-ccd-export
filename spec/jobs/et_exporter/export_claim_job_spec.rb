@@ -65,7 +65,7 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         # Assert - Make sure the fake events service was called correctly
         expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception)
+        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception, use_sidekiq: false)
       end
 
       it 're raises the error to mark it as failure and allow retrying' do
@@ -77,6 +77,20 @@ RSpec.describe EtExporter::ExportClaimJob do
         expect { job.perform(example_export.as_json.to_json) }.to raise_error(MyError)
       end
 
+      context 'with sentry configured', :sentry do
+        it 'adds sentry tags for the claim reference' do
+          allow(fake_singles_service).to receive(:call).and_raise(RuntimeError, "Something went wrong")
+          perform_enqueued_jobs only: described_class do
+            described_class.perform_later(example_export.as_json.to_json)
+          rescue EtCcdExport::ClaimNotExportedException
+            nil
+          end
+          aggregate_failures 'verify sentry events' do
+            expect(sentry_events).not_to be_empty
+            expect(sentry_events).to all(have_attributes(tags: hash_including(reference: instance_of(String))))
+          end
+        end
+      end
     end
 
     context 'with multiple claims' do
@@ -132,6 +146,8 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         perform_enqueued_jobs do
           described_class.perform_later(example_export.as_json.to_json)
+        rescue EtCcdExport::ApplicationException
+          nil
         end
 
         aggregate_failures 'verify all expectations' do
@@ -157,6 +173,8 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         perform_enqueued_jobs do
           described_class.perform_later(example_export.as_json.to_json)
+        rescue EtCcdExport::ApplicationException
+          nil
         end
 
         aggregate_failures 'ensure only called once' do
