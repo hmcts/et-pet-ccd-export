@@ -111,7 +111,8 @@ module EtCcdExport
 
     def send_multiples_claim_references_allocated_event(export, case_type_id, claimant_count, next_ref, sidekiq_job_data)
       events_service.send_multiples_claim_references_allocated_event export_id: export['id'], sidekiq_job_data: sidekiq_job_data,
-                                                                     start_reference: next_ref, quantity: claimant_count, case_type_id: case_type_id
+                                                                     start_reference: next_ref, quantity: claimant_count, case_type_id: case_type_id,
+                                                                     use_sidekiq:
     end
 
     def setup_callbacks(batch, export, multiple_ref, multiples_case_type_id, extra_headers)
