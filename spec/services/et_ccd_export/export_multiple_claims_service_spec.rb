@@ -175,7 +175,8 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
                sidekiq_job_data: { jid: 'examplejid' },
                case_type_id: 'Manchester',
                start_reference: a_string_matching(%r{24\d{5}/\d{4}}),
-               quantity: 11
+               quantity: 11,
+               use_sidekiq: true
       end
 
       it 'queues the worker 11 times with the data from the presenter' do

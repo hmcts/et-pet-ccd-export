@@ -111,7 +111,8 @@ module EtCcdExport
 
     def send_multiples_claim_references_allocated_event(export, case_type_id, claimant_count, next_ref, sidekiq_job_data)
       events_service.send_multiples_claim_references_allocated_event export_id: export['id'], sidekiq_job_data: sidekiq_job_data,
-                                                                     start_reference: next_ref, quantity: claimant_count, case_type_id: case_type_id
+                                                                     start_reference: next_ref, quantity: claimant_count, case_type_id: case_type_id,
+                                                                     use_sidekiq:
     end
 
     def setup_callbacks(batch, export, multiple_ref, multiples_case_type_id, extra_headers)
@@ -182,35 +183,36 @@ module EtCcdExport
       end
     end
 
-    class SuccessCallback
-      include ::Sidekiq::Worker
+    if Object.const_defined?('Sidekiq')
+      class SuccessCallback
+        include ::Sidekiq::Worker
 
-      sidekiq_options queue: 'external_system_ccd_callbacks'
+        sidekiq_options queue: 'external_system_ccd_callbacks'
 
-      def perform(case_references, options)
-        options['header_worker'].safe_constantize.perform_async options['primary_reference'],
-                                                                options['respondent_name'],
-                                                                case_references,
-                                                                options['multiples_case_type_id'],
-                                                                options['export_id'],
-                                                                options['send_request_id'],
-                                                                options['extra_headers']
+        def perform(case_references, options)
+          options['header_worker'].safe_constantize.perform_async options['primary_reference'],
+                                                                  options['respondent_name'],
+                                                                  case_references,
+                                                                  options['multiples_case_type_id'],
+                                                                  options['export_id'],
+                                                                  options['send_request_id'],
+                                                                  options['extra_headers']
+        end
+      end
+
+      class FailedCallback
+        include ::Sidekiq::Worker
+
+        sidekiq_options queue: 'external_system_ccd_callbacks'
+
+        def perform(_done_references, _failed_references, options)
+          ApplicationEventsService.send_subclaim_failed_event(export_id: options['export_id'], sidekiq_job_data: job_data)
+          exception = ClaimNotExportedException.
+                      new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
+          Sentry.capture_exception(exception)
+        end
       end
     end
-
-    class FailedCallback
-      include ::Sidekiq::Worker
-
-      sidekiq_options queue: 'external_system_ccd_callbacks'
-
-      def perform(_done_references, _failed_references, options)
-        ApplicationEventsService.send_subclaim_failed_event(export_id: options['export_id'], sidekiq_job_data: job_data)
-        exception = ClaimNotExportedException.
-                    new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
-        Sentry.capture_exception(exception)
-      end
-    end
-
     class SuccessCallbackJob < ApplicationJob
 
       queue_as 'external_system_ccd_callbacks'
