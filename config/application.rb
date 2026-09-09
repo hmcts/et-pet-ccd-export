@@ -40,25 +40,9 @@ module EtCcdExport
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    config.redis_host = ENV.fetch('REDIS_HOST', 'localhost')
-    config.redis_port = ENV.fetch('REDIS_PORT', '6379')
-    config.redis_database = ENV.fetch('REDIS_DATABASE', '2')
-    default_redis_url = "redis://#{config.redis_host}:#{config.redis_port}"
-    config.redis_url = ENV.fetch('REDIS_URL', default_redis_url) + "/#{config.redis_database}"
 
     config.ccd_time_zone = 'London'
 
-    insights_key = ENV.fetch('AZURE_APP_INSIGHTS_KEY', false)
-    if insights_key
-      config.azure_insights.enable = true
-      config.azure_insights.key = insights_key
-      config.azure_insights.role_name = ENV.fetch('AZURE_APP_INSIGHTS_ROLE_NAME', 'et-ccd-export')
-      config.azure_insights.role_instance = ENV.fetch('HOSTNAME', 'all')
-      config.azure_insights.buffer_size = 500
-      config.azure_insights.send_interval = 60
-    else
-      config.azure_insights.enable = false
-    end
     config.et_ccd_export = ActiveSupport::OrderedOptions.new
     config.et_ccd_export.retry_wait_strategy = ENV.fetch('CCD_EXPORT_RETRY_WAIT_STRATEGY', 'polynomially_longer')
   end
