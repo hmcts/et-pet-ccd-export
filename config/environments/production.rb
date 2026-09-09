@@ -37,9 +37,6 @@ Rails.application.configure do
 
   # Change to "debug" to log everything (including potentially personally-identifiable information!)
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "debug")
-  if Object.const_defined?('Sidekiq')
-    Sidekiq.logger = Sidekiq::Logger.new($stdout, level: Logger.const_get(config.log_level.to_s.upcase))
-  end
 
   # Prevent health checks from clogging up the logs.
   config.silence_healthcheck_path = "/up"
@@ -62,8 +59,6 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-
-  config.multiples_supervisor_adapter = { type: :redis }
 
   config.ccd_disallowed_file_extensions = ENV.fetch('CCD_DOCUMENT_STORE_DISALLOW_FILE_EXTENSIONS', '').split(',')
 end

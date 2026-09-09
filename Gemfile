@@ -9,12 +9,6 @@ gem 'rails', '8.1.3.1'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
-# Sidekiq - Used to receive the jobs from the API service
-gem 'sidekiq', '< 7'
-gem 'sidekiq_alive', '~> 2.0'
-gem 'sidekiq-failures', '~> 1.0'
-gem 'redis', '<5'
-
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
@@ -48,7 +42,6 @@ group :test do
   gem 'json_matchers', '~> 0.11.0'
   gem 'ice_nine', '~> 0.11.2'
   gem 'mock_redis', '0.46.0'
-  gem 'rspec-sidekiq', '~> 5.2'
   gem 'simplecov', '~> 0.22.0'
 end
 
@@ -64,6 +57,5 @@ end
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "sentry-ruby", "~> 5.7"
 gem "sentry-rails", "~> 5.7"
-gem "sentry-sidekiq", "~> 5.7"
 gem 'et_azure_insights', '0.3.2', git: 'https://github.com/hmcts/et-azure-insights.git', tag: 'v0.3.2'
 gem 'application_insights', git: 'https://github.com/microsoft/ApplicationInsights-Ruby.git', ref: '5db6b4'

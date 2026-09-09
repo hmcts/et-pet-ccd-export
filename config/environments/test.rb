@@ -40,9 +40,6 @@ Rails.application.configure do
   config.active_support.disallowed_deprecation_warnings = []
 
   config.log_level = ENV.fetch('RAILS_LOG_LEVEL', 'info').to_sym
-  if Object.const_defined?('Sidekiq')
-    Sidekiq.logger = Sidekiq::Logger.new($stdout, level: Logger.const_get(config.log_level.to_s.upcase))
-  end
   config.after_initialize do
     ActiveJob::Base.logger = Rails.logger.clone
     ActiveJob::Base.logger.level = ENV.fetch('RAILS_LOG_LEVEL', 'warn').to_sym

@@ -10,8 +10,8 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
                         application_events_service: fake_events_service
   end
 
-  let(:mock_presenter) { class_spy(EtCcdExport::MultipleClaimsPresenter, present: '{"some"=>"json", "claim" => "data"}') }
-  let(:mock_header_presenter) { class_spy(EtCcdExport::MultipleClaimsHeaderPresenter, present: '{"some"=>"json","claim"=>"header"}') }
+  let(:mock_presenter) { class_spy(EtCcdExport::MultipleClaimsPresenter, present: '{"some": "json", "claim": "data"}') }
+  let(:mock_header_presenter) { class_spy(EtCcdExport::MultipleClaimsHeaderPresenter, present: '{"some": "json","claim": "header"}') }
   let(:mock_envelope_presenter) { class_spy(EtCcdExport::MultipleClaimsEnvelopePresenter) }
   let(:fake_events_service) { class_spy(EtCcdExport::ApplicationEventsService) }
 
@@ -99,17 +99,14 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
       end
 
       let(:mock_worker_class) do
-        calls                  = mock_worker_calls
-        instance               = nil
-        reference              = 2400001
-        stub_const("#{self.class.name}::MockWorker", Class.new do
-          include Sidekiq::Worker
+        calls = mock_worker_calls
+        stub_const("#{self.class.name}::MockWorker", Class.new(EtCcdExport::ApplicationJob) do
+          include EtCcdExport::JobMetadata
+          include EtCcdExport::MultiplesClientBatchJob
+          include EtCcdExport::MultiplesWorkerBatchJob
 
-          define_singleton_method(:new) { instance ||= super() }
           define_method :perform do |*args|
             calls << args
-            # ::Sidekiq.redis { |r| r.lpush("BID-#{bid}-references", reference) }
-            reference += 1
             'dummyid'
           end
         end)
@@ -121,23 +118,14 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
       end
 
       let(:mock_header_worker_class) do
-        instance                     = mock_header_worker
-        stub_const("#{self.class.name}::MockHeaderWorker", Class.new do
-          include Sidekiq::Worker
-
-          define_singleton_method(:new) { instance }
+        worker = mock_header_worker
+        stub_const("#{self.class.name}::MockHeaderWorker", Class.new(EtCcdExport::ApplicationJob) do
+          define_method(:perform) { |*args| worker.perform(*args) }
         end)
         self.class::MockHeaderWorker
       end
 
-      let(:mock_header_worker) do
-        fake_class_to_spy_on = Class.new do
-          include Sidekiq::Worker
-
-          define_method(:perform) { |*| } # rubocop:disable Lint/EmptyBlock
-        end
-        instance_spy(fake_class_to_spy_on)
-      end
+      let(:mock_header_worker) { instance_spy(EtCcdExport::ExportMultiplesHeaderJob) }
     end
 
     context 'with secondary claimants from csv file' do
@@ -157,7 +145,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
       it 'queues the header worker when done with the data from the header presenter' do
         # Act - Call the service
         service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
-        drain_all_our_sidekiq_jobs
+        drain_all_our_jobs
 
         # Assert - Check the batch
         expect(mock_header_worker).to have_received(:perform).with(match(%r{\d{7}/\d{4}}), example_export.resource.primary_respondent.name, an_object_having_attributes(length: example_export.resource.secondary_claimants.length + 1), 'Manchester_Multiples', example_export.id, true, { 'test_header' => '"true"' })
@@ -166,7 +154,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
       it 'informs the application events service of the references allocated' do
         # Act - Call the service
         service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
-        drain_all_our_sidekiq_jobs
+        drain_all_our_jobs
 
         # Assert - Make sure the service was not called
         expect(fake_events_service).
@@ -175,8 +163,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
                sidekiq_job_data: { jid: 'examplejid' },
                case_type_id: 'Manchester',
                start_reference: a_string_matching(%r{24\d{5}/\d{4}}),
-               quantity: 11,
-               use_sidekiq: true
+               quantity: 11
       end
 
       it 'queues the worker 11 times with the data from the presenter' do
@@ -198,7 +185,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
 
         # Act - Call the service
         service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
-        drain_all_our_sidekiq_jobs
+        drain_all_our_jobs
 
         # Assert - Check the worker has been queued, first time with the primary set to true
         aggregate_failures 'validating calls' do
@@ -210,7 +197,7 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
       it 'calls the presenter 11 times with the correct parameters' do
         # Act - Call the service
         service.call(example_export.as_json, sidekiq_job_data: { jid: 'examplejid' })
-        drain_all_our_sidekiq_jobs
+        drain_all_our_jobs
 
         # Assert - Check the worker has been queued
         aggregate_failures "validate all calls in one" do
@@ -289,14 +276,6 @@ RSpec.describe EtCcdExport::ExportMultipleClaimsService do
           representative_dx: "dx1234567890"
         }
       }
-    end
-
-    before do
-      EtCcdExport::Sidekiq::Batch.start reference: example_ccd_data[:multipleReference],
-                                        quantity: 10,
-                                        start_ref: "24000001/#{Time.now.year}",
-                                        export_id: 'fakeexportid',
-                                        case_type_id: 'fakecasetypeid'
     end
 
     it 'stores the data in fake ccd' do

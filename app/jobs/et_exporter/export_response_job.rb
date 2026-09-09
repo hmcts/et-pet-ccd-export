@@ -11,7 +11,7 @@ module EtExporter
 
       send_exported_event(parsed_json, claim)
     rescue StandardError => e
-      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
+      events_service.send_response_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
       raise e
     end
 
@@ -21,7 +21,7 @@ module EtExporter
 
     def retries_exhausted(exception)
       export = JSON.parse(arguments.first)
-      EtCcdExport::ApplicationEventsService.send_response_failed_event(export_id: export['id'], sidekiq_job_data: active_job_data(exception), use_sidekiq: false)
+      EtCcdExport::ApplicationEventsService.send_response_failed_event(export_id: export['id'], sidekiq_job_data: active_job_data(exception))
       raise EtCcdExport::ClaimNotExportedException
     end
 
@@ -45,14 +45,13 @@ module EtExporter
     end
 
     def send_started_event(parsed_json)
-      events_service.send_response_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, use_sidekiq: false)
+      events_service.send_response_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
     end
 
     def send_exported_event(parsed_json, claim)
       case_type_id = parsed_json.dig('external_system', 'configurations').detect { |c| c['key'] == 'case_type_id' }['value']
       events_service.send_response_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: claim&.fetch('id'), case_type_id: case_type_id,
-                                                  case_reference: parsed_json.dig('resource', 'case_number'), office: claim&.dig('case_data', 'managingOffice'),
-                                                  use_sidekiq: false)
+                                                  case_reference: parsed_json.dig('resource', 'case_number'), office: claim&.dig('case_data', 'managingOffice'))
     end
   end
 end

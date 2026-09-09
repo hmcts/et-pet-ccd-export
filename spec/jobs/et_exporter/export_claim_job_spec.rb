@@ -27,7 +27,7 @@ RSpec.describe EtExporter::ExportClaimJob do
         job.perform_now
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service).to have_received(:send_claim_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, use_sidekiq: false)
+        expect(fake_events_service).to have_received(:send_claim_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
       end
 
       it 'informs the application events service of the process finishing if the service did not raise exception' do
@@ -35,7 +35,7 @@ RSpec.describe EtExporter::ExportClaimJob do
         job.perform_now
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service).to have_received(:send_claim_exported_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'fake_id', case_reference: 'fake_reference', case_type_id: 'fake_case_type_id', use_sidekiq: false)
+        expect(fake_events_service).to have_received(:send_claim_exported_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, case_id: 'fake_id', case_reference: 'fake_reference', case_type_id: 'fake_case_type_id')
       end
 
       it 'calls the service twice if the service responds with a ::EtCcdClient::Exceptions::UnprocessableEntity' do
@@ -65,7 +65,7 @@ RSpec.describe EtExporter::ExportClaimJob do
 
         # Assert - Make sure the fake events service was called correctly
         expected_job_hash = { executions: 1, jid: job.job_id, job_id: job.job_id, queue_name: 'default' }.stringify_keys
-        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception, use_sidekiq: false)
+        expect(fake_events_service).to have_received(:send_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: expected_job_hash, exception: my_exception)
       end
 
       it 're raises the error to mark it as failure and allow retrying' do
@@ -101,7 +101,7 @@ RSpec.describe EtExporter::ExportClaimJob do
         job.perform_now
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service).to have_received(:send_multiples_claim_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, use_sidekiq: false)
+        expect(fake_events_service).to have_received(:send_multiples_claim_export_started_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash)
       end
 
       it 'informs the application events service of the process finishing if the service did not raise exception' do
@@ -109,7 +109,7 @@ RSpec.describe EtExporter::ExportClaimJob do
         job.perform_now
 
         # Assert - Make sure the service was not called
-        expect(fake_events_service).to have_received(:send_claim_export_multiples_queued_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, queued_bid: instance_of(String), percent_complete: instance_of(Integer), use_sidekiq: false)
+        expect(fake_events_service).to have_received(:send_claim_export_multiples_queued_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, queued_bid: instance_of(String), percent_complete: instance_of(Integer))
       end
 
       it 'calls the multiples service with the parsed json as first param and the fake job hash as sidekiq_job_data' do
@@ -130,7 +130,7 @@ RSpec.describe EtExporter::ExportClaimJob do
         job.perform_now
 
         # Assert - Make sure the fake events service was called correctly
-        expect(fake_events_service).to have_received(:send_multiples_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, exception: instance_of(MyError), use_sidekiq: false)
+        expect(fake_events_service).to have_received(:send_multiples_claim_erroring_event).with(export_id: example_export.id, sidekiq_job_data: fake_job_hash, exception: instance_of(MyError))
       end
     end
   end
