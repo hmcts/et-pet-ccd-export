@@ -2,77 +2,12 @@
 
 [![Build Status](https://dev.azure.com/HMCTS-PET/pet-azure-infrastructure/_apis/build/status/et/et-ccd-export?branchName=develop)](https://dev.azure.com/HMCTS-PET/pet-azure-infrastructure/_build/latest?definitionId=23&branchName=develop)
 
-This application is to be used alongside the Employment Tribunals API service.  It shares the same redis connection
-for sidekiq.
+This application is now to be used inside the Employment Tribunals API service.  It no longer uses redis or sidekiq but
+'good jobs' using the database instead.
 
-It works by monitoring a queue called external_system_ccd - whenever a worker called ExternalSystemExportWorker is
-queued, it will be executed by this application and the data sent to CCD.
+The code is in the process of being migrated to the API instead of having its own repository
 
-## Configuration
 
-The application must be configured to use the same redis details as the API service.  See the environment variables below
-
-### Environment Variables
-
-1. The redis config can be configured using the following to allow just the port to be overriden (useful for local development)
-   REDIS_HOST (defaults to localhost)
-   REDIS_PORT (defaults to 6379)
-   REDIS_DATABASE (defaults to 1)
-   STORAGE_REDIS_DATABASE (defaults to 2)
-
-   You can change any of these individually or you can ignore these by setting the full
-   REDIS_URL in the traditional way - such as :-
-
-   ```
-
-   REDIS_URL=redis://localhost:6379/12
-
-   ```
-
-   If your redis server needs a password, it must be specified using
-
-   ```
-   REDIS_PASSWORD=<your password>
-
-   ```
-
-2. Logging levels can be changed using the following (note that
-   this is not a rails app, but I have kept the same naming
-   convention as a rails app)
-   
-   ```
-   RAILS_LOG_LEVEL=debug
-   ```
-   
-   values are debug (noisiest) , info, warn, error and fatal (quietist)
-
-3. Disabling 'sidekiq_alive' (provides a http server to sense
-   if sidekiq is running or not - used in deployment) can be done
-   as follows :-
-   
-   ```
-   DISABLE_SIDEKIQ_ALIVE=true
-   ```
-   
-   To re enable you must completely remove this env var
-   
-4. Controlling sidekiq threads
-   Increasing the number of threads available to sidekiq is a good and a bad thing.
-   It is good because more cases will go to CCD in parallel, but it is bad because
-   it might overload CCD.
-   
-   So, to control the threads (defaults to 20) - change this env var
-   
-   ```
-   RAILS_MAX_THREADS=<value>
-   ```
-   
-5. Connecting to sentry is easy. Just set :-
-
-    ```
-    RAVEN_DSN=<your sentry dsn>
-    ```
-        
 6. Configuration for CCD
 
     There are 3 base urls which have defaults to allow the system to work alongside ccd-docker.
@@ -126,7 +61,7 @@ The application must be configured to use the same redis details as the API serv
     To control the size of this pool, use the following
     
     ```
-    CCD_CLIENT_POOL_SIZE = <size> (where size should not be less than the concurrency in sidekiq else workers will become blocked)
+    CCD_CLIENT_POOL_SIZE = <size> (where size should not be less than the concurrency in active job else workers will become blocked)
     CCD_CLIENT_POOL_TIMEOUT = <timeout seconds> Set this to the max amount of time the code should wait for a client from the pool to become available
     ```
     
@@ -166,24 +101,7 @@ which is just a comma separated list of file extensions to disallow (including t
 
 ## Running
 
-First, clone this repository into et-ccd-export
-
-Then
-
-```
-
-cd et-ccd-export
-
-./bin/setup
-
-```
-
-then
-
-```
-
-./bin/sidekiq --config config/sidekiq.yml
-
+This is no longer able to run standalone
 
 
 ```
