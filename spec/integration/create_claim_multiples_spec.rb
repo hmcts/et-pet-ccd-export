@@ -22,7 +22,7 @@ RSpec.describe "create claim multiples (active job)" do
     job.perform_later(export.as_json.to_json)
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    # Assert - After calling all of our workers like active job would, check with CCD (or fake CCD) to see what we sent
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     aggregate_failures 'validating key fields' do
       expect(ccd_case['case_fields']).to include 'multipleName' => export.resource.primary_respondent.name
@@ -49,7 +49,7 @@ RSpec.describe "create claim multiples (active job)" do
     job.perform_later(export.as_json.to_json)
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check that the event has been sent to the api
+    # Assert - After calling all of our workers like active job would, check that the event has been sent to the api
     expect(external_events).to have_published_multiples_claim_size_exceeded(export: export)
   end
 
@@ -61,7 +61,7 @@ RSpec.describe "create claim multiples (active job)" do
     job.perform_later(export.as_json.to_json)
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    # Assert - After calling all of our workers like active job would, check with CCD (or fake CCD) to see what we sent
     test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     expect(external_events).to have_published_multiples_claim_export_started(export:)
   end
@@ -74,7 +74,7 @@ RSpec.describe "create claim multiples (active job)" do
     job.perform_later(export.as_json.to_json)
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    # Assert - After calling all of our workers like active job would, check with CCD (or fake CCD) to see what we sent
     multiples_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     expect(external_events).to have_published_multiples_claim_export_succeeded(export: export, ccd_case: multiples_case)
   end
@@ -87,7 +87,7 @@ RSpec.describe "create claim multiples (active job)" do
     job.perform_later(export.as_json.to_json)
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    # Assert - After calling all of our workers like active job would, check with CCD (or fake CCD) to see what we sent
     multiples_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     case_references = multiples_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
     sub_cases = case_references.map do |ref|
@@ -122,7 +122,7 @@ RSpec.describe "create claim multiples (active job)" do
     job.perform_later(export.as_json.to_json)
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    # Assert - After calling all of our workers like active job would, check with CCD (or fake CCD) to see what we sent
     primary_claimant = export.resource.primary_claimant
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }
@@ -146,7 +146,7 @@ RSpec.describe "create claim multiples (active job)" do
 
     drain_all_our_jobs
 
-    # Assert - After calling all of our workers like sidekiq would, check with CCD (or fake CCD) to see what we sent
+    # Assert - After calling all of our workers like active job would, check with CCD (or fake CCD) to see what we sent
     primary_claimant = export.resource.primary_claimant
     ccd_case = test_ccd_client.caseworker_search_latest_by_bulk_case_title(export.resource.primary_respondent.name, case_type_id: 'Manchester_Multiples')
     case_references = ccd_case.dig('case_fields', 'caseIdCollection').map { |obj| obj.dig('value', 'ethos_CaseReference') }

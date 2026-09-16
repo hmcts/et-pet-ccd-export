@@ -3,6 +3,10 @@ require 'sentry/test_helper'
 RSpec.configure do |config|
   config.include Sentry::TestHelper
   config.around(:each, :sentry) do |example|
+    Sentry.init do |config|
+      config.dsn = ''
+    end
+
     setup_sentry_test
     example.run
   ensure

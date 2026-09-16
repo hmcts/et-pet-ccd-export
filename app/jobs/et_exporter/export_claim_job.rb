@@ -34,7 +34,7 @@ module EtExporter
     end
 
     def multiples_service
-      @multiples_service ||= EtCcdExport::ExportMultipleClaimsService.new(use_sidekiq: false)
+      @multiples_service ||= EtCcdExport::ExportMultipleClaimsService.new
     end
 
     def perform_multiples(parsed_json)
@@ -42,9 +42,9 @@ module EtExporter
       bid = multiples_service.call(parsed_json, sidekiq_job_data: job_hash)
       send_claim_export_multiples_queued_event parsed_json, bid
     rescue EtCcdExport::ClaimMultipleClaimantCountExceededException => e
-      events_service.send_multiples_claim_size_exceeded_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
+      events_service.send_multiples_claim_size_exceeded_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
     rescue Exception => e # rubocop:disable Lint/RescueException
-      events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
+      events_service.send_multiples_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
       raise e
     end
 
@@ -53,7 +53,7 @@ module EtExporter
       created_case = singles_service.call(parsed_json, sidekiq_job_data: job_hash)
       send_claim_exported_event(parsed_json, created_case)
     rescue Exception => e # rubocop:disable Lint/RescueException
-      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e, use_sidekiq: false)
+      events_service.send_claim_erroring_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, exception: e)
       raise e
     end
 
@@ -62,21 +62,20 @@ module EtExporter
     end
 
     def send_claim_export_started_event(parsed_json)
-      events_service.send_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, use_sidekiq: false)
+      events_service.send_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
     end
 
     def send_claim_exported_event(parsed_json, created_case)
       events_service.send_claim_exported_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, case_id: created_case['id'],
-                                               case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: created_case['case_type_id'],
-                                               use_sidekiq: false)
+                                               case_reference: created_case.dig('case_data', 'ethosCaseReference'), case_type_id: created_case['case_type_id'])
     end
 
     def send_multiples_claim_export_started_event(parsed_json)
-      events_service.send_multiples_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash, use_sidekiq: false)
+      events_service.send_multiples_claim_export_started_event(export_id: parsed_json['id'], sidekiq_job_data: job_hash)
     end
 
     def send_claim_export_multiples_queued_event(parsed_json, bid)
-      events_service.send_claim_export_multiples_queued_event queued_bid: bid, sidekiq_job_data: job_hash, export_id: parsed_json['id'], percent_complete: 0, use_sidekiq: false
+      events_service.send_claim_export_multiples_queued_event queued_bid: bid, sidekiq_job_data: job_hash, export_id: parsed_json['id'], percent_complete: 0
     end
   end
 end

@@ -19,8 +19,9 @@ RSpec.describe EtCcdExport::UpdateLeadCaseService do
 
     context 'with a single case already created' do
       let!(:existing_export_data) do
-        EtExporter::ExportClaimWorker.perform_async(build(:export, :for_claim).as_json.to_json)
-        EtExporter::ExportClaimWorker.drain
+        perform_enqueued_jobs(only: EtExporter::ExportClaimJob) do
+          EtExporter::ExportClaimJob.perform_later(build(:export, :for_claim).as_json.to_json)
+        end
         application_first_export_completed_event
       end
 
@@ -39,12 +40,12 @@ RSpec.describe EtCcdExport::UpdateLeadCaseService do
 
     context 'with a multiple case already created' do
       let!(:existing_export_data) do
-        EtExporter::ExportClaimWorker.perform_async build(
+        EtExporter::ExportClaimJob.perform_later build(
           :export,
           :for_claim,
           claim_traits: [:default_multiple_claimants]
         ).as_json.to_json
-        drain_all_our_sidekiq_jobs
+        drain_all_our_jobs
         application_first_export_completed_event
       end
 

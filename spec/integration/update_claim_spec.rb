@@ -18,7 +18,7 @@ RSpec.describe "update claim" do
     let!(:existing_export_data) do
       EtExporter::ExportClaimJob.perform_later(build(:export, :for_claim).as_json.to_json)
       drain_all_our_jobs
-      application_first_export_completed_event(use_sidekiq: false)
+      application_first_export_completed_event
     end
 
     it 'stores the extra documents' do
@@ -49,7 +49,7 @@ RSpec.describe "update claim" do
         claim_traits: [:default_multiple_claimants]
       ).as_json.to_json
       drain_all_our_jobs
-      application_first_export_completed_event(use_sidekiq: false)
+      application_first_export_completed_event
     end
 
     it 'stores the extra documents' do

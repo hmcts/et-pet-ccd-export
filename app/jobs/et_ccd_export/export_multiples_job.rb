@@ -28,7 +28,7 @@ module EtCcdExport
     end
 
     def multiples_service
-      @multiples_service ||= EtCcdExport::ExportMultipleClaimsService.new(use_sidekiq: false)
+      @multiples_service ||= EtCcdExport::ExportMultipleClaimsService.new
     end
   end
 end

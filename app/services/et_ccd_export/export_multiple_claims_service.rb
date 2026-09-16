@@ -10,9 +10,8 @@ module EtCcdExport
       reference_generator: EtCcdExport::EthosReferenceGeneratorService,
       application_events_service: EtCcdExport::ApplicationEventsService,
       disallow_file_extensions: Rails.application.config.ccd_disallowed_file_extensions,
-      use_sidekiq: true,
-      worker: use_sidekiq ? EtCcdExport::ExportMultiplesWorker : EtCcdExport::ExportMultiplesJob,
-      header_worker: use_sidekiq ? EtCcdExport::ExportMultiplesHeaderWorker : EtCcdExport::ExportMultiplesHeaderJob)
+      worker: EtCcdExport::ExportMultiplesJob,
+      header_worker: EtCcdExport::ExportMultiplesHeaderJob)
       self.presenter = presenter
       self.header_presenter = header_presenter
       self.envelope_presenter = envelope_presenter
@@ -20,7 +19,6 @@ module EtCcdExport
       self.disallow_file_extensions = disallow_file_extensions
       self.reference_generator = reference_generator
       self.events_service = application_events_service
-      self.use_sidekiq = use_sidekiq
       self.worker = worker
       self.header_worker = header_worker
     end
@@ -83,7 +81,7 @@ module EtCcdExport
 
     attr_accessor :presenter, :header_presenter, :envelope_presenter,
                   :client_class, :reference_generator, :disallow_file_extensions,
-                  :events_service, :worker, :header_worker, :use_sidekiq
+                  :events_service, :worker, :header_worker
 
     def percent_complete_for(number, claimant_count:)
       (number * (100.0 / (claimant_count + 2))).to_i
@@ -97,7 +95,7 @@ module EtCcdExport
         next_ref = start_multiple_result.dig('data', 'startCaseRefNumber')
         send_multiples_claim_references_allocated_event(export, case_type_id, claimant_count, next_ref, sidekiq_job_data)
 
-        batch_class = use_sidekiq ? EtCcdExport::Sidekiq::Batch : EtCcdExport::Batch
+        batch_class = EtCcdExport::Batch
         batch = batch_class.start reference: multiple_ref, quantity: claimant_count, start_ref: next_ref,
                                   export_id: export['id'], case_type_id: case_type_id
         setup_callbacks(batch, export, multiple_ref, multiples_case_type_id, extra_headers)
@@ -111,13 +109,12 @@ module EtCcdExport
 
     def send_multiples_claim_references_allocated_event(export, case_type_id, claimant_count, next_ref, sidekiq_job_data)
       events_service.send_multiples_claim_references_allocated_event export_id: export['id'], sidekiq_job_data: sidekiq_job_data,
-                                                                     start_reference: next_ref, quantity: claimant_count, case_type_id: case_type_id,
-                                                                     use_sidekiq:
+                                                                     start_reference: next_ref, quantity: claimant_count, case_type_id: case_type_id
     end
 
     def setup_callbacks(batch, export, multiple_ref, multiples_case_type_id, extra_headers)
       batch.on :success,
-               use_sidekiq ? SuccessCallback : SuccessCallbackJob,
+               SuccessCallbackJob,
                primary_reference: multiple_ref,
                respondent_name: export.dig('resource', 'primary_respondent', 'name'),
                header_worker: header_worker.name,
@@ -126,7 +123,7 @@ module EtCcdExport
                send_request_id: send_request_id?(export),
                extra_headers: extra_headers.except('request_id')
       batch.on :failed,
-               use_sidekiq ? FailedCallback : FailedCallbackJob,
+               FailedCallbackJob,
                export_id: export['id'],
                resource_id: export['resource_id'],
                resource_type: export['resource_type']
@@ -135,20 +132,11 @@ module EtCcdExport
     def perform_lead_case(export, next_ref, batch, multiple_ref, client, case_type_id, claimant_count)
       extra_headers = extra_headers_for(export)
       batch.child_job(next_ref) do
-        if use_sidekiq
-          worker.perform_async presenter.present(export['resource'], lead_claimant: true, multiple_reference: multiple_ref,
-                                                                     claimant: export.dig('resource', 'primary_claimant'),
-                                                                     files: files_data(client, export),
-                                                                     ethos_case_reference: next_ref),
-                               case_type_id, export['id'], claimant_count, true, send_request_id?(export), extra_headers
-        else
-          worker.perform_later presenter.present(export['resource'], lead_claimant: true, multiple_reference: multiple_ref,
-                                                                     claimant: export.dig('resource', 'primary_claimant'),
-                                                                     files: files_data(client, export),
-                                                                     ethos_case_reference: next_ref),
-                               case_type_id, export['id'], claimant_count, true, send_request_id?(export), extra_headers
-
-        end
+        worker.perform_later presenter.present(export['resource'], lead_claimant: true, multiple_reference: multiple_ref,
+                                                                   claimant: export.dig('resource', 'primary_claimant'),
+                                                                   files: files_data(client, export),
+                                                                   ethos_case_reference: next_ref),
+                             case_type_id, export['id'], claimant_count, true, send_request_id?(export), extra_headers
       end
     end
 
@@ -156,22 +144,12 @@ module EtCcdExport
       export.dig('resource', 'secondary_claimants').each do |claimant|
         next_ref = reference_generator.call(next_ref)
         batch.child_job(next_ref) do
-          if use_sidekiq
-            worker.perform_async presenter.present(export['resource'],
-                                                   claimant: claimant,
-                                                   lead_claimant: false,
-                                                   multiple_reference: multiple_ref,
-                                                   ethos_case_reference: next_ref),
-                                 case_type_id, export['id'], claimant_count, false, send_request_id?(export), extra_headers
-          else
-            worker.perform_later presenter.present(export['resource'],
-                                                   claimant: claimant,
-                                                   lead_claimant: false,
-                                                   multiple_reference: multiple_ref,
-                                                   ethos_case_reference: next_ref),
-                                 case_type_id, export['id'], claimant_count, false, send_request_id?(export), extra_headers
-
-          end
+          worker.perform_later presenter.present(export['resource'],
+                                                 claimant: claimant,
+                                                 lead_claimant: false,
+                                                 multiple_reference: multiple_ref,
+                                                 ethos_case_reference: next_ref),
+                               case_type_id, export['id'], claimant_count, false, send_request_id?(export), extra_headers
         end
       end
     end
@@ -183,36 +161,6 @@ module EtCcdExport
       end
     end
 
-    if Object.const_defined?('Sidekiq')
-      class SuccessCallback
-        include ::Sidekiq::Worker
-
-        sidekiq_options queue: 'external_system_ccd_callbacks'
-
-        def perform(case_references, options)
-          options['header_worker'].safe_constantize.perform_async options['primary_reference'],
-                                                                  options['respondent_name'],
-                                                                  case_references,
-                                                                  options['multiples_case_type_id'],
-                                                                  options['export_id'],
-                                                                  options['send_request_id'],
-                                                                  options['extra_headers']
-        end
-      end
-
-      class FailedCallback
-        include ::Sidekiq::Worker
-
-        sidekiq_options queue: 'external_system_ccd_callbacks'
-
-        def perform(_done_references, _failed_references, options)
-          ApplicationEventsService.send_subclaim_failed_event(export_id: options['export_id'], sidekiq_job_data: job_data)
-          exception = ClaimNotExportedException.
-                      new("Claim #{options['resource_id']} for export #{options['export_id']} has not been exported to ccd due to permanent failures in the child cases")
-          Sentry.capture_exception(exception)
-        end
-      end
-    end
     class SuccessCallbackJob < ApplicationJob
 
       queue_as 'external_system_ccd_callbacks'
