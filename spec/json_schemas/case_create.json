@@ -729,7 +729,9 @@
             "respondent_address",
             "respondent_phone1",
             "respondent_ACAS",
-            "respondent_ACAS_question"
+            "respondent_ACAS_question",
+            "acasCertificateReceiptDate",
+            "acasCertificateIssueDate"
           ],
           "properties": {
             "respondent_name": {
@@ -862,6 +864,44 @@
                   "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_ACAS",
                   "type": "null",
                   "title": "The Respondent_acas Schema"
+                }
+              ]
+            },
+            "acasCertificateIssueDate": {
+              "oneOf": [
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateIssueDate",
+                  "type": "string",
+                  "title": "The acasCertificateIssueDate Schema",
+                  "default": "",
+                  "examples": [
+                    "2026-01-08"
+                  ],
+                  "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+                },
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateIssueDate",
+                  "type": "null",
+                  "title": "The acasCertificateIssueDate Schema"
+                }
+              ]
+            },
+            "acasCertificateReceiptDate": {
+              "oneOf": [
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateReceiptDate",
+                  "type": "string",
+                  "title": "The acasCertificateReceiptDate Schema",
+                  "default": "",
+                  "examples": [
+                    "2025-09-29"
+                  ],
+                  "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+                },
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateReceiptDate",
+                  "type": "null",
+                  "title": "The acasCertificateReceiptDate Schema"
                 }
               ]
             },

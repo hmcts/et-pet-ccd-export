@@ -65,6 +65,8 @@ json.set! 'data' do
         json.set! 'respondent_phone1', respondent['address_telephone_number']
         json.set! 'respondent_ACAS', respondent['acas_certificate_number']
         json.set! 'respondent_ACAS_question', respondent['acas_certificate_number'].present? ? 'Yes' : 'No'
+        json.set! 'acasCertificateReceiptDate', respondent['acas_receipt_date']
+        json.set! 'acasCertificateIssueDate', respondent['acas_issue_date']
         json.set! 'respondent_ACAS_no', optional_acas_exemption(respondent['acas_exemption_code']) unless respondent['acas_certificate_number'].present?
       end
     end
