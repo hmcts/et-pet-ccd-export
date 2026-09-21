@@ -18,6 +18,9 @@ FactoryBot.define do
       disability { nil }
       disability_information { nil }
       acas_certificate_number { "AC123456/78/90" }
+      acas_receipt_date { '2025-09-29' }
+      acas_issue_date { '2026-01-08' }
+
       acas_exemption_code { nil }
     end
 

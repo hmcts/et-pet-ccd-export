@@ -524,9 +524,27 @@
               "title": "The Claimant_claimant_employed_notice_period Schema"
             }
           ]
+        },
+        "dateOfLastEvent": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/dateOfLastEvent",
+              "type": "string",
+              "title": "The date of last event Schema",
+              "default": "",
+              "examples": [
+                "2022-12-31"
+              ],
+              "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+
+            },
+            {
+              "$id": "#/properties/data/properties/claimantOtherType/properties/dateOfLastEvent",
+              "type": "null",
+              "title": "The date of last event Schema"
+            }
+          ]
         }
-
-
       }
     },
     "representative_claimant_type": {
@@ -711,7 +729,9 @@
             "respondent_address",
             "respondent_phone1",
             "respondent_ACAS",
-            "respondent_ACAS_question"
+            "respondent_ACAS_question",
+            "acasCertificateReceiptDate",
+            "acasCertificateIssueDate"
           ],
           "properties": {
             "respondent_name": {
@@ -847,6 +867,44 @@
                 }
               ]
             },
+            "acasCertificateIssueDate": {
+              "oneOf": [
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateIssueDate",
+                  "type": "string",
+                  "title": "The acasCertificateIssueDate Schema",
+                  "default": "",
+                  "examples": [
+                    "2026-01-08"
+                  ],
+                  "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+                },
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateIssueDate",
+                  "type": "null",
+                  "title": "The acasCertificateIssueDate Schema"
+                }
+              ]
+            },
+            "acasCertificateReceiptDate": {
+              "oneOf": [
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateReceiptDate",
+                  "type": "string",
+                  "title": "The acasCertificateReceiptDate Schema",
+                  "default": "",
+                  "examples": [
+                    "2025-09-29"
+                  ],
+                  "pattern": "^(\\d{4}-\\d{2}-\\d{2})$"
+                },
+                {
+                  "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/acasCertificateReceiptDate",
+                  "type": "null",
+                  "title": "The acasCertificateReceiptDate Schema"
+                }
+              ]
+            },
             "respondent_ACAS_question": {
               "$id": "#/properties/data/properties/respondentCollection/items/properties/value/properties/respondent_ACAS_question",
               "type": "string",
@@ -964,6 +1022,46 @@
           ]
         }
       }
+    },
+    "claimantHearingPreference": {
+      "$id": "#/properties/data/properties/claimantHearingPreference",
+      "title": "The claimant hearing preference schema",
+      "type": "object",
+      "required": [
+        "claimant_hearing_panel_preference",
+        "claimant_hearing_panel_preference_why"
+      ],
+      "properties": {
+        "claimant_hearing_panel_preference": {
+          "oneOf": [
+            {
+              "$id": "#/properties/data/properties/claimantHearingPreference/properties/claimant_hearing_panel_preference",
+              "type": "string",
+              "title": "Indicates if the claimant would prefer a judge, panel or doesnt have a preference",
+              "examples": [
+                "Judge"
+              ],
+              "enum": [
+                "No preference",
+                "Judge",
+                "Panel"
+              ]
+            },
+            {
+              "$id": "#/properties/data/properties/claimantHearingPreference/properties/claimant_hearing_panel_preference",
+              "type": "null"
+            }
+          ]
+        },
+        "claimant_hearing_panel_preference_why": {
+          "$id": "#/properties/data/properties/claimantHearingPreference/properties/claimant_hearing_panel_preference_why",
+          "type": "string",
+          "title": "If the claimant has specified a judge or a panel, this field will contain the reason why",
+          "examples": [
+            "I would like to have a hearing panel"
+          ]
+        }
+      }
     }
   },
   "schema": "http://json-schema.org/draft-07/schema#",
@@ -982,7 +1080,8 @@
     "claimantOtherType",
     "claimantRepresentedQuestion",
     "positionType",
-    "documentCollection"
+    "documentCollection",
+    "claimantHearingPreference"
   ],
   "additionalProperties": false,
   "properties": {
@@ -1119,6 +1218,10 @@
         "Received by Auto-Import"
       ],
       "enum": ["Received by Auto-Import"]
+    },
+    "claimantHearingPreference": {
+      "$id": "#/properties/data/properties/claimantHearingPreference",
+      "$ref": "#/definitions/claimantHearingPreference"
     }
   }
 }

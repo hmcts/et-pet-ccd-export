@@ -46,6 +46,10 @@ json.set! 'respondentCollection' do
       json.set! 'respondent_phone1', respondent['address_telephone_number']
       json.set! 'respondent_ACAS', respondent['acas_certificate_number']
       json.set! 'respondent_ACAS_question', respondent['acas_certificate_number'].present? ? 'Yes' : 'No'
+      if FeatureFlag.value_for('era_oct_26')
+        json.set! 'acasCertificateReceiptDate', respondent['acas_receipt_date']
+        json.set! 'acasCertificateIssueDate', respondent['acas_issue_date']
+      end
       json.set! 'respondent_ACAS_no', optional_acas_exemption(respondent['acas_exemption_code']) unless respondent['acas_certificate_number'].present?
     end
   end
@@ -71,3 +75,7 @@ if claim['primary_representative'].present?
   end
 end
 json.set! 'documentCollection', []
+json.set!('claimantHearingPreference') do
+  json.set!('claimant_hearing_panel_preference', nil)
+  json.set!('claimant_hearing_panel_preference_why', '')
+end

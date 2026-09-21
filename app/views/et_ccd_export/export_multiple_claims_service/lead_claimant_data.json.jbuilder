@@ -67,6 +67,10 @@ json.set! 'respondentCollection' do
       json.set! 'respondent_phone1', respondent['address_telephone_number']
       json.set! 'respondent_ACAS', respondent['acas_certificate_number']
       json.set! 'respondent_ACAS_question', respondent['acas_certificate_number'].present? ? 'Yes' : 'No'
+      if FeatureFlag.value_for('era_oct_26')
+        json.set! 'acasCertificateReceiptDate', respondent['acas_receipt_date']
+        json.set! 'acasCertificateIssueDate', respondent['acas_issue_date']
+      end
       json.set! 'respondent_ACAS_no', optional_acas_exemption(respondent['acas_exemption_code']) unless respondent['acas_certificate_number'].present?
     end
   end
@@ -74,6 +78,9 @@ end
 json.set! 'claimantOtherType' do
   json.set! 'claimant_disabled', claim.dig('primary_claimant', 'special_needs').present? ? 'Yes' : 'No'
   json.set! 'claimant_disabled_details', claim.dig('primary_claimant', 'special_needs') if claim.dig('primary_claimant', 'special_needs').present?
+  if FeatureFlag.value_for('era_oct_26')
+    json.set! 'dateOfLastEvent', claim['last_event_date']
+  end
   if claim['employment_details'].present?
     json.set! 'claimant_employed_currently', 'Yes' if claim.dig('employment_details', 'start_date').present? &&
                                                       claim.dig('employment_details', 'end_date').nil?
@@ -108,4 +115,10 @@ if claim['primary_representative'].present?
 end
 json.set! "documentCollection" do
   json.array! files, partial: 'et_ccd_export/shared/file', as: :file
+end
+if FeatureFlag.value_for('era_oct_26')
+  json.set!('claimantHearingPreference') do
+    json.set!('claimant_hearing_panel_preference', claim['case_heard_by_preference']&.humanize)
+    json.set!('claimant_hearing_panel_preference_why', claim['case_heard_by_preference_reason'])
+  end
 end
