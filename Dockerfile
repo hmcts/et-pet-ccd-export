@@ -1,6 +1,6 @@
 # Temporary deployment placeholder while the exporter moves into the API.
 # Keep the existing Helm health checks working without starting Rails or Sidekiq.
-FROM busybox:1.37.0
+FROM busybox:1.38.0
 
 ARG APPVERSION=unknown
 ARG APP_BUILD_DATE=unknown
