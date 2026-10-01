@@ -52,7 +52,11 @@ json.set! 'respondentCollection' do
     end
   end
 end
-json.set! 'claimantOtherType', {}
+json.set! 'claimantOtherType' do
+  if FeatureFlag.value_for('era_oct_26')
+    json.set! 'dateOfLastEvent', claim['last_event_date']
+  end
+end
 json.set! 'claimantRepresentedQuestion', claim['primary_representative'].present? ? 'Yes' : 'No'
 if claim['primary_representative'].present?
   json.set! 'representativeClaimantType' do
@@ -73,7 +77,9 @@ if claim['primary_representative'].present?
   end
 end
 json.set! 'documentCollection', []
-json.set!('claimantHearingPreference') do
-  json.set!('claimant_hearing_panel_preference', nil)
-  json.set!('claimant_hearing_panel_preference_why', '')
+if FeatureFlag.value_for('era_oct_26')
+  json.set!('claimantHearingPreference') do
+    json.set!('claimant_hearing_panel_preference', claim['case_heard_by_preference']&.humanize)
+    json.set!('claimant_hearing_panel_preference_why', claim['case_heard_by_preference_reason'])
+  end
 end
